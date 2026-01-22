@@ -1,4 +1,6 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, input, OnInit, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-loading-spinner',
@@ -14,30 +16,26 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
     </div>
   `
 })
-export class LoadingSpinnerComponent implements OnInit, OnDestroy {
-  @Input() messages: string[] = [
+export class LoadingSpinnerComponent implements OnInit {
+  messages = input<string[]>([
     'Analyzing your style...',
     'Curating color palettes...',
     'Selecting fabrics...',
     'Designing your outfit...',
     'Finalizing mood board...'
-  ];
+  ]);
 
   currentMessage = '';
   private messageIndex = 0;
-  private intervalId: ReturnType<typeof setInterval> | null = null;
+  private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
-    this.currentMessage = this.messages[0];
-    this.intervalId = setInterval(() => {
-      this.messageIndex = (this.messageIndex + 1) % this.messages.length;
-      this.currentMessage = this.messages[this.messageIndex];
-    }, 2500);
-  }
-
-  ngOnDestroy(): void {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
+    this.currentMessage = this.messages()[0];
+    interval(2500)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.messageIndex = (this.messageIndex + 1) % this.messages().length;
+        this.currentMessage = this.messages()[this.messageIndex];
+      });
   }
 }

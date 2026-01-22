@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { AppError } from '../../models/mood-board.model';
 
 @Component({
@@ -13,10 +13,10 @@ import { AppError } from '../../models/mood-board.model';
         </svg>
       </div>
       <h3 class="text-neutral-100 text-lg font-medium mb-2">Something went wrong</h3>
-      <p class="text-neutral-400 mb-6">{{ error?.userMessage || 'An unexpected error occurred.' }}</p>
+      <p class="text-neutral-400 mb-6">{{ error()?.userMessage || 'An unexpected error occurred.' }}</p>
 
       <div class="flex justify-center gap-4">
-        @if (error?.retryable) {
+        @if (error()?.retryable) {
           <button
             (click)="retry.emit()"
             class="px-6 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-100 rounded-lg transition-colors"
@@ -35,7 +35,7 @@ import { AppError } from '../../models/mood-board.model';
   `
 })
 export class ErrorMessageComponent {
-  @Input() error: AppError | null = null;
-  @Output() retry = new EventEmitter<void>();
-  @Output() dismiss = new EventEmitter<void>();
+  error = input<AppError | null>(null);
+  retry = output<void>();
+  dismiss = output<void>();
 }

@@ -4,14 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Moodify is an AI-powered fashion mood board generator built with Angular 17. Users describe a style or occasion, and GPT-4 generates curated mood boards with color palettes, fabric recommendations, style keywords, and outfit suggestions.
+Moodify is an AI-powered fashion mood board generator built with Angular 21. Users describe a style or occasion, and GPT-4 generates curated mood boards with color palettes, fabric recommendations, style keywords, and outfit suggestions.
 
 ## Commands
 
 ```bash
 npm start          # Start dev server at localhost:4200
 npm run build      # Production build (outputs to dist/moodify)
-npm test           # Run Karma tests
 ```
 
 ## Coding Guidelines
@@ -32,7 +31,11 @@ Uses Angular signals for reactive state. `MoodBoardService` is the central state
 - App states: `idle` → `loading` → `success` | `error`
 
 ### Component Pattern
-All components are standalone (no NgModules). The app uses a flat component structure under `src/app/components/` with single-responsibility components.
+All components are standalone (no NgModules) using modern Angular 21 patterns:
+- Signal-based inputs via `input()` function instead of `@Input()` decorator
+- Signal-based outputs via `output()` function instead of `@Output()` decorator
+- Signal-based view queries via `viewChild()` instead of `@ViewChild()` decorator
+- The app uses a flat component structure under `src/app/components/` with single-responsibility components
 
 ### API Integration
 `OpenAIService` handles GPT-4 communication:

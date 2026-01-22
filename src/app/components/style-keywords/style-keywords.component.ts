@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-style-keywords',
@@ -7,7 +7,7 @@ import { Component, Input } from '@angular/core';
     <div class="card-glass p-6 animate-slide-up" style="animation-delay: 0.2s">
       <h3 class="section-title">Style Keywords</h3>
       <div class="flex flex-wrap gap-2">
-        @for (keyword of keywords; track keyword; let i = $index) {
+        @for (keyword of keywords(); track keyword; let i = $index) {
           <span
             class="style-tag"
             [style.animation-delay]="(i * 0.03) + 's'"
@@ -20,5 +20,5 @@ import { Component, Input } from '@angular/core';
   `
 })
 export class StyleKeywordsComponent {
-  @Input() keywords: string[] = [];
+  keywords = input<string[]>([]);
 }

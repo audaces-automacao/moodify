@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, viewChild } from '@angular/core';
 import { MoodBoardService } from './services/mood-board.service';
 import { MoodBoardInputComponent } from './components/mood-board-input/mood-board-input.component';
 import { ExamplePromptsComponent } from './components/example-prompts/example-prompts.component';
@@ -8,19 +8,18 @@ import { MoodBoardDisplayComponent } from './components/mood-board-display/mood-
 import { EXAMPLE_PROMPTS } from './constants/example-prompts.constant';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-    MoodBoardInputComponent,
-    ExamplePromptsComponent,
-    LoadingSpinnerComponent,
-    ErrorMessageComponent,
-    MoodBoardDisplayComponent
-  ],
-  templateUrl: './app.component.html'
+    selector: 'app-root',
+    imports: [
+        MoodBoardInputComponent,
+        ExamplePromptsComponent,
+        LoadingSpinnerComponent,
+        ErrorMessageComponent,
+        MoodBoardDisplayComponent
+    ],
+    templateUrl: './app.component.html'
 })
 export class AppComponent {
-  @ViewChild(MoodBoardInputComponent) inputComponent!: MoodBoardInputComponent;
+  private inputComponent = viewChild.required(MoodBoardInputComponent);
 
   readonly moodBoardService = inject(MoodBoardService);
   readonly examplePrompts = EXAMPLE_PROMPTS;
@@ -30,7 +29,7 @@ export class AppComponent {
   }
 
   onSelectExample(prompt: string): void {
-    this.inputComponent.setPrompt(prompt);
+    this.inputComponent().setPrompt(prompt);
   }
 
   onRetry(): void {

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, map, catchError, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -14,8 +14,7 @@ import {
 })
 export class OpenAIService {
   private readonly API_URL = 'https://api.openai.com/v1/chat/completions';
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   generateMoodBoard(userPrompt: string): Observable<MoodBoard> {
     const headers = new HttpHeaders({

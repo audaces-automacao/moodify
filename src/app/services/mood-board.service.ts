@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { OpenAIService } from './openai.service';
 import { MoodBoard, AppState, AppError } from '../models/mood-board.model';
 
@@ -6,6 +6,8 @@ import { MoodBoard, AppState, AppError } from '../models/mood-board.model';
   providedIn: 'root'
 })
 export class MoodBoardService {
+  private openaiService = inject(OpenAIService);
+
   private _moodBoard = signal<MoodBoard | null>(null);
   private _state = signal<AppState>('idle');
   private _error = signal<AppError | null>(null);
@@ -18,8 +20,6 @@ export class MoodBoardService {
   readonly isLoading = computed(() => this._state() === 'loading');
   readonly hasResult = computed(() => this._state() === 'success' && this._moodBoard() !== null);
   readonly hasError = computed(() => this._state() === 'error');
-
-  constructor(private openaiService: OpenAIService) {}
 
   generateMoodBoard(prompt: string): void {
     if (!prompt.trim()) return;

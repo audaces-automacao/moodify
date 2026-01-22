@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { ExamplePrompt } from '../../models/mood-board.model';
 
 @Component({
@@ -8,10 +8,10 @@ import { ExamplePrompt } from '../../models/mood-board.model';
     <div class="mt-6">
       <p class="text-sm text-neutral-500 mb-3 text-center">Or try an example:</p>
       <div class="flex flex-wrap justify-center gap-2">
-        @for (example of prompts; track example.id) {
+        @for (example of prompts(); track example.id) {
           <button
             (click)="onSelect(example.prompt)"
-            [disabled]="disabled"
+            [disabled]="disabled()"
             class="style-tag disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {{ example.label }}
@@ -22,9 +22,9 @@ import { ExamplePrompt } from '../../models/mood-board.model';
   `
 })
 export class ExamplePromptsComponent {
-  @Input() prompts: ExamplePrompt[] = [];
-  @Input() disabled = false;
-  @Output() selectPrompt = new EventEmitter<string>();
+  prompts = input<ExamplePrompt[]>([]);
+  disabled = input(false);
+  selectPrompt = output<string>();
 
   onSelect(prompt: string): void {
     this.selectPrompt.emit(prompt);

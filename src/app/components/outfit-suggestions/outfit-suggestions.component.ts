@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { OutfitSuggestion } from '../../models/mood-board.model';
 
 @Component({
@@ -14,9 +14,9 @@ import { OutfitSuggestion } from '../../models/mood-board.model';
             <span class="text-2xl">👔</span>
             <span class="text-xs uppercase tracking-wider text-neutral-500">Top</span>
           </div>
-          <h4 class="text-neutral-100 font-medium mb-1">{{ outfit.top.item }}</h4>
-          <p class="text-neutral-400 text-sm mb-2">{{ outfit.top.details }}</p>
-          <p class="text-neutral-500 text-xs italic">{{ outfit.top.styling }}</p>
+          <h4 class="text-neutral-100 font-medium mb-1">{{ outfit().top.item }}</h4>
+          <p class="text-neutral-400 text-sm mb-2">{{ outfit().top.details }}</p>
+          <p class="text-neutral-500 text-xs italic">{{ outfit().top.styling }}</p>
         </div>
 
         <!-- Bottom -->
@@ -25,9 +25,9 @@ import { OutfitSuggestion } from '../../models/mood-board.model';
             <span class="text-2xl">👖</span>
             <span class="text-xs uppercase tracking-wider text-neutral-500">Bottom</span>
           </div>
-          <h4 class="text-neutral-100 font-medium mb-1">{{ outfit.bottom.item }}</h4>
-          <p class="text-neutral-400 text-sm mb-2">{{ outfit.bottom.details }}</p>
-          <p class="text-neutral-500 text-xs italic">{{ outfit.bottom.styling }}</p>
+          <h4 class="text-neutral-100 font-medium mb-1">{{ outfit().bottom.item }}</h4>
+          <p class="text-neutral-400 text-sm mb-2">{{ outfit().bottom.details }}</p>
+          <p class="text-neutral-500 text-xs italic">{{ outfit().bottom.styling }}</p>
         </div>
 
         <!-- Shoes -->
@@ -36,9 +36,9 @@ import { OutfitSuggestion } from '../../models/mood-board.model';
             <span class="text-2xl">👟</span>
             <span class="text-xs uppercase tracking-wider text-neutral-500">Shoes</span>
           </div>
-          <h4 class="text-neutral-100 font-medium mb-1">{{ outfit.shoes.item }}</h4>
-          <p class="text-neutral-400 text-sm mb-2">{{ outfit.shoes.details }}</p>
-          <p class="text-neutral-500 text-xs italic">{{ outfit.shoes.styling }}</p>
+          <h4 class="text-neutral-100 font-medium mb-1">{{ outfit().shoes.item }}</h4>
+          <p class="text-neutral-400 text-sm mb-2">{{ outfit().shoes.details }}</p>
+          <p class="text-neutral-500 text-xs italic">{{ outfit().shoes.styling }}</p>
         </div>
 
         <!-- Accessories -->
@@ -47,7 +47,7 @@ import { OutfitSuggestion } from '../../models/mood-board.model';
             <span class="text-2xl">💎</span>
             <span class="text-xs uppercase tracking-wider text-neutral-500">Accessories</span>
           </div>
-          @for (accessory of outfit.accessories; track accessory.item; let i = $index) {
+          @for (accessory of outfit().accessories; track accessory.item; let i = $index) {
             <div [class.mt-3]="i > 0" [class.pt-3]="i > 0" [class.border-t]="i > 0" [class.border-neutral-800]="i > 0">
               <h4 class="text-neutral-100 font-medium mb-1">{{ accessory.item }}</h4>
               <p class="text-neutral-400 text-sm">{{ accessory.details }}</p>
@@ -59,5 +59,5 @@ import { OutfitSuggestion } from '../../models/mood-board.model';
   `
 })
 export class OutfitSuggestionsComponent {
-  @Input() outfit!: OutfitSuggestion;
+  outfit = input.required<OutfitSuggestion>();
 }

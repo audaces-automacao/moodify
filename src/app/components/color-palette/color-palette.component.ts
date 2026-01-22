@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { ColorItem } from '../../models/mood-board.model';
 
 @Component({
@@ -8,7 +8,7 @@ import { ColorItem } from '../../models/mood-board.model';
     <div class="card-glass p-6 animate-slide-up" style="animation-delay: 0.1s">
       <h3 class="section-title">Color Palette</h3>
       <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
-        @for (color of colors; track color.hex; let i = $index) {
+        @for (color of colors(); track color.hex; let i = $index) {
           <div
             class="group cursor-pointer"
             [style.animation-delay]="(i * 0.05) + 's'"
@@ -37,7 +37,7 @@ import { ColorItem } from '../../models/mood-board.model';
   `
 })
 export class ColorPaletteComponent {
-  @Input() colors: ColorItem[] = [];
+  colors = input<ColorItem[]>([]);
 
   copiedHex: string | null = null;
 

@@ -13,7 +13,7 @@ An AI-powered web application that generates fashion mood boards based on style 
 
 ## Tech Stack
 
-- Angular 17+ (Standalone Components)
+- Angular 21 (Standalone Components, Signal-based Inputs/Outputs)
 - Tailwind CSS
 - OpenAI GPT-4 API
 
@@ -21,8 +21,8 @@ An AI-powered web application that generates fashion mood boards based on style 
 
 ### Prerequisites
 
-- Node.js 18+
-- Angular CLI (`npm install -g @angular/cli`)
+- Node.js 20+
+- Angular CLI 21 (`npm install -g @angular/cli@21`)
 - OpenAI API Key
 
 ### Installation
