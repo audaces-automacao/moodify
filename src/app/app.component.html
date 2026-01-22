@@ -1,0 +1,76 @@
+<main class="min-h-screen">
+  <!-- Header -->
+  <header class="py-8 md:py-12 text-center border-b border-neutral-800/50">
+    <h1 class="text-4xl md:text-5xl font-display font-medium tracking-wide text-gradient-gold">
+      MOODIFY
+    </h1>
+    <p class="mt-2 text-sm text-neutral-500 tracking-widest uppercase">
+      AI-Powered Fashion Curation
+    </p>
+  </header>
+
+  <!-- Main Content -->
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+    <!-- Input Section - Show when idle or has error -->
+    @if (moodBoardService.state() === 'idle' || moodBoardService.hasError()) {
+      <section class="max-w-2xl mx-auto animate-fade-in">
+        <app-mood-board-input
+          [isLoading]="moodBoardService.isLoading()"
+          (submitPrompt)="onSubmitPrompt($event)"
+        />
+
+        <app-example-prompts
+          [prompts]="examplePrompts"
+          [disabled]="moodBoardService.isLoading()"
+          (selectPrompt)="onSelectExample($event)"
+        />
+      </section>
+    }
+
+    <!-- Loading State -->
+    @if (moodBoardService.isLoading()) {
+      <section class="max-w-2xl mx-auto">
+        <app-loading-spinner />
+      </section>
+    }
+
+    <!-- Error State -->
+    @if (moodBoardService.hasError()) {
+      <section class="mt-8">
+        <app-error-message
+          [error]="moodBoardService.error()"
+          (retry)="onRetry()"
+          (dismiss)="onDismissError()"
+        />
+      </section>
+    }
+
+    <!-- Success State - Mood Board Display -->
+    @if (moodBoardService.hasResult()) {
+      <section>
+        <!-- New Mood Board Button -->
+        <div class="flex justify-center mb-8">
+          <button
+            (click)="onNewMoodBoard()"
+            class="flex items-center gap-2 px-6 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-gold-400 rounded-lg border border-neutral-800 hover:border-gold-400/30 transition-all"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Create New Mood Board
+          </button>
+        </div>
+
+        <app-mood-board-display [moodBoard]="moodBoardService.moodBoard()" />
+      </section>
+    }
+  </div>
+
+  <!-- Footer -->
+  <footer class="py-8 text-center border-t border-neutral-800/50 mt-12">
+    <p class="text-neutral-600 text-sm">
+      Powered by OpenAI GPT-4 · Built with Angular & Tailwind CSS
+    </p>
+  </footer>
+</main>
