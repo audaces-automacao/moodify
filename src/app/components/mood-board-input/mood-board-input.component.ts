@@ -1,4 +1,4 @@
-import { Component, input, output, computed } from '@angular/core';
+import { Component, input, output, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -11,7 +11,8 @@ import { FormsModule } from '@angular/forms';
       </label>
       <textarea
         id="style-input"
-        [(ngModel)]="promptText"
+        [ngModel]="promptText()"
+        (ngModelChange)="promptText.set($any($event))"
         [disabled]="isLoading()"
         placeholder="Describe your style, occasion, or vibe... (e.g., 'Confident business casual for a creative agency - modern, slightly edgy but professional')"
         class="textarea-luxury w-full"
@@ -46,13 +47,13 @@ export class MoodBoardInputComponent {
   isLoading = input(false);
   submitPrompt = output<string>();
 
-  promptText = '';
+  promptText = signal('');
 
-  canSubmit = computed(() => this.promptText.trim().length >= 10 && !this.isLoading());
+  canSubmit = computed(() => this.promptText().trim().length >= 10 && !this.isLoading());
 
   onSubmit(): void {
     if (this.canSubmit()) {
-      this.submitPrompt.emit(this.promptText.trim());
+      this.submitPrompt.emit(this.promptText().trim());
     }
   }
 
@@ -64,6 +65,6 @@ export class MoodBoardInputComponent {
   }
 
   setPrompt(prompt: string): void {
-    this.promptText = prompt;
+    this.promptText.set(prompt);
   }
 }
