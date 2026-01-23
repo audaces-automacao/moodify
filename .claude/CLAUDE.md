@@ -8,7 +8,52 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm start          # Start dev server at http://localhost:4200
 npm run build      # Production build (outputs to dist/)
 npm run lint       # Run ESLint + Prettier on src/**/*.ts and src/**/*.html
-npm test           # Run tests with Vitest
+npm test           # Run tests in watch mode
+npm run test:ci    # CI mode: single run with coverage
+```
+
+## Testing
+
+```bash
+npm test              # Run tests in watch mode
+npm run test:ci       # CI mode: single run with coverage
+```
+
+**Run tests after any code changes to verify nothing is broken.**
+
+Coverage reports are generated in `coverage/` directory. Open `coverage/index.html` for the HTML report.
+
+### Test Patterns
+
+Tests use Jasmine with Angular TestBed. Key patterns:
+
+**Testing `input.required()`:**
+```typescript
+const fixture = TestBed.createComponent(MyComponent);
+fixture.componentRef.setInput('myInput', value);
+fixture.detectChanges();
+```
+
+**Testing `output()`:**
+```typescript
+const spy = jasmine.createSpy('outputSpy');
+component.myOutput.subscribe(spy);
+// trigger action
+expect(spy).toHaveBeenCalledWith(expectedValue);
+```
+
+**Mocking TranslocoService:**
+```typescript
+import { TranslocoTestingModule } from '@jsverse/transloco';
+
+TestBed.configureTestingModule({
+  imports: [
+    TranslocoTestingModule.forRoot({
+      langs: { en: { key: 'value' } },
+      translocoConfig: { availableLangs: ['en'], defaultLang: 'en' },
+    }),
+  ],
+});
 ```
 
 ## Architecture
@@ -19,7 +64,7 @@ npm test           # Run tests with Vitest
 - Angular 21 with standalone components and signals
 - Tailwind CSS v4 (utility classes) + SCSS (component styles)
 - OpenAI GPT-4o for mood board generation
-- Vitest for testing
+- Karma + Jasmine for testing
 
 ### Component Patterns
 

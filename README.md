@@ -106,6 +106,39 @@ Build artifacts are stored in the `dist/` directory.
 npm run lint
 ```
 
+## Testing
+
+```bash
+npm test           # Run tests in watch mode
+npm run test:ci    # CI mode: single run with coverage
+```
+
+Coverage reports are generated in the `coverage/` directory. Open `coverage/index.html` to view the HTML report.
+
+**Minimum Coverage Expectations: 80%**
+
+### Test Structure
+
+Each component and service has a corresponding `.spec.ts` file:
+
+```
+src/app/
+├── app.spec.ts
+├── components/
+│   ├── header.component.spec.ts
+│   ├── language-switcher.component.spec.ts
+│   ├── mood-input.component.spec.ts
+│   ├── mood-board.component.spec.ts
+│   ├── color-palette.component.spec.ts
+│   ├── fabric-list.component.spec.ts
+│   ├── style-tags.component.spec.ts
+│   ├── outfit-grid.component.spec.ts
+│   └── loading-skeleton.component.spec.ts
+├── services/
+│   └── openai.service.spec.ts
+└── transloco-loader.spec.ts
+```
+
 ## License
 
 Demo project for educational purposes.
