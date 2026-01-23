@@ -8,5 +8,17 @@
       "Bash(git reset --hard:*)",
       "Bash(git push --force:*)"
     ]
+  },
+  "hooks": {
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "taskkill /F /FI \"WINDOWTITLE eq*npm*\" 2>nul & taskkill /F /IM node.exe 2>nul || exit 0"
+          }
+        ]
+      }
+    ]
   }
 }
