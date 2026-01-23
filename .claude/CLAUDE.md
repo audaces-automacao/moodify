@@ -108,3 +108,16 @@ OpenAI settings are in `src/environments/environment.ts`. The API key is client-
 - Editorial/fashion magazine aesthetic (Vogue-inspired)
 - Custom color tokens: `editorial-black`, `editorial-white`, `editorial-charcoal`, `editorial-gold`, `editorial-cream`
 - Fonts: Playfair Display (serif headings), Inter (sans-serif body)
+
+## Coding Guidelines
+
+- **Follow existing patterns**: Match the codebase's architecture, naming, and style; don't introduce new patterns unless necessary.
+- **Keep it simple (KISS)**: Default to the simplest change that works; avoid speculative abstractions and keep diffs minimal.
+- **Prefer clarity**: Choose clear, concise solutions; reduce duplication but don't sacrifice readability for fewer lines.
+- **Readability over cleverness**: Use explicit control flow, simple data flow; prioritize correctness over clever tricks.
+- **Domain-accurate naming**: Use names that reflect the domain; prefer typed interfaces over primitives when it clarifies meaning.
+- **Small, focused functions (SRP)**: Keep functions small with a single responsibility; minimize parameters; group related inputs into objects when it improves readability.
+- **Minimize dependencies**: Prefer Angular's built-in features and existing dependencies; avoid adding new packages unnecessarily.
+- **Pragmatic SOLID**: Apply SOLID principles when they improve clarity/maintainability; don't add indirection just to "be SOLID."
+- **Extract abstractions sparingly**: Only create abstractions for clarity; ensure high cohesion, low coupling, and minimal side effects.
+- **Comment intent, not code**: Comment only non-obvious intent and tradeoffs; don't narrate what the code already expresses.
