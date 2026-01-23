@@ -1,0 +1,29 @@
+@use "tailwindcss";
+
+/* Custom theme configuration for Tailwind v4 */
+@theme {
+  /* Editorial color palette */
+  --color-editorial-black: #000000;
+  --color-editorial-white: #FAFAFA;
+  --color-editorial-charcoal: #1A1A1A;
+  --color-editorial-red: #8B0000;
+  --color-editorial-gold: #B8860B;
+
+  /* Font families */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+/* Global styles */
+body {
+  @apply font-sans bg-editorial-white text-editorial-charcoal antialiased;
+}
+
+/* Editorial typography utilities */
+.heading-editorial {
+  @apply font-serif font-semibold tracking-tight;
+}
+
+.text-uppercase {
+  @apply uppercase tracking-widest text-xs font-medium;
+}
