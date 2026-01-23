@@ -12,6 +12,30 @@
   /* Font families */
   --font-serif: 'Playfair Display', Georgia, serif;
   --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Custom animations */
+  --animate-fade-in: fade-in 0.5s ease-out forwards;
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
 }
 
 /* Global styles */
@@ -26,4 +50,27 @@ body {
 
 .text-uppercase {
   @apply uppercase tracking-widest text-xs font-medium;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-editorial-white);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-editorial-charcoal);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-editorial-black);
+}
+
+/* Selection color */
+::selection {
+  background: var(--color-editorial-gold);
+  color: var(--color-editorial-white);
 }

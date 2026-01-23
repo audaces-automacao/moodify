@@ -1,59 +1,111 @@
 # Moodify
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.1.
+AI-Powered Fashion Mood Board Generator - A demo application showcasing AI capabilities in the fashion/textile industry.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- **AI-Generated Mood Boards**: Enter a style description and receive a complete fashion mood board
+- **Color Palette**: 5-6 curated colors with hex codes and usage suggestions
+- **Fabric Recommendations**: 3-4 fabric suggestions with textures and seasonal notes
+- **Style Keywords**: Aesthetic descriptors and mood tags
+- **Outfit Suggestions**: Complete outfit breakdown (top, bottom, shoes, accessories, outerwear)
+- **Bold Editorial Design**: Vogue/Harper's Bazaar inspired aesthetic
+
+## Tech Stack
+
+- **Framework**: Angular 21 (standalone components, signals)
+- **Styling**: Tailwind CSS v4
+- **AI**: OpenAI GPT-4o API
+- **Fonts**: Playfair Display (serif) + Inter (sans-serif)
+
+## Prerequisites
+
+- Node.js 18+
+- npm 9+
+- OpenAI API key ([Get one here](https://platform.openai.com/api-keys))
+
+## Setup
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Configure OpenAI API Key
+
+Open `src/environments/environment.ts` and replace the placeholder with your API key:
+
+```typescript
+export const environment = {
+  production: false,
+  openaiApiKey: 'sk-your-actual-api-key-here',  // <-- Add your key
+  openaiModel: 'gpt-4o',
+  openaiApiUrl: 'https://api.openai.com/v1/chat/completions',
+};
+```
+
+> **Security Note**: This is a demo application. The API key is exposed in the frontend code. For production use, implement a backend proxy to secure your API key.
+
+### 3. Start Development Server
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Open http://localhost:4200 in your browser.
 
-## Code scaffolding
+## Usage
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+1. Enter a style description in the text area (e.g., "Parisian chic for a gallery opening")
+2. Or click one of the example prompt chips to auto-fill
+3. Click "Generate Mood Board"
+4. View your AI-generated fashion mood board
 
-```bash
-ng generate component component-name
+## Example Prompts
+
+- "Parisian chic for a gallery opening"
+- "Coastal grandmother aesthetic for summer"
+- "90s minimalism meets modern streetwear"
+- "Dark academia for autumn"
+- "Maximalist disco glam for New Year's Eve"
+
+## Project Structure
+
+```
+src/app/
+├── components/
+│   ├── header.component.ts         # App branding
+│   ├── mood-input.component.ts     # Input + example chips
+│   ├── mood-board.component.ts     # Results container
+│   ├── color-palette.component.ts  # Color swatches
+│   ├── fabric-list.component.ts    # Fabric cards
+│   ├── style-tags.component.ts     # Style keyword tags
+│   ├── outfit-grid.component.ts    # Outfit suggestions
+│   └── loading-skeleton.component.ts
+├── services/
+│   └── openai.service.ts           # OpenAI API integration
+├── models/
+│   └── mood-board.model.ts         # TypeScript interfaces
+├── app.ts                          # Main app component
+├── app.html                        # Main template
+└── app.config.ts                   # App configuration
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+## Build
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Build artifacts are stored in the `dist/` directory.
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Linting
 
 ```bash
-ng test
+npm run lint
 ```
 
-## Running end-to-end tests
+## License
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Demo project for educational purposes.
