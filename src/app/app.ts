@@ -4,7 +4,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoEvents, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { asyncScheduler, filter, observeOn } from 'rxjs';
 import { HeaderComponent } from './components/header.component';
-import { LanguageSwitcherComponent } from './components/language-switcher.component';
 import { LoadingSkeletonComponent } from './components/loading-skeleton.component';
 import { MoodBoardComponent } from './components/mood-board.component';
 import { ExamplePrompt, MoodInputComponent } from './components/mood-input.component';
@@ -19,7 +18,6 @@ import { OpenAIService } from './services/openai.service';
     MoodInputComponent,
     LoadingSkeletonComponent,
     MoodBoardComponent,
-    LanguageSwitcherComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
