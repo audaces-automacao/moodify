@@ -1,0 +1,57 @@
+{
+  "header": {
+    "title": "MOODIFY",
+    "subtitle": "Gerador de Mood Board de Moda com IA"
+  },
+  "moodInput": {
+    "label": "Descreva Seu Estilo",
+    "placeholder": "ex., Chique parisiense para uma abertura de galeria...",
+    "generateButton": "Gerar Mood Board",
+    "generatingButton": "Gerando...",
+    "examplesTitle": "Experimente um Exemplo"
+  },
+  "examples": {
+    "parisian": "Chique parisiense para uma abertura de galeria",
+    "coastal": "Estética avó praiana para o verão",
+    "90s": "Minimalismo dos anos 90 com streetwear moderno",
+    "darkAcademia": "Dark academia para o outono",
+    "disco": "Glamour disco maximalista para o Réveillon"
+  },
+  "moodBoard": {
+    "aestheticOverview": "Visão Geral da Estética"
+  },
+  "colorPalette": {
+    "title": "Paleta de Cores"
+  },
+  "fabrics": {
+    "title": "Recomendações de Tecidos",
+    "textureLabel": "Textura:"
+  },
+  "outfits": {
+    "title": "Sugestões de Looks",
+    "top": "Parte de Cima",
+    "bottom": "Parte de Baixo",
+    "shoes": "Calçados",
+    "outerwear": "Casacos",
+    "accessories": "Acessórios"
+  },
+  "app": {
+    "errorLabel": "Erro",
+    "emptyState": "Seu mood board aparecerá aqui",
+    "emptyHint": "Digite uma descrição de estilo acima para gerar",
+    "footer": "Desenvolvido com Angular 21 + Tailwind CSS + OpenAI"
+  },
+  "errors": {
+    "noResponse": "Sem resposta da OpenAI",
+    "parseError": "Falha ao processar a resposta. Por favor, tente novamente.",
+    "invalidApiKey": "Chave de API inválida. Verifique sua chave da OpenAI.",
+    "rateLimited": "Limite de requisições excedido. Aguarde um momento e tente novamente.",
+    "serviceUnavailable": "O serviço da OpenAI está temporariamente indisponível. Tente novamente.",
+    "generic": "Falha ao gerar mood board. Por favor, tente novamente."
+  },
+  "languageSwitcher": {
+    "label": "Idioma",
+    "en": "English",
+    "pt-BR": "Português"
+  }
+}

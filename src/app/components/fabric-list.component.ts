@@ -1,12 +1,14 @@
 import { Component, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { FabricRecommendation } from '../models/mood-board.model';
 
 @Component({
   selector: 'app-fabric-list',
+  imports: [TranslocoPipe],
   template: `
     <section class="mb-12">
       <h3 class="text-uppercase text-editorial-charcoal mb-6 tracking-[0.2em]">
-        Fabric Recommendations
+        {{ 'fabrics.title' | transloco }}
       </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         @for (fabric of fabrics(); track fabric.name) {
@@ -28,7 +30,8 @@ import { FabricRecommendation } from '../models/mood-board.model';
               {{ fabric.description }}
             </p>
             <p class="text-editorial-charcoal/70 text-xs italic">
-              <span class="font-medium not-italic">Texture:</span> {{ fabric.texture }}
+              <span class="font-medium not-italic">{{ 'fabrics.textureLabel' | transloco }}</span>
+              {{ fabric.texture }}
             </p>
           </div>
         }

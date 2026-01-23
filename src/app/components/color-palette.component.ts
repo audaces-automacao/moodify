@@ -1,11 +1,15 @@
 import { Component, input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { ColorSwatch } from '../models/mood-board.model';
 
 @Component({
   selector: 'app-color-palette',
+  imports: [TranslocoPipe],
   template: `
     <section class="mb-12">
-      <h3 class="text-uppercase text-editorial-charcoal mb-6 tracking-[0.2em]">Color Palette</h3>
+      <h3 class="text-uppercase text-editorial-charcoal mb-6 tracking-[0.2em]">
+        {{ 'colorPalette.title' | transloco }}
+      </h3>
       <div class="flex flex-wrap gap-6 justify-center md:justify-start">
         @for (color of colors(); track color.hex) {
           <div class="flex flex-col items-center gap-3 group">

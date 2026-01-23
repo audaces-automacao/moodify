@@ -1,20 +1,27 @@
 import { Component, input, output, signal } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
+
+export interface ExamplePrompt {
+  key: string;
+  text: string;
+}
 
 @Component({
   selector: 'app-mood-input',
+  imports: [TranslocoPipe],
   template: `
     <div class="max-w-2xl mx-auto">
       <!-- Input Section -->
       <div class="border-2 border-editorial-black bg-white p-8">
         <label for="mood-prompt" class="text-uppercase block mb-4 text-editorial-charcoal">
-          Describe Your Style
+          {{ 'moodInput.label' | transloco }}
         </label>
         <textarea
           id="mood-prompt"
           [value]="inputValue()"
           (input)="onInput($event)"
           (keydown.enter)="onSubmit($event)"
-          placeholder="e.g., Parisian chic for a gallery opening..."
+          [placeholder]="'moodInput.placeholder' | transloco"
           class="w-full h-32 p-4 border-2 border-editorial-black font-sans text-lg resize-none
                  focus:outline-none focus:border-editorial-gold transition-colors"
         ></textarea>
@@ -26,24 +33,28 @@ import { Component, input, output, signal } from '@angular/core';
                  hover:bg-editorial-charcoal
                  disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {{ isLoading() ? 'Generating...' : 'Generate Mood Board' }}
+          {{
+            isLoading()
+              ? ('moodInput.generatingButton' | transloco)
+              : ('moodInput.generateButton' | transloco)
+          }}
         </button>
       </div>
 
       <!-- Example Prompts -->
       <div class="mt-8">
         <span class="text-uppercase block mb-4 text-editorial-charcoal text-center">
-          Try an Example
+          {{ 'moodInput.examplesTitle' | transloco }}
         </span>
         <div class="flex flex-wrap justify-center gap-3">
-          @for (example of examples(); track example) {
+          @for (example of examples(); track example.key) {
             <button
-              (click)="selectExample(example)"
+              (click)="selectExample(example.text)"
               class="px-4 py-2 border border-editorial-charcoal text-sm font-sans
                      text-editorial-charcoal transition-all
                      hover:bg-editorial-black hover:text-editorial-white hover:border-editorial-black"
             >
-              {{ example }}
+              {{ example.text }}
             </button>
           }
         </div>
@@ -52,7 +63,7 @@ import { Component, input, output, signal } from '@angular/core';
   `,
 })
 export class MoodInputComponent {
-  examples = input<string[]>([]);
+  examples = input<ExamplePrompt[]>([]);
   isLoading = input<boolean>(false);
   generate = output<string>();
 
@@ -63,8 +74,8 @@ export class MoodInputComponent {
     this.inputValue.set(target.value);
   }
 
-  selectExample(example: string) {
-    this.inputValue.set(example);
+  selectExample(text: string) {
+    this.inputValue.set(text);
   }
 
   onSubmit(event: Event) {

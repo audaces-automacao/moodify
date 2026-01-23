@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { MoodBoardResponse } from '../models/mood-board.model';
@@ -27,8 +28,15 @@ interface OpenAIResponse {
 @Injectable({ providedIn: 'root' })
 export class OpenAIService {
   private http = inject(HttpClient);
+  private transloco = inject(TranslocoService);
 
-  private readonly systemPrompt = `You are an expert fashion stylist and mood board curator. Generate fashion mood boards based on user descriptions. Always respond with valid JSON matching the exact schema provided. Do not include any markdown formatting or code blocks - just raw JSON.`;
+  private buildSystemPrompt(): string {
+    const lang = this.transloco.getActiveLang();
+    const languageInstruction =
+      lang === 'pt-BR' ? 'Respond in Brazilian Portuguese.' : 'Respond in English.';
+
+    return `You are an expert fashion stylist and mood board curator. Generate fashion mood boards based on user descriptions. ${languageInstruction} Always respond with valid JSON matching the exact schema provided. Do not include any markdown formatting or code blocks - just raw JSON.`;
+  }
 
   private buildUserPrompt(userInput: string): string {
     return `Create a fashion mood board for: "${userInput}"
@@ -69,7 +77,7 @@ Requirements:
     const request: OpenAIRequest = {
       model: environment.openaiModel,
       messages: [
-        { role: 'system', content: this.systemPrompt },
+        { role: 'system', content: this.buildSystemPrompt() },
         { role: 'user', content: this.buildUserPrompt(prompt) },
       ],
       temperature: 0.7,
@@ -80,7 +88,7 @@ Requirements:
       map((response) => {
         const content = response.choices[0]?.message?.content;
         if (!content) {
-          throw new Error('No response content from OpenAI');
+          throw new Error(this.transloco.translate('errors.noResponse'));
         }
 
         // Clean the response - remove any markdown code blocks if present
@@ -92,25 +100,21 @@ Requirements:
         try {
           return JSON.parse(cleanedContent) as MoodBoardResponse;
         } catch {
-          throw new Error('Failed to parse mood board response. Please try again.');
+          throw new Error(this.transloco.translate('errors.parseError'));
         }
       }),
       catchError((error) => {
         if (error.status === 401) {
-          return throwError(() => new Error('Invalid API key. Please check your OpenAI API key.'));
+          return throwError(() => new Error(this.transloco.translate('errors.invalidApiKey')));
         }
         if (error.status === 429) {
-          return throwError(
-            () => new Error('Rate limit exceeded. Please wait a moment and try again.'),
-          );
+          return throwError(() => new Error(this.transloco.translate('errors.rateLimited')));
         }
         if (error.status === 500) {
-          return throwError(
-            () => new Error('OpenAI service is temporarily unavailable. Please try again.'),
-          );
+          return throwError(() => new Error(this.transloco.translate('errors.serviceUnavailable')));
         }
         return throwError(
-          () => new Error(error.message || 'Failed to generate mood board. Please try again.'),
+          () => new Error(error.message || this.transloco.translate('errors.generic')),
         );
       }),
     );

@@ -1,4 +1,9 @@
 <main class="min-h-screen bg-editorial-white flex flex-col">
+  <!-- Language Switcher -->
+  <div class="absolute top-4 right-4 z-10">
+    <app-language-switcher />
+  </div>
+
   <!-- Header -->
   <app-header />
 
@@ -6,7 +11,7 @@
   <section class="flex-1 container mx-auto px-6 py-12 md:py-16">
     <!-- Input Section -->
     <app-mood-input
-      [examples]="examplePrompts"
+      [examples]="examplePrompts()"
       [isLoading]="isLoading()"
       (generate)="generateMoodBoard($event)"
     />
@@ -18,7 +23,7 @@
         <div
           class="border-2 border-editorial-red bg-editorial-red/5 p-6 text-center animate-fade-in"
         >
-          <p class="text-uppercase text-editorial-red text-sm mb-2">Error</p>
+          <p class="text-uppercase text-editorial-red text-sm mb-2">{{ 'app.errorLabel' | transloco }}</p>
           <p class="font-serif text-editorial-charcoal">{{ error() }}</p>
         </div>
       }
@@ -37,10 +42,10 @@
       @if (!isLoading() && !moodBoard() && !error()) {
         <div class="text-center py-16 border-2 border-dashed border-editorial-charcoal/30">
           <p class="font-serif text-2xl text-editorial-charcoal/50 italic">
-            Your mood board will appear here
+            {{ 'app.emptyState' | transloco }}
           </p>
           <p class="text-uppercase text-xs text-editorial-charcoal/40 mt-4">
-            Enter a style description above to generate
+            {{ 'app.emptyHint' | transloco }}
           </p>
         </div>
       }
@@ -50,7 +55,7 @@
   <!-- Footer -->
   <footer class="border-t-2 border-editorial-black py-6 mt-auto">
     <p class="text-uppercase text-center text-editorial-charcoal tracking-widest text-xs">
-      Built with Angular 21 + Tailwind CSS + OpenAI
+      {{ 'app.footer' | transloco }}
     </p>
   </footer>
 </main>

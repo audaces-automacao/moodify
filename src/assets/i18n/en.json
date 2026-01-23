@@ -1,0 +1,57 @@
+{
+  "header": {
+    "title": "MOODIFY",
+    "subtitle": "AI-Powered Fashion Mood Board Generator"
+  },
+  "moodInput": {
+    "label": "Describe Your Style",
+    "placeholder": "e.g., Parisian chic for a gallery opening...",
+    "generateButton": "Generate Mood Board",
+    "generatingButton": "Generating...",
+    "examplesTitle": "Try an Example"
+  },
+  "examples": {
+    "parisian": "Parisian chic for a gallery opening",
+    "coastal": "Coastal grandmother aesthetic for summer",
+    "90s": "90s minimalism meets modern streetwear",
+    "darkAcademia": "Dark academia for autumn",
+    "disco": "Maximalist disco glam for New Year's Eve"
+  },
+  "moodBoard": {
+    "aestheticOverview": "Aesthetic Overview"
+  },
+  "colorPalette": {
+    "title": "Color Palette"
+  },
+  "fabrics": {
+    "title": "Fabric Recommendations",
+    "textureLabel": "Texture:"
+  },
+  "outfits": {
+    "title": "Outfit Suggestions",
+    "top": "Top",
+    "bottom": "Bottom",
+    "shoes": "Shoes",
+    "outerwear": "Outerwear",
+    "accessories": "Accessories"
+  },
+  "app": {
+    "errorLabel": "Error",
+    "emptyState": "Your mood board will appear here",
+    "emptyHint": "Enter a style description above to generate",
+    "footer": "Built with Angular 21 + Tailwind CSS + OpenAI"
+  },
+  "errors": {
+    "noResponse": "No response content from OpenAI",
+    "parseError": "Failed to parse mood board response. Please try again.",
+    "invalidApiKey": "Invalid API key. Please check your OpenAI API key.",
+    "rateLimited": "Rate limit exceeded. Please wait a moment and try again.",
+    "serviceUnavailable": "OpenAI service is temporarily unavailable. Please try again.",
+    "generic": "Failed to generate mood board. Please try again."
+  },
+  "languageSwitcher": {
+    "label": "Language",
+    "en": "English",
+    "pt-BR": "Portugues"
+  }
+}
