@@ -19,11 +19,11 @@ import { OutfitGridComponent } from './outfit-grid.component';
     <div class="animate-fade-in">
       <!-- Aesthetic Description -->
       <section class="mb-12">
-        <h3 class="text-uppercase text-editorial-charcoal mb-4 tracking-[0.2em]">
+        <h3 class="text-uppercase text-luxury-silver mb-4 tracking-[0.2em]">
           {{ 'moodBoard.aestheticOverview' | transloco }}
         </h3>
-        <div class="border-l-4 border-editorial-gold pl-6 py-2">
-          <p class="font-serif text-xl md:text-2xl text-editorial-charcoal leading-relaxed italic">
+        <div class="border-l-4 border-luxury-champagne pl-6 py-2">
+          <p class="font-serif text-xl md:text-2xl text-luxury-cream leading-relaxed italic">
             {{ data().aestheticDescription }}
           </p>
         </div>

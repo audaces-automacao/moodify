@@ -12,8 +12,8 @@ export interface ExamplePrompt {
   template: `
     <div class="max-w-2xl mx-auto">
       <!-- Input Section -->
-      <div class="border-2 border-editorial-black bg-white p-8">
-        <label for="mood-prompt" class="text-uppercase block mb-4 text-editorial-charcoal">
+      <div class="glass-card p-8 rounded-lg">
+        <label for="mood-prompt" class="text-uppercase block mb-4 text-luxury-silver">
           {{ 'moodInput.label' | transloco }}
         </label>
         <textarea
@@ -22,16 +22,14 @@ export interface ExamplePrompt {
           (input)="onInput($event)"
           (keydown.enter)="onSubmit($event)"
           [placeholder]="'moodInput.placeholder' | transloco"
-          class="w-full h-32 p-4 border-2 border-editorial-black font-sans text-lg resize-none
-                 focus:outline-none focus:border-editorial-gold transition-colors"
+          class="glass-input w-full h-32 p-4 font-sans text-lg text-luxury-cream
+                 placeholder-luxury-silver/50 resize-none rounded-lg"
         ></textarea>
         <button
           (click)="onSubmit($event)"
           [disabled]="!inputValue().trim() || isLoading()"
-          class="mt-4 w-full py-4 bg-editorial-black text-editorial-white font-sans text-sm
-                 tracking-widest uppercase transition-all
-                 hover:bg-editorial-charcoal
-                 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="glass-btn-primary mt-4 w-full py-4 font-sans text-sm font-semibold
+                 tracking-widest uppercase rounded-lg"
         >
           {{
             isLoading()
@@ -43,16 +41,14 @@ export interface ExamplePrompt {
 
       <!-- Example Prompts -->
       <div class="mt-8">
-        <span class="text-uppercase block mb-4 text-editorial-charcoal text-center">
+        <span class="text-uppercase block mb-4 text-luxury-silver text-center">
           {{ 'moodInput.examplesTitle' | transloco }}
         </span>
         <div class="flex flex-wrap justify-center gap-3">
           @for (example of examples(); track example.key) {
             <button
               (click)="selectExample(example.text)"
-              class="px-4 py-2 border border-editorial-charcoal text-sm font-sans
-                     text-editorial-charcoal transition-all
-                     hover:bg-editorial-black hover:text-editorial-white hover:border-editorial-black"
+              class="glass-btn-secondary px-4 py-2 text-sm font-sans rounded-full"
             >
               {{ example.text }}
             </button>

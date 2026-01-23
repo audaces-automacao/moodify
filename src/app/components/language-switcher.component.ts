@@ -8,20 +8,22 @@ import { TranslocoService } from '@jsverse/transloco';
     <div class="relative">
       <select
         (change)="switchLanguage($event)"
-        class="appearance-none bg-transparent border border-editorial-charcoal/30
-               text-editorial-charcoal text-xs uppercase tracking-widest
-               px-3 py-2 pr-8 cursor-pointer
-               hover:border-editorial-charcoal transition-colors
-               focus:outline-none focus:border-editorial-gold"
+        class="glass-input appearance-none text-luxury-cream text-xs uppercase tracking-widest
+               px-3 py-2 pr-8 cursor-pointer rounded
+               hover:border-luxury-champagne/50 transition-all"
       >
         @for (lang of availableLangs; track lang.code) {
-          <option [value]="lang.code" [selected]="lang.code === currentLang()">
+          <option
+            [value]="lang.code"
+            [selected]="lang.code === currentLang()"
+            class="bg-luxury-obsidian text-luxury-cream"
+          >
             {{ lang.label }}
           </option>
         }
       </select>
       <span
-        class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-editorial-charcoal"
+        class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-luxury-champagne"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

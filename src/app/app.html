@@ -1,4 +1,4 @@
-<main class="min-h-screen bg-editorial-white flex flex-col">
+<main class="min-h-screen bg-luxury-void flex flex-col">
   <!-- Header (includes language switcher) -->
   <app-header />
 
@@ -16,10 +16,10 @@
       <!-- Error State -->
       @if (error()) {
         <div
-          class="border-2 border-editorial-red bg-editorial-red/5 p-6 text-center animate-fade-in"
+          class="glass-card border-luxury-rose bg-luxury-rose/10 p-6 text-center animate-fade-in"
         >
-          <p class="text-uppercase text-editorial-red text-sm mb-2">{{ 'app.errorLabel' | transloco }}</p>
-          <p class="font-serif text-editorial-charcoal">{{ error() }}</p>
+          <p class="text-uppercase text-luxury-rose text-sm mb-2">{{ 'app.errorLabel' | transloco }}</p>
+          <p class="font-serif text-luxury-cream">{{ error() }}</p>
         </div>
       }
 
@@ -35,11 +35,11 @@
 
       <!-- Empty State (initial) -->
       @if (!isLoading() && !moodBoard() && !error()) {
-        <div class="text-center py-16 border-2 border-dashed border-editorial-charcoal/30">
-          <p class="font-serif text-2xl text-editorial-charcoal/50 italic">
+        <div class="text-center py-16 border border-dashed border-luxury-graphite/50 rounded-lg">
+          <p class="font-serif text-2xl text-luxury-silver/70 italic">
             {{ 'app.emptyState' | transloco }}
           </p>
-          <p class="text-uppercase text-xs text-editorial-charcoal/40 mt-4">
+          <p class="text-uppercase text-xs text-luxury-silver/50 mt-4">
             {{ 'app.emptyHint' | transloco }}
           </p>
         </div>
@@ -48,8 +48,8 @@
   </section>
 
   <!-- Footer -->
-  <footer class="border-t-2 border-editorial-black py-6 mt-auto">
-    <p class="text-uppercase text-center text-editorial-charcoal tracking-widest text-xs">
+  <footer class="border-t border-luxury-graphite py-6 mt-auto">
+    <p class="text-uppercase text-center text-luxury-silver tracking-widest text-xs">
       {{ 'app.footer' | transloco }}
     </p>
   </footer>
