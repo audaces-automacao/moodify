@@ -3,6 +3,7 @@
     "allow": [
       "Bash(npx ng update:*)",
       "Bash(npm run build:*)",
+      "Bash(npm run lint)",
       "Bash(npm ls:*)",
       "Bash(npm test:*)",
       "Bash(npx ng test:*)",

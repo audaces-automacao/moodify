@@ -25,15 +25,44 @@ interface OpenAIResponse {
   }[];
 }
 
+const HTTP_ERROR_MESSAGES: Record<number, string> = {
+  401: 'errors.invalidApiKey',
+  429: 'errors.rateLimited',
+  500: 'errors.serviceUnavailable',
+};
+
 @Injectable({ providedIn: 'root' })
 export class OpenAIService {
   private http = inject(HttpClient);
   private transloco = inject(TranslocoService);
 
+  generateMoodBoard(prompt: string): Observable<MoodBoardResponse> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${environment.openaiApiKey}`,
+    });
+
+    const request: OpenAIRequest = {
+      model: environment.openaiModel,
+      messages: [
+        { role: 'system', content: this.buildSystemPrompt() },
+        { role: 'user', content: this.buildUserPrompt(prompt) },
+      ],
+      temperature: 0.7,
+      max_tokens: 1500,
+    };
+
+    return this.http.post<OpenAIResponse>(environment.openaiApiUrl, request, { headers }).pipe(
+      map((response) => this.parseResponse(response)),
+      catchError((error) => this.handleError(error)),
+    );
+  }
+
   private buildSystemPrompt(): string {
-    const lang = this.transloco.getActiveLang();
     const languageInstruction =
-      lang === 'pt-BR' ? 'Respond in Brazilian Portuguese.' : 'Respond in English.';
+      this.transloco.getActiveLang() === 'pt-BR'
+        ? 'Respond in Brazilian Portuguese.'
+        : 'Respond in English.';
 
     return `You are an expert fashion stylist and mood board curator. Generate fashion mood boards based on user descriptions. ${languageInstruction} Always respond with valid JSON matching the exact schema provided. Do not include any markdown formatting or code blocks - just raw JSON.`;
   }
@@ -68,55 +97,34 @@ Requirements:
 - Be specific and fashion-forward in descriptions`;
   }
 
-  generateMoodBoard(prompt: string): Observable<MoodBoardResponse> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${environment.openaiApiKey}`,
-    });
+  private parseResponse(response: OpenAIResponse): MoodBoardResponse {
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error(this.transloco.translate('errors.noResponse'));
+    }
 
-    const request: OpenAIRequest = {
-      model: environment.openaiModel,
-      messages: [
-        { role: 'system', content: this.buildSystemPrompt() },
-        { role: 'user', content: this.buildUserPrompt(prompt) },
-      ],
-      temperature: 0.7,
-      max_tokens: 1500,
-    };
+    const cleanedContent = this.stripMarkdownCodeBlocks(content);
 
-    return this.http.post<OpenAIResponse>(environment.openaiApiUrl, request, { headers }).pipe(
-      map((response) => {
-        const content = response.choices[0]?.message?.content;
-        if (!content) {
-          throw new Error(this.transloco.translate('errors.noResponse'));
-        }
+    try {
+      return JSON.parse(cleanedContent) as MoodBoardResponse;
+    } catch {
+      throw new Error(this.transloco.translate('errors.parseError'));
+    }
+  }
 
-        // Clean the response - remove any markdown code blocks if present
-        const cleanedContent = content
-          .replace(/```json\n?/g, '')
-          .replace(/```\n?/g, '')
-          .trim();
+  private stripMarkdownCodeBlocks(content: string): string {
+    return content
+      .replace(/```json\n?/g, '')
+      .replace(/```\n?/g, '')
+      .trim();
+  }
 
-        try {
-          return JSON.parse(cleanedContent) as MoodBoardResponse;
-        } catch {
-          throw new Error(this.transloco.translate('errors.parseError'));
-        }
-      }),
-      catchError((error) => {
-        if (error.status === 401) {
-          return throwError(() => new Error(this.transloco.translate('errors.invalidApiKey')));
-        }
-        if (error.status === 429) {
-          return throwError(() => new Error(this.transloco.translate('errors.rateLimited')));
-        }
-        if (error.status === 500) {
-          return throwError(() => new Error(this.transloco.translate('errors.serviceUnavailable')));
-        }
-        return throwError(
-          () => new Error(error.message || this.transloco.translate('errors.generic')),
-        );
-      }),
-    );
+  private handleError(error: { status?: number; message?: string }): Observable<never> {
+    const errorKey = HTTP_ERROR_MESSAGES[error.status ?? 0];
+    const message = errorKey
+      ? this.transloco.translate(errorKey)
+      : error.message || this.transloco.translate('errors.generic');
+
+    return throwError(() => new Error(message));
   }
 }

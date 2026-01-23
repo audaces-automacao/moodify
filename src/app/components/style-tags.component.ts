@@ -1,6 +1,17 @@
 import { Component, input } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
+const TAG_STYLES = [
+  'bg-luxury-champagne text-luxury-void',
+  'border border-luxury-champagne text-luxury-champagne',
+  'bg-luxury-onyx text-luxury-cream',
+  'border border-luxury-graphite text-luxury-cream',
+  'bg-luxury-champagne/20 text-luxury-champagne',
+  'bg-luxury-rose text-luxury-cream',
+  'border border-luxury-cream/30 text-luxury-silver',
+  'bg-gradient-to-r from-luxury-champagne to-luxury-gold text-luxury-void',
+];
+
 @Component({
   selector: 'app-style-tags',
   imports: [TranslocoPipe],
@@ -27,16 +38,6 @@ export class StyleTagsComponent {
   tags = input.required<string[]>();
 
   getTagStyle(index: number): string {
-    const styles = [
-      'bg-luxury-champagne text-luxury-void',
-      'border border-luxury-champagne text-luxury-champagne',
-      'bg-luxury-onyx text-luxury-cream',
-      'border border-luxury-graphite text-luxury-cream',
-      'bg-luxury-champagne/20 text-luxury-champagne',
-      'bg-luxury-rose text-luxury-cream',
-      'border border-luxury-cream/30 text-luxury-silver',
-      'bg-gradient-to-r from-luxury-champagne to-luxury-gold text-luxury-void',
-    ];
-    return styles[index % styles.length];
+    return TAG_STYLES[index % TAG_STYLES.length];
   }
 }

@@ -60,36 +60,15 @@ describe('FabricListComponent', () => {
     expect(cards.length).toBe(2);
   });
 
-  it('should display fabric names', () => {
+  it('should display all fabric properties with texture label', () => {
     const html = fixture.nativeElement.innerHTML;
+
     mockFabrics.forEach((fabric) => {
       expect(html).toContain(fabric.name);
-    });
-  });
-
-  it('should display fabric descriptions', () => {
-    const html = fixture.nativeElement.innerHTML;
-    mockFabrics.forEach((fabric) => {
       expect(html).toContain(fabric.description);
-    });
-  });
-
-  it('should display fabric textures', () => {
-    const html = fixture.nativeElement.innerHTML;
-    mockFabrics.forEach((fabric) => {
       expect(html).toContain(fabric.texture);
-    });
-  });
-
-  it('should display fabric seasons', () => {
-    const html = fixture.nativeElement.innerHTML;
-    mockFabrics.forEach((fabric) => {
       expect(html).toContain(fabric.season);
     });
-  });
-
-  it('should display texture label', () => {
-    const html = fixture.nativeElement.innerHTML;
     expect(html).toContain('Texture:');
   });
 

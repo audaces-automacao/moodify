@@ -48,36 +48,22 @@ describe('ColorPaletteComponent', () => {
     expect(swatches.length).toBe(3);
   });
 
-  it('should display color names', () => {
+  it('should display color names, hex codes, and usage labels', () => {
     const html = fixture.nativeElement.innerHTML;
     mockColors.forEach((color) => {
       expect(html).toContain(color.name);
-    });
-  });
-
-  it('should display hex codes', () => {
-    const html = fixture.nativeElement.innerHTML;
-    mockColors.forEach((color) => {
       expect(html).toContain(color.hex);
-    });
-  });
-
-  it('should display usage labels', () => {
-    const html = fixture.nativeElement.innerHTML;
-    mockColors.forEach((color) => {
       expect(html).toContain(color.usage);
     });
   });
 
-  it('should apply background color to swatch', () => {
+  it('should apply background color and title attribute to swatches', () => {
     const swatch = fixture.nativeElement.querySelector('[style*="background-color"]');
-    expect(swatch).toBeTruthy();
-  });
+    const swatchWithTitle = fixture.nativeElement.querySelector('[title]');
 
-  it('should set title attribute with color info', () => {
-    const swatch = fixture.nativeElement.querySelector('[title]');
-    expect(swatch.getAttribute('title')).toContain('Midnight Blue');
-    expect(swatch.getAttribute('title')).toContain('primary');
+    expect(swatch).toBeTruthy();
+    expect(swatchWithTitle.getAttribute('title')).toContain('Midnight Blue');
+    expect(swatchWithTitle.getAttribute('title')).toContain('primary');
   });
 
   it('should handle empty colors array', async () => {

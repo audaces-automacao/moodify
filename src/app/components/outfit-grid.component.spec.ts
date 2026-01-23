@@ -69,35 +69,14 @@ describe('OutfitGridComponent', () => {
     expect(title.textContent).toContain('Outfit Suggestions');
   });
 
-  it('should display top item', () => {
+  it('should display all outfit items including outerwear when present', () => {
     fixture.componentRef.setInput('outfit', mockOutfitWithOuterwear);
     fixture.detectChanges();
 
     const html = fixture.nativeElement.innerHTML;
     expect(html).toContain('Silk blouse in champagne');
-  });
-
-  it('should display bottom item', () => {
-    fixture.componentRef.setInput('outfit', mockOutfitWithOuterwear);
-    fixture.detectChanges();
-
-    const html = fixture.nativeElement.innerHTML;
     expect(html).toContain('High-waisted trousers');
-  });
-
-  it('should display shoes', () => {
-    fixture.componentRef.setInput('outfit', mockOutfitWithOuterwear);
-    fixture.detectChanges();
-
-    const html = fixture.nativeElement.innerHTML;
     expect(html).toContain('Pointed-toe pumps');
-  });
-
-  it('should display outerwear when present', () => {
-    fixture.componentRef.setInput('outfit', mockOutfitWithOuterwear);
-    fixture.detectChanges();
-
-    const html = fixture.nativeElement.innerHTML;
     expect(html).toContain('Tailored wool coat');
     expect(html).toContain('Outerwear');
   });
@@ -110,13 +89,18 @@ describe('OutfitGridComponent', () => {
     expect(cards.length).toBe(3); // top, bottom, shoes only
   });
 
-  it('should display accessories when present', () => {
+  it('should display accessories when present with correct count', () => {
     fixture.componentRef.setInput('outfit', mockOutfitWithOuterwear);
     fixture.detectChanges();
 
     const html = fixture.nativeElement.innerHTML;
+    const accessoryItems = fixture.nativeElement.querySelectorAll(
+      '.mt-6 .flex.flex-wrap.gap-3 span',
+    );
+
     expect(html).toContain('Gold watch');
     expect(html).toContain('Pearl earrings');
+    expect(accessoryItems.length).toBe(2);
   });
 
   it('should not display accessories section when empty', () => {
@@ -125,16 +109,6 @@ describe('OutfitGridComponent', () => {
 
     const accessoriesSection = fixture.nativeElement.querySelector('.mt-6.glass-card');
     expect(accessoriesSection).toBeFalsy();
-  });
-
-  it('should render correct number of accessory items', () => {
-    fixture.componentRef.setInput('outfit', mockOutfitWithOuterwear);
-    fixture.detectChanges();
-
-    const accessoryItems = fixture.nativeElement.querySelectorAll(
-      '.mt-6 .flex.flex-wrap.gap-3 span',
-    );
-    expect(accessoryItems.length).toBe(2);
   });
 
   it('should render 4 grid cards when outerwear is present', () => {

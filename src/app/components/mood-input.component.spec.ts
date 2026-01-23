@@ -41,31 +41,20 @@ describe('MoodInputComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have empty examples by default', () => {
+  it('should have correct default values', () => {
     expect(component.examples()).toEqual([]);
-  });
-
-  it('should have isLoading false by default', () => {
     expect(component.isLoading()).toBe(false);
-  });
-
-  it('should have empty input value by default', () => {
     expect(component.inputValue()).toBe('');
   });
 
-  it('should render label', () => {
+  it('should render form elements with translated text', () => {
     const label = fixture.nativeElement.querySelector('label');
-    expect(label.textContent).toContain('Describe Your Style');
-  });
-
-  it('should render textarea with placeholder', () => {
     const textarea = fixture.nativeElement.querySelector('textarea');
+    const button = fixture.nativeElement.querySelector('button');
+
+    expect(label.textContent).toContain('Describe Your Style');
     expect(textarea).toBeTruthy();
     expect(textarea.getAttribute('placeholder')).toBe('Enter your mood...');
-  });
-
-  it('should render generate button', () => {
-    const button = fixture.nativeElement.querySelector('button');
     expect(button.textContent).toContain('Generate Mood Board');
   });
 
@@ -150,35 +139,27 @@ describe('MoodInputComponent', () => {
     expect(spy).not.toHaveBeenCalled();
   });
 
-  it('should render example buttons when examples provided', () => {
+  it('should render example buttons with text when examples provided', () => {
     fixture.componentRef.setInput('examples', mockExamples);
     fixture.detectChanges();
 
     const exampleButtons = fixture.nativeElement.querySelectorAll('.glass-btn-secondary');
-    expect(exampleButtons.length).toBe(2);
-  });
-
-  it('should display example text', () => {
-    fixture.componentRef.setInput('examples', mockExamples);
-    fixture.detectChanges();
-
     const html = fixture.nativeElement.innerHTML;
+
+    expect(exampleButtons.length).toBe(2);
     expect(html).toContain('Parisian chic');
     expect(html).toContain('Coastal grandmother');
   });
 
-  it('should set inputValue when clicking example', () => {
+  it('should set inputValue when clicking example or calling selectExample', () => {
     fixture.componentRef.setInput('examples', mockExamples);
     fixture.detectChanges();
 
     const exampleButton = fixture.nativeElement.querySelector('.glass-btn-secondary');
     exampleButton.click();
     fixture.detectChanges();
-
     expect(component.inputValue()).toBe('Parisian chic');
-  });
 
-  it('should call selectExample method', () => {
     component.selectExample('Test example');
     expect(component.inputValue()).toBe('Test example');
   });

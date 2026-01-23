@@ -43,59 +43,32 @@ describe('LanguageSwitcherComponent', () => {
     expect(component.currentLang()).toBe('en');
   });
 
-  it('should render select element', () => {
+  it('should render select with all available languages', () => {
     const select = fixture.nativeElement.querySelector('select');
+    const options = fixture.nativeElement.querySelectorAll('option');
+    const html = fixture.nativeElement.innerHTML;
+
     expect(select).toBeTruthy();
-  });
-
-  it('should render all available languages', () => {
-    const options = fixture.nativeElement.querySelectorAll('option');
     expect(options.length).toBe(2);
-  });
-
-  it('should display English option', () => {
-    const html = fixture.nativeElement.innerHTML;
     expect(html).toContain('English');
-  });
-
-  it('should display Portuguese option', () => {
-    const html = fixture.nativeElement.innerHTML;
     expect(html).toContain('Português');
-  });
-
-  it('should have correct values for options', () => {
-    const options = fixture.nativeElement.querySelectorAll('option');
     expect(options[0].value).toBe('en');
     expect(options[1].value).toBe('pt-BR');
   });
 
-  it('should call setActiveLang when language is switched', () => {
+  it('should update language and persist to localStorage on switch', () => {
     const select = fixture.nativeElement.querySelector('select');
     select.value = 'pt-BR';
     select.dispatchEvent(new Event('change'));
     fixture.detectChanges();
 
     expect(translocoService.setActiveLang).toHaveBeenCalledWith('pt-BR');
-  });
-
-  it('should save language to localStorage on switch', () => {
-    const select = fixture.nativeElement.querySelector('select');
-    select.value = 'pt-BR';
-    select.dispatchEvent(new Event('change'));
-    fixture.detectChanges();
-
     expect(localStorageSpy.setItem).toHaveBeenCalledWith('preferredLanguage', 'pt-BR');
   });
 
-  it('should update currentLang signal when switchLanguage is called', () => {
-    const mockEvent = {
-      target: { value: 'pt-BR' },
-    } as unknown as Event;
-
+  it('should call setActiveLang when switchLanguage is invoked directly', () => {
+    const mockEvent = { target: { value: 'pt-BR' } } as unknown as Event;
     component.switchLanguage(mockEvent);
-
-    // The currentLang signal is updated via the langChanges$ subscription
-    // For testing, we directly verify that setActiveLang was called
     expect(translocoService.setActiveLang).toHaveBeenCalledWith('pt-BR');
   });
 
@@ -112,60 +85,40 @@ describe('LanguageSwitcherComponent', () => {
   });
 });
 
-describe('LanguageSwitcherComponent with pt-BR default', () => {
-  let component: LanguageSwitcherComponent;
-  let fixture: ComponentFixture<LanguageSwitcherComponent>;
-
-  beforeEach(async () => {
+describe('LanguageSwitcherComponent initialization', () => {
+  function createComponent(
+    storedLang: string | null,
+    defaultLang: string,
+  ): {
+    component: LanguageSwitcherComponent;
+    fixture: ComponentFixture<LanguageSwitcherComponent>;
+  } {
     const localStorageSpy = jasmine.createSpyObj('localStorage', ['getItem', 'setItem']);
-    localStorageSpy.getItem.and.returnValue('pt-BR');
+    localStorageSpy.getItem.and.returnValue(storedLang);
     spyOnProperty(window, 'localStorage', 'get').and.returnValue(localStorageSpy);
 
-    await TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
       imports: [
         LanguageSwitcherComponent,
         TranslocoTestingModule.forRoot({
           langs: { en: {}, 'pt-BR': {} },
-          translocoConfig: { availableLangs: ['en', 'pt-BR'], defaultLang: 'pt-BR' },
+          translocoConfig: { availableLangs: ['en', 'pt-BR'], defaultLang },
         }),
       ],
-    }).compileComponents();
+    });
 
-    fixture = TestBed.createComponent(LanguageSwitcherComponent);
-    component = fixture.componentInstance;
+    const fixture = TestBed.createComponent(LanguageSwitcherComponent);
     fixture.detectChanges();
-  });
+    return { component: fixture.componentInstance, fixture };
+  }
 
   it('should initialize with pt-BR from localStorage', () => {
+    const { component } = createComponent('pt-BR', 'pt-BR');
     expect(component.currentLang()).toBe('pt-BR');
-  });
-});
-
-describe('LanguageSwitcherComponent with no localStorage value', () => {
-  let component: LanguageSwitcherComponent;
-  let fixture: ComponentFixture<LanguageSwitcherComponent>;
-
-  beforeEach(async () => {
-    const localStorageSpy = jasmine.createSpyObj('localStorage', ['getItem', 'setItem']);
-    localStorageSpy.getItem.and.returnValue(null);
-    spyOnProperty(window, 'localStorage', 'get').and.returnValue(localStorageSpy);
-
-    await TestBed.configureTestingModule({
-      imports: [
-        LanguageSwitcherComponent,
-        TranslocoTestingModule.forRoot({
-          langs: { en: {}, 'pt-BR': {} },
-          translocoConfig: { availableLangs: ['en', 'pt-BR'], defaultLang: 'en' },
-        }),
-      ],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(LanguageSwitcherComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should default to en when localStorage is empty', () => {
+    const { component } = createComponent(null, 'en');
     expect(component.currentLang()).toBe('en');
   });
 });

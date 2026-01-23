@@ -98,41 +98,16 @@ describe('App', () => {
   });
 
   describe('initial state', () => {
-    it('should have null moodBoard', () => {
+    it('should have correct default values', () => {
       expect(component.moodBoard()).toBeNull();
-    });
-
-    it('should have isLoading false', () => {
       expect(component.isLoading()).toBe(false);
-    });
-
-    it('should have null error', () => {
       expect(component.error()).toBeNull();
-    });
-
-    it('should have empty examplePrompts initially', () => {
       expect(component.examplePrompts()).toBeDefined();
     });
   });
 
   describe('generateMoodBoard', () => {
-    it('should set isLoading to true during request', () => {
-      // Use a delayed observable to test loading state
-      openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
-      component.generateMoodBoard('test');
-      // With sync observable, loading is set then immediately false after subscribe completes
-      // But we can at least verify the service was called
-      expect(openAIServiceMock.generateMoodBoard).toHaveBeenCalled();
-    });
-
-    it('should clear previous error', () => {
-      component.error.set('Previous error');
-      component.generateMoodBoard('test');
-      expect(component.error()).toBeNull();
-    });
-
-    it('should clear previous moodBoard at start', () => {
-      // Set up a mock that doesn't complete immediately
+    it('should clear previous state and call service with prompt', () => {
       let subscribeCalled = false;
       openAIServiceMock.generateMoodBoard.and.returnValue({
         subscribe: () => {
@@ -141,46 +116,30 @@ describe('App', () => {
       } as unknown as ReturnType<typeof of>);
 
       component.moodBoard.set(mockMoodBoard);
-      component.generateMoodBoard('test');
+      component.error.set('Previous error');
+      component.generateMoodBoard('test prompt');
 
-      // moodBoard should be null after calling generateMoodBoard
       expect(component.moodBoard()).toBeNull();
+      expect(component.error()).toBeNull();
+      expect(openAIServiceMock.generateMoodBoard).toHaveBeenCalledWith('test prompt');
       expect(subscribeCalled).toBe(true);
     });
 
-    it('should call OpenAIService with prompt', () => {
-      component.generateMoodBoard('test prompt');
-      expect(openAIServiceMock.generateMoodBoard).toHaveBeenCalledWith('test prompt');
-    });
-
-    it('should set moodBoard on success', () => {
+    it('should update state on success', () => {
       openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
       component.generateMoodBoard('test');
-      // Observable completes synchronously
+
       expect(component.moodBoard()).toEqual(mockMoodBoard);
-    });
-
-    it('should set isLoading false on success', () => {
-      openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
-      component.generateMoodBoard('test');
       expect(component.isLoading()).toBe(false);
+      expect(component.error()).toBeNull();
     });
 
-    it('should set error on failure', () => {
+    it('should update state on failure', () => {
       openAIServiceMock.generateMoodBoard.and.returnValue(throwError(() => new Error('API Error')));
       component.generateMoodBoard('test');
+
       expect(component.error()).toBe('API Error');
-    });
-
-    it('should set isLoading false on failure', () => {
-      openAIServiceMock.generateMoodBoard.and.returnValue(throwError(() => new Error('API Error')));
-      component.generateMoodBoard('test');
       expect(component.isLoading()).toBe(false);
-    });
-
-    it('should not set moodBoard on error', () => {
-      openAIServiceMock.generateMoodBoard.and.returnValue(throwError(() => new Error('API Error')));
-      component.generateMoodBoard('test');
       expect(component.moodBoard()).toBeNull();
     });
   });

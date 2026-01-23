@@ -60,27 +60,13 @@ describe('OpenAIService', () => {
   });
 
   describe('generateMoodBoard', () => {
-    it('should make POST request to OpenAI API', () => {
-      service.generateMoodBoard('test prompt').subscribe();
-
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
-      expect(req.request.method).toBe('POST');
-      req.flush(mockOpenAIResponse);
-    });
-
-    it('should include correct headers', () => {
-      service.generateMoodBoard('test prompt').subscribe();
-
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
-      expect(req.request.headers.get('Content-Type')).toBe('application/json');
-      expect(req.request.headers.get('Authorization')).toContain('Bearer');
-      req.flush(mockOpenAIResponse);
-    });
-
-    it('should include user prompt in request body', () => {
+    it('should make POST request with correct headers and body', () => {
       service.generateMoodBoard('Parisian chic').subscribe();
 
       const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
+      expect(req.request.method).toBe('POST');
+      expect(req.request.headers.get('Content-Type')).toBe('application/json');
+      expect(req.request.headers.get('Authorization')).toContain('Bearer');
       expect(req.request.body.messages[1].content).toContain('Parisian chic');
       req.flush(mockOpenAIResponse);
     });
@@ -99,14 +85,9 @@ describe('OpenAIService', () => {
     });
 
     it('should strip markdown code blocks from response', (done) => {
+      const jsonContent = JSON.stringify(validMoodBoardResponse);
       const responseWithMarkdown = {
-        choices: [
-          {
-            message: {
-              content: '```json\n' + JSON.stringify(validMoodBoardResponse) + '\n```',
-            },
-          },
-        ],
+        choices: [{ message: { content: '```json\n' + jsonContent + '\n```' } }],
       };
 
       service.generateMoodBoard('test').subscribe({
@@ -121,14 +102,9 @@ describe('OpenAIService', () => {
     });
 
     it('should strip json code blocks without newline', (done) => {
+      const jsonContent = JSON.stringify(validMoodBoardResponse);
       const responseWithMarkdown = {
-        choices: [
-          {
-            message: {
-              content: '```json' + JSON.stringify(validMoodBoardResponse) + '```',
-            },
-          },
-        ],
+        choices: [{ message: { content: '```json' + jsonContent + '```' } }],
       };
 
       service.generateMoodBoard('test').subscribe({
@@ -243,34 +219,13 @@ describe('OpenAIService', () => {
       req.flush(mockOpenAIResponse);
     });
 
-    it('should include system role in first message', () => {
+    it('should configure request with correct message roles and parameters', () => {
       service.generateMoodBoard('test').subscribe();
 
       const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
       expect(req.request.body.messages[0].role).toBe('system');
-      req.flush(mockOpenAIResponse);
-    });
-
-    it('should include user role in second message', () => {
-      service.generateMoodBoard('test').subscribe();
-
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
       expect(req.request.body.messages[1].role).toBe('user');
-      req.flush(mockOpenAIResponse);
-    });
-
-    it('should set temperature to 0.7', () => {
-      service.generateMoodBoard('test').subscribe();
-
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
       expect(req.request.body.temperature).toBe(0.7);
-      req.flush(mockOpenAIResponse);
-    });
-
-    it('should set max_tokens to 1500', () => {
-      service.generateMoodBoard('test').subscribe();
-
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
       expect(req.request.body.max_tokens).toBe(1500);
       req.flush(mockOpenAIResponse);
     });
