@@ -53,5 +53,9 @@
     "label": "Language",
     "en": "English",
     "pt-BR": "Portugues"
+  },
+  "themeSwitcher": {
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode"
   }
 }

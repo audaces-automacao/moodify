@@ -1,18 +1,80 @@
 @use "tailwindcss";
 
+/* Theme-specific CSS custom properties */
+:root,
+html[data-theme="dark"] {
+  /* Dark theme colors */
+  --theme-void: #0A0A0A;
+  --theme-obsidian: #141414;
+  --theme-onyx: #1C1C1C;
+  --theme-graphite: #2A2A2A;
+  --theme-silver: #8A8A8A;
+  --theme-champagne: #C9A961;
+  --theme-gold: #D4AF37;
+  --theme-cream: #E8E4DC;
+  --theme-white: #F5F5F5;
+  --theme-rose: #6B2D3D;
+
+  /* Glassmorphism colors */
+  --glass-bg: rgba(20, 20, 20, 0.8);
+  --glass-bg-light: rgba(20, 20, 20, 0.6);
+  --glass-border: rgba(42, 42, 42, 0.6);
+  --glass-border-input: rgba(42, 42, 42, 0.8);
+  --glass-hover-bg: rgba(201, 169, 97, 0.1);
+  --glass-hover-border: rgba(201, 169, 97, 0.3);
+
+  /* Skeleton shimmer */
+  --skeleton-base: rgba(42, 42, 42, 0.3);
+  --skeleton-highlight: rgba(42, 42, 42, 0.5);
+
+  /* Scrollbar */
+  --scrollbar-track: #0A0A0A;
+  --scrollbar-thumb: #2A2A2A;
+}
+
+html[data-theme="light"] {
+  /* Light theme colors */
+  --theme-void: #FAFAFA;
+  --theme-obsidian: #F5F5F3;
+  --theme-onyx: #EDECE8;
+  --theme-graphite: #D4D3CF;
+  --theme-silver: #6B6B6B;
+  --theme-champagne: #B8983C;
+  --theme-gold: #C49E2C;
+  --theme-cream: #1A1A1A;
+  --theme-white: #0A0A0A;
+  --theme-rose: #8B3D4D;
+
+  /* Glassmorphism colors - adjusted for light backgrounds */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-bg-light: rgba(255, 255, 255, 0.5);
+  --glass-border: rgba(200, 200, 195, 0.6);
+  --glass-border-input: rgba(200, 200, 195, 0.8);
+  --glass-hover-bg: rgba(184, 152, 60, 0.1);
+  --glass-hover-border: rgba(184, 152, 60, 0.3);
+
+  /* Skeleton shimmer */
+  --skeleton-base: rgba(200, 200, 195, 0.3);
+  --skeleton-highlight: rgba(200, 200, 195, 0.5);
+
+  /* Scrollbar */
+  --scrollbar-track: #FAFAFA;
+  --scrollbar-thumb: #D4D3CF;
+}
+
 /* Custom theme configuration for Tailwind v4 */
 @theme {
-  /* Dark Luxury color palette */
-  --color-luxury-void: #0A0A0A;
-  --color-luxury-obsidian: #141414;
-  --color-luxury-onyx: #1C1C1C;
-  --color-luxury-graphite: #2A2A2A;
-  --color-luxury-silver: #8A8A8A;
-  --color-luxury-champagne: #C9A961;
-  --color-luxury-gold: #D4AF37;
-  --color-luxury-cream: #E8E4DC;
-  --color-luxury-white: #F5F5F5;
-  --color-luxury-rose: #6B2D3D;
+  /* Map semantic colors to theme variables */
+  --color-luxury-void: var(--theme-void);
+  --color-luxury-obsidian: var(--theme-obsidian);
+  --color-luxury-onyx: var(--theme-onyx);
+  --color-luxury-graphite: var(--theme-graphite);
+  --color-luxury-silver: var(--theme-silver);
+  --color-luxury-champagne: var(--theme-champagne);
+  --color-luxury-gold: var(--theme-gold);
+  --color-luxury-cream: var(--theme-cream);
+  --color-luxury-white: var(--theme-white);
+  --color-luxury-rose: var(--theme-rose);
 
   /* Font families */
   --font-serif: 'Playfair Display', Georgia, serif;
@@ -39,6 +101,23 @@
   }
 }
 
+/* Theme transition for smooth switching */
+html {
+  transition: background-color 0.3s ease;
+}
+
+html * {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Disable transitions for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  html,
+  html * {
+    transition: none !important;
+  }
+}
+
 /* Global styles */
 body {
   @apply font-sans bg-luxury-void text-luxury-cream antialiased;
@@ -55,7 +134,7 @@ body {
 
 /* Champagne gold gradient text */
 .text-gradient-gold {
-  background: linear-gradient(135deg, var(--color-luxury-champagne) 0%, var(--color-luxury-gold) 50%, var(--color-luxury-champagne) 100%);
+  background: linear-gradient(135deg, var(--theme-champagne) 0%, var(--theme-gold) 50%, var(--theme-champagne) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -64,38 +143,38 @@ body {
 /* Glassmorphism utilities */
 .glass-card,
 .glass-card-hover {
-  background: rgba(20, 20, 20, 0.8);
+  background: var(--glass-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(42, 42, 42, 0.6);
+  border: 1px solid var(--glass-border);
   transition: all 0.3s ease;
 }
 
 .glass-card-hover:hover {
   transform: translateY(-4px);
-  border-color: rgba(201, 169, 97, 0.3);
+  border-color: var(--glass-hover-border);
   box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.4),
     0 0 30px rgba(201, 169, 97, 0.1);
 }
 
 .glass-input {
-  background: rgba(20, 20, 20, 0.6);
+  background: var(--glass-bg-light);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(42, 42, 42, 0.8);
+  border: 1px solid var(--glass-border-input);
   transition: all 0.3s ease;
 
   &:focus {
-    border-color: var(--color-luxury-champagne);
+    border-color: var(--theme-champagne);
     box-shadow: 0 0 20px rgba(201, 169, 97, 0.15);
     outline: none;
   }
 }
 
 .glass-btn-primary {
-  background: linear-gradient(135deg, var(--color-luxury-champagne) 0%, var(--color-luxury-gold) 100%);
-  color: var(--color-luxury-void);
+  background: linear-gradient(135deg, var(--theme-champagne) 0%, var(--theme-gold) 100%);
+  color: var(--theme-void);
   border: none;
   position: relative;
   overflow: hidden;
@@ -136,14 +215,14 @@ body {
 .glass-btn-secondary {
   background: transparent;
   border: 1px solid rgba(201, 169, 97, 0.4);
-  color: var(--color-luxury-champagne);
+  color: var(--theme-champagne);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   transition: all 0.3s ease;
 
   &:hover {
-    background: rgba(201, 169, 97, 0.1);
-    border-color: var(--color-luxury-champagne);
+    background: var(--glass-hover-bg);
+    border-color: var(--theme-champagne);
     box-shadow: 0 0 20px rgba(201, 169, 97, 0.15);
   }
 }
@@ -152,9 +231,9 @@ body {
 .skeleton-shimmer {
   background: linear-gradient(
     90deg,
-    rgba(42, 42, 42, 0.3) 0%,
-    rgba(42, 42, 42, 0.5) 50%,
-    rgba(42, 42, 42, 0.3) 100%
+    var(--skeleton-base) 0%,
+    var(--skeleton-highlight) 50%,
+    var(--skeleton-base) 100%
   );
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
@@ -166,33 +245,22 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-luxury-void);
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-luxury-graphite);
+  background: var(--scrollbar-thumb);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-luxury-champagne);
+  background: var(--theme-champagne);
 }
 
 /* Selection color */
 ::selection {
-  background: var(--color-luxury-champagne);
-  color: var(--color-luxury-void);
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+  background: var(--theme-champagne);
+  color: var(--theme-void);
 }
 
 /* Mobile performance optimization for glassmorphism */
