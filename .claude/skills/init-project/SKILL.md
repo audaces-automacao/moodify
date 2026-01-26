@@ -12,8 +12,12 @@ Set up a comprehensive Claude Code documentation structure for the current proje
 
 Execute these steps in order:
 
-### 1. Fetch Best Practices
-Use WebFetch to analyze https://www.humanlayer.dev/blog/writing-a-good-claude-md and extract current best practices for CLAUDE.md files. Apply these recommendations throughout the initialization.
+### 1. Review Best Practices
+Read the best practices reference at `.claude/skills/init-project/references/claude-md-best-practices.md`. Apply these recommendations throughout the initialization, particularly:
+- WHAT/WHY/HOW structure
+- Keep under 60 lines
+- Use file:line references instead of code snippets
+- Only include universally-applicable instructions
 
 ### 2. Detect Project Information
 Detect project type by checking for manifest/config files:
@@ -57,7 +61,7 @@ Create `.claude/CLAUDE.md` following the WHAT/WHY/HOW structure:
 **HOW** - References:
 - Links to detailed docs using progressive disclosure
 
-**Best practices (from web analysis):**
+**Best practices (from reference file):**
 - Keep under 60 lines total
 - Only universally applicable instructions
 - Use file:line references, not code snippets
