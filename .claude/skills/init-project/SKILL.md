@@ -36,13 +36,41 @@ Extract from detected manifest:
 - Build system / package manager
 - Available scripts/commands (if defined)
 
-### 3. Create .claude Directory
+### 3. Analyze Project Context
+Perform a deeper analysis to understand the project's purpose and architecture:
+
+**Read key documentation:**
+- README.md (project description, features, purpose)
+- CONTRIBUTING.md, docs/ folder (existing guidelines)
+
+**Analyze project structure:**
+- Top-level directory layout (identify architecture pattern)
+- Source directory organization (feature-based, layered, etc.)
+- Key entry points (main.ts, index.ts, app.module.ts, etc.)
+
+**Extract domain context:**
+- Core concepts from folder/file names
+- Main features from component/service names
+- Business domain terminology
+
+**Scope limits:**
+- Focus on top-level structure, avoid deep file reading
+- Prioritize README and entry points
+- Skip node_modules, dist, build artifacts
+
+### 4. Create .claude Directory
 ```bash
 mkdir -p .claude/docs
 ```
 
-### 4. Create CLAUDE.md
-Create `.claude/CLAUDE.md` following the WHAT/WHY/HOW structure:
+### 5. Create CLAUDE.md
+Create `.claude/CLAUDE.md` with a living document header and following the WHAT/WHY/HOW structure:
+
+```markdown
+<!-- Keep this file and .claude/docs/ updated when project structure, conventions, or tooling changes -->
+
+# Project Name
+```
 
 **WHAT** - Technical overview:
 - Project name and purpose (1 line)
@@ -67,7 +95,7 @@ Create `.claude/CLAUDE.md` following the WHAT/WHY/HOW structure:
 - Use file:line references, not code snippets
 - Reference separate doc files for details
 
-### 5. Create .claude/settings.json
+### 6. Create .claude/settings.json
 Use the template from `.claude/skills/init-project/templates/settings.json` as a base. Customize the allow list based on the detected project type:
 - **Node.js/Angular**: `npm run`, `npx`, `yarn`, `pnpm`
 - **Rust**: `cargo build`, `cargo test`, `cargo run`, `cargo clippy`
@@ -79,7 +107,7 @@ Use the template from `.claude/skills/init-project/templates/settings.json` as a
 - **C/C++**: `cmake`, `make`, `ctest`, `ninja`
 - **Ruby**: `bundle`, `rake`, `rspec`
 
-### 6. Create Documentation Files
+### 7. Create Documentation Files
 Create `.claude/docs/coding-guidelines.md` using the template from `.claude/skills/init-project/templates/docs/coding-guidelines.md`, replacing [PROJECT NAME] with the actual project name.
 
 Create additional doc files as appropriate for the project:
@@ -87,7 +115,7 @@ Create additional doc files as appropriate for the project:
 - `architecture.md` - Detailed system design
 - `styling.md` - Design system (if frontend project)
 
-### 7. Verify Structure
+### 8. Verify Structure
 List all created files and confirm the structure is correct:
 ```bash
 find .claude -type f -name "*.md" -o -name "*.json" | head -20
