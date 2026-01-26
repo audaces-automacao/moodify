@@ -4,50 +4,46 @@ Moodify uses Tailwind CSS v4 with a bold editorial design inspired by Vogue/Harp
 
 ## Tech Stack
 
-- **Tailwind CSS v4** with PostCSS
-- **Fonts**: Playfair Display (serif headings) + Inter (sans-serif body)
-- **Component styles**: Inline Tailwind classes in templates
+- **Tailwind CSS v4** via PostCSS (`.postcssrc.json`)
+- **Fonts**: Playfair Display (serif headlines) + Inter (sans-serif body)
+- **Configuration**: Tailwind v4 uses CSS-based config, no `tailwind.config.js`
 
-## Design System
+## Design Principles
 
-### Typography
-- Headings: `font-serif` (Playfair Display)
-- Body text: `font-sans` (Inter)
-- Editorial aesthetic with high contrast
+### Editorial Aesthetic
+- Bold typography with large serif headlines
+- High contrast black/white base with accent colors
+- Generous whitespace and breathing room
+- Fashion-forward, magazine-quality visuals
 
-### Color Usage
-- Generated mood boards display 5-6 curated colors with hex codes
-- Use semantic color naming in dynamic content
+### Typography Hierarchy
+- Headlines: Playfair Display, large sizes, bold
+- Body text: Inter, readable sizes, regular weight
+- Use Tailwind's typography utilities for consistency
 
-### Layout Patterns
-- Responsive grid layouts for mood board displays
-- Card-based UI for fabric and outfit suggestions
-- Chip/tag styling for style keywords
+## Component Styling
 
-## File Structure
-
-```
-src/
-├── styles.scss        # Global styles, font imports
-├── app/
-│   ├── app.scss       # App-level styles
-│   └── components/    # Component templates with Tailwind classes
-public/
-└── favicon.ico
-```
-
-## Conventions
-
-### Tailwind Classes
-- Use utility classes directly in templates
-- Prefer responsive prefixes (`sm:`, `md:`, `lg:`)
-- Group related utilities logically
-
-### Custom Styles
-- Add global styles to `src/styles.scss`
-- Component-specific styles in co-located `.scss` files
-- Avoid `!important` overrides
+### Tailwind-First Approach
+Use Tailwind utility classes directly in templates. Avoid custom CSS unless necessary.
 
 ### Responsive Design
 - Mobile-first approach
-- Test at common breakpoints (sm, md, lg, xl)
+- Use Tailwind's responsive prefixes: `sm:`, `md:`, `lg:`, `xl:`
+- Test on multiple viewport sizes
+
+### Color Palette
+Components display dynamic color palettes from AI. Use:
+- Hex codes from `MoodBoard.colors` for swatches
+- Tailwind's color utilities for UI chrome
+
+## File Structure
+
+- Component styles: Inline in `.component.ts` or separate `.component.css`
+- Global styles: `src/styles.css`
+- Tailwind directives: Imported in styles.css
+
+## Animations
+
+Use Tailwind's transition utilities:
+- `transition-all`, `duration-300`, `ease-in-out`
+- `hover:` and `focus:` states for interactivity

@@ -1,55 +1,53 @@
 # Architecture Overview
 
-Moodify is a single-page Angular 21 application demonstrating AI-powered fashion mood board generation.
+Moodify is an Angular 21 standalone application that generates AI-powered fashion mood boards.
 
-## Application Flow
-
-```
-User Input → OpenAI Service → GPT-4o API → Mood Board Display
-```
-
-1. User enters style description in `MoodInputComponent`
-2. `OpenAIService` sends prompt to GPT-4o API
-3. Response parsed into `MoodBoard` model
-4. `MoodBoardComponent` displays results via child components
-
-## Project Structure
+## Directory Structure
 
 ```
 src/app/
-├── components/           # Presentational components
-│   ├── header.component.ts
-│   ├── language-switcher.component.ts
-│   ├── mood-input.component.ts        # Input + example chips
-│   ├── mood-board.component.ts        # Results container
-│   ├── color-palette.component.ts     # Color swatches
-│   ├── fabric-list.component.ts       # Fabric cards
-│   ├── style-tags.component.ts        # Style keywords
-│   ├── outfit-grid.component.ts       # Outfit suggestions
-│   └── loading-skeleton.component.ts
-├── services/
-│   └── openai.service.ts              # OpenAI API integration
-├── models/
-│   └── mood-board.model.ts            # TypeScript interfaces
-├── app.ts                             # Root component (container)
-├── app.config.ts                      # Providers, routing, i18n
-└── transloco-loader.ts                # Translation file loader
+├── components/          # UI components (standalone)
+├── services/            # Business logic and API calls
+├── models/              # TypeScript interfaces
+├── app.ts               # Root component
+├── app.config.ts        # Application configuration
+└── transloco-loader.ts  # i18n translation loader
 ```
 
-## Key Patterns
+## Key Components
 
-### Standalone Components
-All components are standalone (no NgModules). Imports declared per-component.
+### Input Flow
+- `mood-input.component.ts` - Text input + example prompt chips
+- Emits user prompt to parent `app.ts`
 
-### Signals
-State management uses Angular signals for reactivity without zone.js.
+### Display Components
+- `mood-board.component.ts` - Results container, orchestrates child components
+- `color-palette.component.ts` - Color swatches with hex codes
+- `fabric-list.component.ts` - Fabric recommendation cards
+- `style-tags.component.ts` - Style keyword tag cloud
+- `outfit-grid.component.ts` - Outfit suggestion grid
 
-### Container/Presentational
-- `App` and `MoodBoard` are container components (manage state)
-- Other components are presentational (receive inputs, emit outputs)
+### Services
+- `openai.service.ts` - OpenAI API integration, prompt engineering, response parsing
 
-## Configuration
+### Models
+- `mood-board.model.ts` - TypeScript interfaces for `MoodBoard`, `Color`, `Fabric`, `OutfitItem`
 
-- **Environment**: `src/environments/environment.ts` (API keys, endpoints)
-- **i18n**: `public/i18n/{en,pt}.json` (translations)
-- **Build**: `angular.json` (build configuration)
+## Data Flow
+
+1. User enters prompt in `MoodInputComponent`
+2. `AppComponent` receives prompt, calls `OpenAIService.generateMoodBoard()`
+3. Service sends request to OpenAI API, parses JSON response
+4. `MoodBoardComponent` displays results via child components
+
+## i18n Architecture
+
+- `@jsverse/transloco` for translations
+- Translation files: `public/i18n/{en,pt}.json`
+- `transloco-loader.ts` handles async loading
+- `language-switcher.component.ts` toggles locale
+
+## Environment Configuration
+
+- `src/environments/environment.ts` - OpenAI API key and model config
+- **Note**: API key exposed in frontend (demo only, use backend proxy for production)

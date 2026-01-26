@@ -1,53 +1,48 @@
 # Testing Guidelines
 
-Moodify uses Karma + Jasmine for unit testing with 80% minimum coverage requirement.
+Moodify uses Karma + Jasmine for unit testing with 80% minimum coverage.
 
 ## Commands
 
 ```bash
-npm test           # Watch mode for development
+npm test           # Watch mode - auto-reruns on changes
 npm run test:ci    # Single run with coverage (CI)
 ```
 
 ## Test Structure
 
-Each component and service has a co-located `.spec.ts` file:
-
-```
-src/app/
-├── app.spec.ts
-├── components/
-│   ├── header.component.spec.ts
-│   ├── mood-input.component.spec.ts
-│   └── ...
-├── services/
-│   └── openai.service.spec.ts
-└── transloco-loader.spec.ts
-```
+Each component/service has a `.spec.ts` file alongside it:
+- `src/app/app.spec.ts`
+- `src/app/components/*.spec.ts`
+- `src/app/services/*.spec.ts`
 
 ## Writing Tests
 
-### Component Tests
-- Use `TestBed.configureTestingModule()` with standalone components
-- Mock services using `jasmine.createSpyObj()`
-- Test signal changes and component interactions
-- Reference: [app.spec.ts](src/app/app.spec.ts)
+### Test File Location
+Place `.spec.ts` files next to the file being tested.
 
-### Service Tests
-- Mock HTTP calls using `HttpClientTestingModule`
+### Test Organization
+Use `describe` blocks for the component/service name. Use `it` blocks with clear behavior descriptions.
+
+### Mocking
+- Mock HTTP calls using Angular's `HttpTestingController`
+- Mock services using Jasmine spies or test doubles
+- For OpenAI service tests, mock API responses
+
+### Coverage
+- Coverage reports in `coverage/` directory
+- View HTML report: `coverage/index.html`
+- Minimum threshold: 80% statements, branches, functions, lines
+
+## Component Testing
+
+Use Angular's `TestBed` to configure test modules:
+- Import `provideHttpClient` and `provideHttpClientTesting` for HTTP tests
+- Use `ComponentFixture` for component interaction tests
+- Test signal-based components by updating inputs and checking outputs
+
+## Service Testing
+
+- Test public API methods
+- Verify HTTP requests are made with correct parameters
 - Test error handling paths
-- Reference: [openai.service.spec.ts](src/app/services/openai.service.spec.ts)
-
-### i18n Tests
-- Use `TranslocoTestingModule` with test translations
-- Reference: [transloco-loader.spec.ts](src/app/transloco-loader.spec.ts)
-
-## Coverage
-
-Reports generated in `coverage/` directory. Open `coverage/index.html` for HTML report.
-
-**Minimum thresholds (configured in karma.conf.js):**
-- Statements: 80%
-- Branches: 80%
-- Functions: 80%
-- Lines: 80%

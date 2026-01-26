@@ -2,36 +2,25 @@
 
 # Moodify
 
-AI-powered fashion mood board generator demo using Angular 21 with standalone components, signals, Tailwind CSS v4, and OpenAI GPT-4o integration.
+AI-Powered Fashion Mood Board Generator built with Angular 21, Tailwind CSS v4, and OpenAI GPT-4o.
 
 ## Tech Stack
 
-- **Framework**: Angular 21 (standalone components, signals, zoneless)
+- **Framework**: Angular 21 (standalone components, signals)
 - **Styling**: Tailwind CSS v4 with PostCSS
-- **AI**: OpenAI GPT-4o via REST API
+- **AI**: OpenAI GPT-4o API via `src/app/services/openai.service.ts`
 - **i18n**: @jsverse/transloco (English, Portuguese)
 - **Testing**: Karma + Jasmine (80% coverage minimum)
-- **Linting**: ESLint + Prettier
+- **Linting**: ESLint + angular-eslint + Prettier
 
 ## Commands
 
 ```bash
-npm start          # Dev server at localhost:4200
+npm start          # Dev server at http://localhost:4200
 npm run build      # Production build to dist/
 npm test           # Run tests in watch mode
-npm run test:ci    # CI tests with coverage
-npm run lint       # ESLint + Prettier check
-```
-
-## Project Structure
-
-```
-src/app/
-├── components/    # UI components (header, mood-input, mood-board, etc.)
-├── services/      # Business logic (openai.service.ts)
-├── models/        # TypeScript interfaces (mood-board.model.ts)
-├── app.ts         # Root component
-└── app.config.ts  # App configuration with providers
+npm run test:ci    # CI mode: single run with coverage
+npm run lint       # ESLint + Prettier
 ```
 
 ## Documentation
@@ -42,10 +31,3 @@ Read the relevant doc before making changes:
 - [testing.md](.claude/docs/testing.md) - For writing or modifying tests
 - [styling.md](.claude/docs/styling.md) - For UI components, CSS, visual changes
 - [architecture.md](.claude/docs/architecture.md) - For understanding project structure, data flow
-
-## Key Conventions
-
-- Use standalone components with signals (not modules or zone.js)
-- All components have co-located `.spec.ts` test files
-- Translations in `public/i18n/{en,pt}.json`
-- Environment config in `src/environments/`
