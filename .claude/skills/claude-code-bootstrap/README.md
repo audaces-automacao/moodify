@@ -1,149 +1,57 @@
 # claude-code-bootstrap
 
-A Claude Code skill that initializes comprehensive project documentation with CLAUDE.md and supporting files.
+Initialize effective CLAUDE.md files using research-backed practices that help Claude Code deliver better, more context-aware assistance.
 
-## Features
+## Quick Start
 
-- Auto-detects project type (Node.js, Rust, Python, C#/.NET, Java, Go, C/C++, Ruby)
-- Creates CLAUDE.md following best practices (WHAT/WHY/HOW structure, under 60 lines)
-- Generates .claude/settings.json with sensible command permissions
-- Creates documentation files (coding-guidelines.md, testing.md, styling.md, architecture.md)
-
-## Why use this instead of `/init`?
-
-Claude Code's built-in `/init` command provides a quick start, but this skill creates more effective documentation by:
-
-- **Following research-backed practices** - WHAT/WHY/HOW structure, keeping CLAUDE.md under 60 lines for optimal LLM attention
-- **Progressive disclosure** - Detailed guidelines in separate docs instead of one large file
-- **Command permissions** - Pre-configured settings.json with safe defaults
-- **Project-aware** - Auto-detects your tech stack and generates relevant documentation
-
-## Installation
-
-### macOS / Linux
+**Install:**
 
 ```bash
+# macOS/Linux
 git clone https://github.com/YOUR_USERNAME/claude-code-bootstrap ~/.claude/skills/claude-code-bootstrap
-```
 
-### Windows
-
-```cmd
+# Windows
 git clone https://github.com/YOUR_USERNAME/claude-code-bootstrap %USERPROFILE%\.claude\skills\claude-code-bootstrap
 ```
 
-### Verify Installation
+**Run:** Type `/bootstrap` in any project directory.
 
-In Claude Code, type `/bootstrap` - it should appear in the autocomplete.
+## Why This Skill?
 
-## Usage
+Claude Code's `/init` creates basic documentation. This skill creates **effective** documentation using research-backed practices:
 
-Navigate to any project and run:
-
-```
-/bootstrap
-```
-
-Claude will:
-1. Detect your project type from manifest files
-2. Analyze project structure and documentation
-3. Create `.claude/` directory with:
-   - `CLAUDE.md` - Main project documentation
-   - `settings.json` - Command permissions
-   - `docs/` - Additional documentation files
+- **WHAT/WHY/HOW structure** - Organizes information for optimal LLM comprehension
+- **60-line CLAUDE.md** - Keeps the main file within LLM's peak attention window
+- **Progressive disclosure** - Details in separate docs, not one massive file
+- **Pre-configured permissions** - Safe defaults for build/test/lint commands
 
 ## What Gets Generated
 
-| File | Purpose |
-|------|---------|
-| `.claude/CLAUDE.md` | Project overview, commands, documentation references |
-| `.claude/settings.json` | Build/test/lint command permissions |
-| `.claude/docs/coding-guidelines.md` | Code style and architecture guidelines |
-| `.claude/docs/testing.md` | Testing conventions (if test framework detected) |
-| `.claude/docs/styling.md` | UI/CSS guidelines (if frontend project) |
-| `.claude/docs/architecture.md` | Project structure documentation |
+| File                                | Purpose                                                          |
+| ----------------------------------- | ---------------------------------------------------------------- |
+| `.claude/CLAUDE.md`                 | Project overview, commands, doc references                       |
+| `.claude/settings.json`             | Command permissions (allow build/test, require approval for git) |
+| `.claude/docs/coding-guidelines.md` | Code style and architecture guidelines                           |
+| `.claude/docs/testing.md`           | Testing conventions (if test framework detected)                 |
+| `.claude/docs/styling.md`           | UI/CSS guidelines (if frontend project)                          |
+| `.claude/docs/architecture.md`      | Project structure documentation                                  |
 
-## Understanding the Default Settings
+## Permission Philosophy
 
-The generated `settings.json` uses **conservative defaults**:
+The generated `settings.json` allows development commands (build, test, lint) while requiring explicit approval for git operations (commit, push, rebase). This ensures Claude helps with coding while leaving version control decisions to you.
 
-**Allowed by default:**
-- Build commands (`npm run build`, `cargo build`, etc.)
-- Test commands (`npm test`, `pytest`, etc.)
-- Lint commands (`npm run lint`, `eslint`, etc.)
-
-**Denied by default:**
-- `git commit` - Requires explicit user action
-- `git push` - Prevents accidental remote changes
-- `git rebase` - Destructive operation
-- `git reset --hard` - Can lose uncommitted work
-- `git push --force` - Can overwrite remote history
-
-This design philosophy ensures Claude helps with development tasks while leaving version control decisions to you.
+See `templates/settings.json` to customize defaults.
 
 ## Customization
 
-### Modify Templates
+Edit files in `templates/` to change generated content:
 
-Edit files in the `templates/` directory to customize generated content for your preferences.
+- `templates/settings.json` - Permission defaults
+- `templates/docs/coding-guidelines.md` - Code guidelines template
 
-The `templates/docs/coding-guidelines.md` includes principles we find effective, but you should adapt them to match your team's experience and coding philosophy.
+## Credits
 
-### Customize Permissions
-
-The `templates/settings.json` file controls default command permissions. Customize based on your workflow:
-
-**Trust Claude with commits (remove git restrictions):**
-```json
-{
-  "permissions": {
-    "allow": [
-      "Bash(npm run build:*)",
-      "Bash(npm test:*)",
-      "Bash(git commit:*)",
-      "Bash(git push:*)"
-    ],
-    "deny": []
-  }
-}
-```
-
-**Maximum caution (review everything):**
-```json
-{
-  "permissions": {
-    "allow": [],
-    "deny": []
-  }
-}
-```
-
-**Keep defaults (recommended for most users):**
-Use the template as-is - it allows development commands while requiring approval for git operations.
-
-### Add Project Types
-
-Edit `SKILL.md` Step 2 to add detection for additional manifest files or build systems.
-
-## Updating
-
-```bash
-cd ~/.claude/skills/claude-code-bootstrap
-git pull
-```
-
-## Uninstalling
-
-```bash
-rm -rf ~/.claude/skills/claude-code-bootstrap
-```
-
-## Credits & Acknowledgments
-
-The best practices in `references/claude-md-best-practices.md` are based on insights from:
-- [Writing a Good CLAUDE.md](https://www.humanlayer.dev/blog/writing-a-good-claude-md) by HumanLayer
-
-Thank you to the HumanLayer team for their research on effective Claude Code documentation.
+Best practices based on [Writing a Good CLAUDE.md](https://www.humanlayer.dev/blog/writing-a-good-claude-md) by HumanLayer.
 
 ## License
 
