@@ -8,6 +8,7 @@
 
 # Node
 /node_modules
+/server/node_modules
 npm-debug.log
 yarn-error.log
 
@@ -46,3 +47,6 @@ Thumbs.db
 # Environment files with real API keys
 src/environments/environment.development.ts
 src/environments/environment.prod.ts
+
+# Proxy config with API keys (use proxy.conf.example.json as template)
+proxy.conf.json

@@ -63,10 +63,9 @@ describe('OpenAIService', () => {
     it('should make POST request with correct headers and body', () => {
       service.generateMoodBoard('Parisian chic').subscribe();
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
+      const req = httpMock.expectOne('/api/chat/completions');
       expect(req.request.method).toBe('POST');
       expect(req.request.headers.get('Content-Type')).toBe('application/json');
-      expect(req.request.headers.get('Authorization')).toContain('Bearer');
       expect(req.request.body.messages[1].content).toContain('Parisian chic');
       req.flush(mockOpenAIResponse);
     });
@@ -80,7 +79,7 @@ describe('OpenAIService', () => {
         },
       });
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
+      const req = httpMock.expectOne('/api/chat/completions');
       req.flush(mockOpenAIResponse);
     });
 
@@ -97,7 +96,7 @@ describe('OpenAIService', () => {
         },
       });
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
+      const req = httpMock.expectOne('/api/chat/completions');
       req.flush(responseWithMarkdown);
     });
 
@@ -114,7 +113,7 @@ describe('OpenAIService', () => {
         },
       });
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
+      const req = httpMock.expectOne('/api/chat/completions');
       req.flush(responseWithMarkdown);
     });
 
@@ -130,7 +129,7 @@ describe('OpenAIService', () => {
         },
       });
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
+      const req = httpMock.expectOne('/api/chat/completions');
       req.flush(emptyResponse);
     });
 
@@ -146,7 +145,7 @@ describe('OpenAIService', () => {
         },
       });
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
+      const req = httpMock.expectOne('/api/chat/completions');
       req.flush(invalidJsonResponse);
     });
 
@@ -158,7 +157,7 @@ describe('OpenAIService', () => {
         },
       });
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
+      const req = httpMock.expectOne('/api/chat/completions');
       req.flush(null, { status: 401, statusText: 'Unauthorized' });
     });
 
@@ -170,7 +169,7 @@ describe('OpenAIService', () => {
         },
       });
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
+      const req = httpMock.expectOne('/api/chat/completions');
       req.flush(null, { status: 429, statusText: 'Too Many Requests' });
     });
 
@@ -182,7 +181,7 @@ describe('OpenAIService', () => {
         },
       });
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
+      const req = httpMock.expectOne('/api/chat/completions');
       req.flush(null, { status: 500, statusText: 'Internal Server Error' });
     });
 
@@ -195,7 +194,7 @@ describe('OpenAIService', () => {
         },
       });
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
+      const req = httpMock.expectOne('/api/chat/completions');
       req.flush(null, { status: 503, statusText: 'Service Unavailable' });
     });
 
@@ -204,7 +203,7 @@ describe('OpenAIService', () => {
 
       service.generateMoodBoard('test').subscribe();
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
+      const req = httpMock.expectOne('/api/chat/completions');
       expect(req.request.body.messages[0].content).toContain('Respond in English');
       req.flush(mockOpenAIResponse);
     });
@@ -214,7 +213,7 @@ describe('OpenAIService', () => {
 
       service.generateMoodBoard('test').subscribe();
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
+      const req = httpMock.expectOne('/api/chat/completions');
       expect(req.request.body.messages[0].content).toContain('Brazilian Portuguese');
       req.flush(mockOpenAIResponse);
     });
@@ -222,7 +221,7 @@ describe('OpenAIService', () => {
     it('should configure request with correct message roles and parameters', () => {
       service.generateMoodBoard('test').subscribe();
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/chat/completions');
+      const req = httpMock.expectOne('/api/chat/completions');
       expect(req.request.body.messages[0].role).toBe('system');
       expect(req.request.body.messages[1].role).toBe('user');
       expect(req.request.body.temperature).toBe(0.7);
@@ -247,20 +246,19 @@ describe('OpenAIService', () => {
       data: [{ url: 'https://example.com/generated-image.png' }],
     };
 
-    it('should make POST request to DALL-E endpoint with correct headers', () => {
+    it('should make POST request to image generation endpoint with correct headers', () => {
       service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe();
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      const req = httpMock.expectOne('/api/images/generations');
       expect(req.request.method).toBe('POST');
       expect(req.request.headers.get('Content-Type')).toBe('application/json');
-      expect(req.request.headers.get('Authorization')).toContain('Bearer');
       req.flush(mockDallEResponse);
     });
 
     it('should send correct request body', () => {
       service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe();
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      const req = httpMock.expectOne('/api/images/generations');
       expect(req.request.body.model).toBe('dall-e-3');
       expect(req.request.body.n).toBe(1);
       expect(req.request.body.size).toBe('1024x1024');
@@ -272,7 +270,7 @@ describe('OpenAIService', () => {
     it('should build prompt with outfit items', () => {
       service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe();
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      const req = httpMock.expectOne('/api/images/generations');
       const prompt = req.request.body.prompt;
       expect(prompt).toContain('Silk blouse');
       expect(prompt).toContain('High-waisted trousers');
@@ -286,7 +284,7 @@ describe('OpenAIService', () => {
     it('should build prompt with style keywords', () => {
       service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe();
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      const req = httpMock.expectOne('/api/images/generations');
       const prompt = req.request.body.prompt;
       expect(prompt).toContain('Elegant');
       expect(prompt).toContain('Sophisticated');
@@ -302,7 +300,7 @@ describe('OpenAIService', () => {
         },
       });
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      const req = httpMock.expectOne('/api/images/generations');
       req.flush(mockDallEResponse);
     });
 
@@ -316,7 +314,7 @@ describe('OpenAIService', () => {
 
       service.generateOutfitImage(outfitWithoutOuterwear, mockStyleKeywords).subscribe();
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      const req = httpMock.expectOne('/api/images/generations');
       const prompt = req.request.body.prompt;
       expect(prompt).toContain('T-shirt');
       expect(prompt).toContain('Jeans');
@@ -332,7 +330,7 @@ describe('OpenAIService', () => {
         },
       });
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      const req = httpMock.expectOne('/api/images/generations');
       req.flush(null, { status: 400, statusText: 'Bad Request' });
     });
 
@@ -344,7 +342,7 @@ describe('OpenAIService', () => {
         },
       });
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      const req = httpMock.expectOne('/api/images/generations');
       req.flush(null, { status: 401, statusText: 'Unauthorized' });
     });
 
@@ -356,7 +354,7 @@ describe('OpenAIService', () => {
         },
       });
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      const req = httpMock.expectOne('/api/images/generations');
       req.flush(null, { status: 429, statusText: 'Too Many Requests' });
     });
 
@@ -369,7 +367,7 @@ describe('OpenAIService', () => {
         },
       });
 
-      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      const req = httpMock.expectOne('/api/images/generations');
       req.flush(null, { status: 503, statusText: 'Service Unavailable' });
     });
   });

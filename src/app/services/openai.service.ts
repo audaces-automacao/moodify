@@ -53,7 +53,6 @@ export class OpenAIService {
   generateMoodBoard(prompt: string): Observable<MoodBoardResponse> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${environment.openaiApiKey}`,
     });
 
     const request: OpenAIRequest = {
@@ -145,7 +144,6 @@ Requirements:
   generateOutfitImage(outfit: OutfitSuggestion, styleKeywords: string[]): Observable<string> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${environment.openaiApiKey}`,
     });
 
     const request: DallERequest = {

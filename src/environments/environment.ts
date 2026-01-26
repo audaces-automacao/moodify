@@ -1,15 +1,13 @@
 /**
- * Environment template file - DO NOT add real API keys here.
+ * Environment template file.
  * This file is versioned and serves as documentation for required variables.
  *
- * For local development, create environment.development.ts with your real keys.
- * For production builds, create environment.prod.ts with production keys.
+ * The OpenAI API key is now handled server-side via the OPENAI_API_KEY environment variable.
  */
 export const environment = {
   production: false,
-  openaiApiKey: 'REPLACE_WITH_YOUR_OPENAI_API_KEY',
   openaiModel: 'gpt-4o',
-  openaiApiUrl: 'https://api.openai.com/v1/chat/completions',
+  openaiApiUrl: '/api/chat/completions',
   dalleModel: 'dall-e-3',
-  dalleApiUrl: 'https://api.openai.com/v1/images/generations',
+  dalleApiUrl: '/api/images/generations',
 };

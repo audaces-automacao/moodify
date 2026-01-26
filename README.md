@@ -36,26 +36,69 @@ npm install
 
 ### 2. Configure OpenAI API Key
 
-Open `src/environments/environment.ts` and replace the placeholder with your API key:
+Copy the proxy configuration template and add your API key:
 
-```typescript
-export const environment = {
-  production: false,
-  openaiApiKey: 'sk-your-actual-api-key-here',  // <-- Add your key
-  openaiModel: 'gpt-4o',
-  openaiApiUrl: 'https://api.openai.com/v1/chat/completions',
-};
+```bash
+cp proxy.conf.example.json proxy.conf.json
 ```
 
-> **Security Note**: This is a demo application. The API key is exposed in the frontend code. For production use, implement a backend proxy to secure your API key.
+Edit `proxy.conf.json` and replace `YOUR_OPENAI_API_KEY_HERE` with your actual API key.
+
+> **Note**: `proxy.conf.json` is gitignored to keep your API key secure.
 
 ### 3. Start Development Server
 
 ```bash
-ng serve
+npm start
 ```
 
 Open http://localhost:4200 in your browser.
+
+## Docker Deployment
+
+For production, use Docker to run the application with a secure backend proxy.
+
+### Build the Docker Image
+
+```bash
+docker build -t moodify .
+```
+
+### Run the Container
+
+```bash
+docker run -p 3000:3000 -e OPENAI_API_KEY=sk-your-key moodify
+```
+
+Open http://localhost:3000 in your browser.
+
+### Environment Variables
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `OPENAI_API_KEY` | Yes | - | Your OpenAI API key |
+| `PORT` | No | 3000 | Port the server listens on |
+
+### Docker Compose (Optional)
+
+Create a `docker-compose.yml`:
+
+```yaml
+version: '3.8'
+services:
+  moodify:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+```
+
+Then run:
+
+```bash
+OPENAI_API_KEY=sk-your-key docker-compose up
+```
 
 ## Usage
 
