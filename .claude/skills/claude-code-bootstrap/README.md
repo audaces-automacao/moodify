@@ -8,10 +8,10 @@ Initialize effective CLAUDE.md files using research-backed practices that help C
 
 ```bash
 # macOS/Linux
-git clone https://github.com/YOUR_USERNAME/claude-code-bootstrap ~/.claude/skills/claude-code-bootstrap
+git clone https://github.com/oprogramadorreal/claude-code-bootstrap ~/.claude/skills/claude-code-bootstrap
 
 # Windows
-git clone https://github.com/YOUR_USERNAME/claude-code-bootstrap %USERPROFILE%\.claude\skills\claude-code-bootstrap
+git clone https://github.com/oprogramadorreal/claude-code-bootstrap %USERPROFILE%\.claude\skills\claude-code-bootstrap
 ```
 
 **Run:** Type `/bootstrap` in any project directory.
