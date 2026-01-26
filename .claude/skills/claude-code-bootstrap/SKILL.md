@@ -1,5 +1,5 @@
 ---
-name: init-project
+name: bootstrap
 description: Initialize project with CLAUDE.md, settings, and documentation structure
 disable-model-invocation: true
 ---
@@ -13,7 +13,7 @@ Set up a comprehensive Claude Code documentation structure for the current proje
 Execute these steps in order:
 
 ### 1. Review Best Practices
-Read the best practices reference at `.claude/skills/init-project/references/claude-md-best-practices.md`. Apply these recommendations throughout the initialization, particularly:
+Read the best practices reference at `.claude/skills/claude-code-bootstrap/references/claude-md-best-practices.md`. Apply these recommendations throughout the initialization, particularly:
 - WHAT/WHY/HOW structure
 - Keep under 60 lines
 - Use file:line references instead of code snippets
@@ -102,7 +102,7 @@ Create `.claude/CLAUDE.md` with a living document header and following the WHAT/
 - Reference separate doc files for details
 
 ### 6. Create .claude/settings.json
-Use the template from `.claude/skills/init-project/templates/settings.json` as a base. Customize the allow list based on the detected project type:
+Use the template from `.claude/skills/claude-code-bootstrap/templates/settings.json` as a base. Customize the allow list based on the detected project type:
 - **Node.js/Angular**: `npm run`, `npx`, `yarn`, `pnpm`
 - **Rust**: `cargo build`, `cargo test`, `cargo run`, `cargo clippy`
 - **Python**: `pytest`, `pip`, `poetry`, `uv`, `ruff`, `mypy`
@@ -118,7 +118,7 @@ Use the template from `.claude/skills/init-project/templates/settings.json` as a
 Create documentation files based on project type:
 
 **Always create:**
-- `coding-guidelines.md` - Use template from `.claude/skills/init-project/templates/docs/coding-guidelines.md`, replacing [PROJECT NAME] with actual project name
+- `coding-guidelines.md` - Use template from `.claude/skills/claude-code-bootstrap/templates/docs/coding-guidelines.md`, replacing [PROJECT NAME] with actual project name
 
 **Create if applicable:**
 - `testing.md` - If test framework detected (Karma, Jest, pytest, cargo test, go test, etc.)
