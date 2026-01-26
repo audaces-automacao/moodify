@@ -1,54 +1,55 @@
-# Architecture
+# Architecture Overview
 
-Project structure and data flow for Moodify.
+Moodify is a single-page Angular 21 application demonstrating AI-powered fashion mood board generation.
+
+## Application Flow
+
+```
+User Input → OpenAI Service → GPT-4o API → Mood Board Display
+```
+
+1. User enters style description in `MoodInputComponent`
+2. `OpenAIService` sends prompt to GPT-4o API
+3. Response parsed into `MoodBoard` model
+4. `MoodBoardComponent` displays results via child components
 
 ## Project Structure
 
 ```
-src/
-├── app/
-│   ├── components/     # Reusable UI components
-│   ├── pages/          # Route-level components
-│   ├── services/       # Business logic and API calls
-│   ├── models/         # TypeScript interfaces
-│   └── utils/          # Helper functions
-├── assets/
-│   └── i18n/           # Translation files
-└── styles.css          # Global styles and Tailwind
+src/app/
+├── components/           # Presentational components
+│   ├── header.component.ts
+│   ├── language-switcher.component.ts
+│   ├── mood-input.component.ts        # Input + example chips
+│   ├── mood-board.component.ts        # Results container
+│   ├── color-palette.component.ts     # Color swatches
+│   ├── fabric-list.component.ts       # Fabric cards
+│   ├── style-tags.component.ts        # Style keywords
+│   ├── outfit-grid.component.ts       # Outfit suggestions
+│   └── loading-skeleton.component.ts
+├── services/
+│   └── openai.service.ts              # OpenAI API integration
+├── models/
+│   └── mood-board.model.ts            # TypeScript interfaces
+├── app.ts                             # Root component (container)
+├── app.config.ts                      # Providers, routing, i18n
+└── transloco-loader.ts                # Translation file loader
 ```
 
-## Angular Architecture
+## Key Patterns
 
 ### Standalone Components
-All components use standalone architecture (no NgModules).
+All components are standalone (no NgModules). Imports declared per-component.
 
-```typescript
-@Component({
-  selector: 'app-example',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './example.component.html',
-})
-export class ExampleComponent {}
-```
+### Signals
+State management uses Angular signals for reactivity without zone.js.
 
-### State Management
-Use Angular signals for reactive state management.
+### Container/Presentational
+- `App` and `MoodBoard` are container components (manage state)
+- Other components are presentational (receive inputs, emit outputs)
 
-### Routing
-Routes defined in `app.routes.ts` with lazy loading for pages.
+## Configuration
 
-## Internationalization
-
-Uses @jsverse/transloco for translations.
-
-- Translation files in `src/assets/i18n/`
-- Use `translate` pipe in templates
-- Support for runtime language switching
-
-## Data Flow
-
-1. Components receive data via inputs or services
-2. Services handle API communication
-3. State managed with signals
-4. Templates render reactive data
+- **Environment**: `src/environments/environment.ts` (API keys, endpoints)
+- **i18n**: `public/i18n/{en,pt}.json` (translations)
+- **Build**: `angular.json` (build configuration)
