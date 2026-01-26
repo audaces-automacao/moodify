@@ -16,11 +16,21 @@ Execute these steps in order:
 Use WebFetch to analyze https://www.humanlayer.dev/blog/writing-a-good-claude-md and extract current best practices for CLAUDE.md files. Apply these recommendations throughout the initialization.
 
 ### 2. Detect Project Information
-- Read package.json, Cargo.toml, pyproject.toml, or similar to identify:
-  - Project name
-  - Tech stack (Angular, React, Node, Rust, Python, etc.)
-  - Package manager (npm, yarn, pnpm, bun)
-  - Available scripts/commands
+Detect project type by checking for manifest/config files:
+- **Node.js**: package.json → npm, yarn, pnpm, bun
+- **Rust**: Cargo.toml → cargo
+- **Python**: pyproject.toml, setup.py, requirements.txt → pip, poetry, uv
+- **C#/.NET**: *.csproj, *.sln → dotnet
+- **Java**: pom.xml → maven | build.gradle → gradle
+- **Go**: go.mod → go
+- **C/C++**: CMakeLists.txt → cmake | Makefile → make
+- **Ruby**: Gemfile → bundler
+
+Extract from detected manifest:
+- Project name
+- Tech stack/framework
+- Build system / package manager
+- Available scripts/commands (if defined)
 
 ### 3. Create .claude Directory
 ```bash
@@ -35,7 +45,14 @@ Create `.claude/CLAUDE.md` following the WHAT/WHY/HOW structure:
 - Tech stack summary
 
 **WHY** - Commands section:
-- Essential build/test/lint commands from package.json
+- Essential build/test/lint commands from project manifest or common conventions:
+  - Node.js: from `scripts` in package.json
+  - Rust: `cargo build`, `cargo test`, `cargo clippy`
+  - Python: `pytest`, `ruff`, build commands
+  - C#/.NET: `dotnet build`, `dotnet test`, `dotnet run`
+  - Java: `mvn compile`, `mvn test` or `gradle build`, `gradle test`
+  - Go: `go build`, `go test`, `go vet`
+  - C/C++: `cmake --build`, `make`, `ctest`
 
 **HOW** - References:
 - Links to detailed docs using progressive disclosure
@@ -48,10 +65,15 @@ Create `.claude/CLAUDE.md` following the WHAT/WHY/HOW structure:
 
 ### 5. Create .claude/settings.json
 Use the template from `.claude/skills/init-project/templates/settings.json` as a base. Customize the allow list based on the detected project type:
-- For Angular: include `npx ng` commands
-- For Node.js: include `npm run` commands
-- For Python: include `pytest`, `pip` commands
-- For Rust: include `cargo` commands
+- **Node.js/Angular**: `npm run`, `npx`, `yarn`, `pnpm`
+- **Rust**: `cargo build`, `cargo test`, `cargo run`, `cargo clippy`
+- **Python**: `pytest`, `pip`, `poetry`, `uv`, `ruff`, `mypy`
+- **C#/.NET**: `dotnet build`, `dotnet test`, `dotnet run`, `dotnet restore`
+- **Java/Maven**: `mvn compile`, `mvn test`, `mvn package`
+- **Java/Gradle**: `gradle build`, `gradle test`, `gradlew`
+- **Go**: `go build`, `go test`, `go run`, `go vet`, `golangci-lint`
+- **C/C++**: `cmake`, `make`, `ctest`, `ninja`
+- **Ruby**: `bundle`, `rake`, `rspec`
 
 ### 6. Create Documentation Files
 Create `.claude/docs/coding-guidelines.md` using the template from `.claude/skills/init-project/templates/docs/coding-guidelines.md`, replacing [PROJECT NAME] with the actual project name.
