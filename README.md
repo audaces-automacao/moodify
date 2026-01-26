@@ -9,6 +9,7 @@ AI-Powered Fashion Mood Board Generator - A demo application showcasing AI capab
 - **Fabric Recommendations**: 3-4 fabric suggestions with textures and seasonal notes
 - **Style Keywords**: Aesthetic descriptors and mood tags
 - **Outfit Suggestions**: Complete outfit breakdown (top, bottom, shoes, accessories, outerwear)
+- **Multi-language Support**: English and Portuguese (Brazilian) with auto-detection
 - **Bold Editorial Design**: Vogue/Harper's Bazaar inspired aesthetic
 
 ## Tech Stack
@@ -16,6 +17,7 @@ AI-Powered Fashion Mood Board Generator - A demo application showcasing AI capab
 - **Framework**: Angular 21 (standalone components, signals)
 - **Styling**: Tailwind CSS v4
 - **AI**: OpenAI GPT-4o API
+- **i18n**: @jsverse/transloco (English, Portuguese)
 - **Fonts**: Playfair Display (serif) + Inter (sans-serif)
 
 ## Prerequisites
@@ -75,21 +77,23 @@ Open http://localhost:4200 in your browser.
 ```
 src/app/
 ├── components/
-│   ├── header.component.ts         # App branding
-│   ├── mood-input.component.ts     # Input + example chips
-│   ├── mood-board.component.ts     # Results container
-│   ├── color-palette.component.ts  # Color swatches
-│   ├── fabric-list.component.ts    # Fabric cards
-│   ├── style-tags.component.ts     # Style keyword tags
-│   ├── outfit-grid.component.ts    # Outfit suggestions
+│   ├── header.component.ts           # App branding
+│   ├── language-switcher.component.ts # i18n language selector
+│   ├── mood-input.component.ts       # Input + example chips
+│   ├── mood-board.component.ts       # Results container
+│   ├── color-palette.component.ts    # Color swatches
+│   ├── fabric-list.component.ts      # Fabric cards
+│   ├── style-tags.component.ts       # Style keyword tags
+│   ├── outfit-grid.component.ts      # Outfit suggestions
 │   └── loading-skeleton.component.ts
 ├── services/
-│   └── openai.service.ts           # OpenAI API integration
+│   └── openai.service.ts             # OpenAI API integration
 ├── models/
-│   └── mood-board.model.ts         # TypeScript interfaces
-├── app.ts                          # Main app component
-├── app.html                        # Main template
-└── app.config.ts                   # App configuration
+│   └── mood-board.model.ts           # TypeScript interfaces
+├── app.ts                            # Main app component
+├── app.html                          # Main template
+├── app.config.ts                     # App configuration
+└── transloco-loader.ts               # i18n translation loader
 ```
 
 ## Build

@@ -86,8 +86,14 @@ Create `.claude/CLAUDE.md` with a living document header and following the WHAT/
   - Go: `go build`, `go test`, `go vet`
   - C/C++: `cmake --build`, `make`, `ctest`
 
-**HOW** - References:
-- Links to detailed docs using progressive disclosure
+**HOW** - Documentation section:
+- Include a `## Documentation` section with header: "Read the relevant doc before making changes:"
+- List only the docs that were created (see Step 7)
+- Use task-oriented descriptions that tell Claude WHEN to read each doc:
+  - `coding-guidelines.md` → "For new features, refactoring, code structure"
+  - `testing.md` → "For writing or modifying tests"
+  - `styling.md` → "For UI components, CSS, visual changes"
+  - `architecture.md` → "For understanding project structure, data flow"
 
 **Best practices (from reference file):**
 - Keep under 60 lines total
@@ -108,12 +114,18 @@ Use the template from `.claude/skills/init-project/templates/settings.json` as a
 - **Ruby**: `bundle`, `rake`, `rspec`
 
 ### 7. Create Documentation Files
-Create `.claude/docs/coding-guidelines.md` using the template from `.claude/skills/init-project/templates/docs/coding-guidelines.md`, replacing [PROJECT NAME] with the actual project name.
 
-Create additional doc files as appropriate for the project:
-- `testing.md` - Test patterns and commands
-- `architecture.md` - Detailed system design
-- `styling.md` - Design system (if frontend project)
+Create documentation files based on project type:
+
+**Always create:**
+- `coding-guidelines.md` - Use template from `.claude/skills/init-project/templates/docs/coding-guidelines.md`, replacing [PROJECT NAME] with actual project name
+
+**Create if applicable:**
+- `testing.md` - If test framework detected (Karma, Jest, pytest, cargo test, go test, etc.)
+- `styling.md` - If frontend project (Angular, React, Vue, or has CSS/SCSS files)
+- `architecture.md` - If project has meaningful structure worth documenting
+
+**IMPORTANT:** The Documentation section in CLAUDE.md must only list docs that were created. Use task-oriented descriptions for each (see Step 5).
 
 ### 8. Verify Structure
 List all created files and confirm the structure is correct:
