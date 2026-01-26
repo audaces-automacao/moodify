@@ -230,4 +230,147 @@ describe('OpenAIService', () => {
       req.flush(mockOpenAIResponse);
     });
   });
+
+  describe('generateOutfitImage', () => {
+    const mockOutfit = {
+      top: 'Silk blouse',
+      bottom: 'High-waisted trousers',
+      shoes: 'Pointed-toe pumps',
+      accessories: ['Gold watch', 'Pearl earrings'],
+      outerwear: 'Tailored coat',
+    };
+
+    const mockStyleKeywords = ['Elegant', 'Sophisticated', 'Timeless'];
+
+    const mockDallEResponse = {
+      created: 1234567890,
+      data: [{ url: 'https://example.com/generated-image.png' }],
+    };
+
+    it('should make POST request to DALL-E endpoint with correct headers', () => {
+      service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe();
+
+      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      expect(req.request.method).toBe('POST');
+      expect(req.request.headers.get('Content-Type')).toBe('application/json');
+      expect(req.request.headers.get('Authorization')).toContain('Bearer');
+      req.flush(mockDallEResponse);
+    });
+
+    it('should send correct request body', () => {
+      service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe();
+
+      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      expect(req.request.body.model).toBe('dall-e-3');
+      expect(req.request.body.n).toBe(1);
+      expect(req.request.body.size).toBe('1024x1024');
+      expect(req.request.body.quality).toBe('standard');
+      expect(req.request.body.response_format).toBe('url');
+      req.flush(mockDallEResponse);
+    });
+
+    it('should build prompt with outfit items', () => {
+      service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe();
+
+      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      const prompt = req.request.body.prompt;
+      expect(prompt).toContain('Silk blouse');
+      expect(prompt).toContain('High-waisted trousers');
+      expect(prompt).toContain('Pointed-toe pumps');
+      expect(prompt).toContain('Tailored coat');
+      expect(prompt).toContain('Gold watch');
+      expect(prompt).toContain('Pearl earrings');
+      req.flush(mockDallEResponse);
+    });
+
+    it('should build prompt with style keywords', () => {
+      service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe();
+
+      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      const prompt = req.request.body.prompt;
+      expect(prompt).toContain('Elegant');
+      expect(prompt).toContain('Sophisticated');
+      expect(prompt).toContain('Timeless');
+      req.flush(mockDallEResponse);
+    });
+
+    it('should return image URL on success', (done) => {
+      service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe({
+        next: (url) => {
+          expect(url).toBe('https://example.com/generated-image.png');
+          done();
+        },
+      });
+
+      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      req.flush(mockDallEResponse);
+    });
+
+    it('should handle outfit without outerwear', () => {
+      const outfitWithoutOuterwear = {
+        top: 'T-shirt',
+        bottom: 'Jeans',
+        shoes: 'Sneakers',
+        accessories: ['Cap'],
+      };
+
+      service.generateOutfitImage(outfitWithoutOuterwear, mockStyleKeywords).subscribe();
+
+      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      const prompt = req.request.body.prompt;
+      expect(prompt).toContain('T-shirt');
+      expect(prompt).toContain('Jeans');
+      expect(prompt).not.toContain('undefined');
+      req.flush(mockDallEResponse);
+    });
+
+    it('should handle 400 error (content policy)', (done) => {
+      service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe({
+        error: () => {
+          expect(translocoServiceMock.translate).toHaveBeenCalledWith('errors.imagePromptRejected');
+          done();
+        },
+      });
+
+      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      req.flush(null, { status: 400, statusText: 'Bad Request' });
+    });
+
+    it('should handle 401 error', (done) => {
+      service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe({
+        error: () => {
+          expect(translocoServiceMock.translate).toHaveBeenCalledWith('errors.invalidApiKey');
+          done();
+        },
+      });
+
+      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      req.flush(null, { status: 401, statusText: 'Unauthorized' });
+    });
+
+    it('should handle 429 error (rate limited)', (done) => {
+      service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe({
+        error: () => {
+          expect(translocoServiceMock.translate).toHaveBeenCalledWith('errors.rateLimited');
+          done();
+        },
+      });
+
+      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      req.flush(null, { status: 429, statusText: 'Too Many Requests' });
+    });
+
+    it('should handle generic error', (done) => {
+      service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe({
+        error: (err) => {
+          // For non-mapped status codes, it uses the error message from HttpErrorResponse
+          expect(err).toBeTruthy();
+          done();
+        },
+      });
+
+      const req = httpMock.expectOne('https://api.openai.com/v1/images/generations');
+      req.flush(null, { status: 503, statusText: 'Service Unavailable' });
+    });
+  });
 });

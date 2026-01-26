@@ -30,7 +30,12 @@
 
       <!-- Results -->
       @if (moodBoard()) {
-        <app-mood-board [data]="moodBoard()!" />
+        <app-mood-board
+          [data]="moodBoard()!"
+          [outfitImage]="outfitImage()"
+          [isImageLoading]="isImageLoading()"
+          [imageError]="imageError()"
+        />
       }
 
       <!-- Empty State (initial) -->

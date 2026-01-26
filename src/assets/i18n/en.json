@@ -47,7 +47,15 @@
     "invalidApiKey": "Invalid API key. Please check your OpenAI API key.",
     "rateLimited": "Rate limit exceeded. Please wait a moment and try again.",
     "serviceUnavailable": "OpenAI service is temporarily unavailable. Please try again.",
-    "generic": "Failed to generate mood board. Please try again."
+    "generic": "Failed to generate mood board. Please try again.",
+    "imagePromptRejected": "Unable to generate image. Please try a different style.",
+    "imageGenericError": "Failed to generate outfit image. Please try again."
+  },
+  "outfitImage": {
+    "title": "Outfit Visualization",
+    "altText": "AI-generated outfit visualization",
+    "generating": "Generating outfit visualization...",
+    "disclaimer": "AI-generated image for inspiration purposes"
   },
   "languageSwitcher": {
     "label": "Language",

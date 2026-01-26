@@ -10,4 +10,6 @@ export const environment = {
   openaiApiKey: 'REPLACE_WITH_YOUR_OPENAI_API_KEY',
   openaiModel: 'gpt-4o',
   openaiApiUrl: 'https://api.openai.com/v1/chat/completions',
+  dalleModel: 'dall-e-3',
+  dalleApiUrl: 'https://api.openai.com/v1/images/generations',
 };

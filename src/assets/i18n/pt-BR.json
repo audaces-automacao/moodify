@@ -47,7 +47,15 @@
     "invalidApiKey": "Chave de API inválida. Verifique sua chave da OpenAI.",
     "rateLimited": "Limite de requisições excedido. Aguarde um momento e tente novamente.",
     "serviceUnavailable": "O serviço da OpenAI está temporariamente indisponível. Tente novamente.",
-    "generic": "Falha ao gerar mood board. Por favor, tente novamente."
+    "generic": "Falha ao gerar mood board. Por favor, tente novamente.",
+    "imagePromptRejected": "Não foi possível gerar a imagem. Tente um estilo diferente.",
+    "imageGenericError": "Falha ao gerar imagem do look. Tente novamente."
+  },
+  "outfitImage": {
+    "title": "Visualização do Look",
+    "altText": "Visualização do look gerada por IA",
+    "generating": "Gerando visualização do look...",
+    "disclaimer": "Imagem gerada por IA para fins de inspiração"
   },
   "languageSwitcher": {
     "label": "Idioma",

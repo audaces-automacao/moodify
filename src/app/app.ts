@@ -33,6 +33,10 @@ export class App implements OnInit {
   error = signal<string | null>(null);
   examplePrompts = signal<ExamplePrompt[]>([]);
 
+  outfitImage = signal<string | null>(null);
+  isImageLoading = signal(false);
+  imageError = signal<string | null>(null);
+
   private exampleKeys = ['parisian', 'coastal', '90s', 'darkAcademia', 'disco'] as const;
 
   ngOnInit() {
@@ -63,16 +67,38 @@ export class App implements OnInit {
     this.isLoading.set(true);
     this.error.set(null);
     this.moodBoard.set(null);
+    this.outfitImage.set(null);
+    this.isImageLoading.set(false);
+    this.imageError.set(null);
 
     this.openai.generateMoodBoard(prompt).subscribe({
       next: (result) => {
         this.moodBoard.set(result);
         this.isLoading.set(false);
+        this.generateOutfitImage(result);
       },
       error: (err) => {
         this.error.set(err.message);
         this.isLoading.set(false);
       },
     });
+  }
+
+  private generateOutfitImage(moodBoard: MoodBoardResponse) {
+    this.isImageLoading.set(true);
+    this.imageError.set(null);
+
+    this.openai
+      .generateOutfitImage(moodBoard.outfitSuggestions, moodBoard.styleKeywords)
+      .subscribe({
+        next: (imageUrl) => {
+          this.outfitImage.set(imageUrl);
+          this.isImageLoading.set(false);
+        },
+        error: (err) => {
+          this.imageError.set(err.message);
+          this.isImageLoading.set(false);
+        },
+      });
   }
 }

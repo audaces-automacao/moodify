@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { MoodBoardResponse } from '../models/mood-board.model';
+import { MoodBoardResponse, OutfitSuggestion } from '../models/mood-board.model';
 
 interface OpenAIMessage {
   role: 'system' | 'user' | 'assistant';
@@ -23,6 +23,20 @@ interface OpenAIResponse {
       content: string;
     };
   }[];
+}
+
+interface DallERequest {
+  model: string;
+  prompt: string;
+  n: number;
+  size: '1024x1024' | '1792x1024' | '1024x1792';
+  quality: 'standard' | 'hd';
+  response_format: 'url' | 'b64_json';
+}
+
+interface DallEResponse {
+  created: number;
+  data: { url: string; revised_prompt?: string }[];
 }
 
 const HTTP_ERROR_MESSAGES: Record<number, string> = {
@@ -124,6 +138,54 @@ Requirements:
     const message = errorKey
       ? this.transloco.translate(errorKey)
       : error.message || this.transloco.translate('errors.generic');
+
+    return throwError(() => new Error(message));
+  }
+
+  generateOutfitImage(outfit: OutfitSuggestion, styleKeywords: string[]): Observable<string> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${environment.openaiApiKey}`,
+    });
+
+    const request: DallERequest = {
+      model: environment.dalleModel,
+      prompt: this.buildImagePrompt(outfit, styleKeywords),
+      n: 1,
+      size: '1024x1024',
+      quality: 'standard',
+      response_format: 'url',
+    };
+
+    return this.http.post<DallEResponse>(environment.dalleApiUrl, request, { headers }).pipe(
+      map((response) => response.data[0].url),
+      catchError((error) => this.handleImageError(error)),
+    );
+  }
+
+  private buildImagePrompt(outfit: OutfitSuggestion, styleKeywords: string[]): string {
+    const outfitDescription = [
+      outfit.top,
+      outfit.bottom,
+      outfit.shoes,
+      outfit.outerwear,
+      ...outfit.accessories,
+    ]
+      .filter(Boolean)
+      .join(', ');
+
+    const styleDescription = styleKeywords.slice(0, 5).join(', ');
+
+    return `Fashion editorial photograph of a complete outfit on a mannequin or flat lay: ${outfitDescription}. Style: ${styleDescription}. High-end fashion photography, luxury magazine aesthetic, professional lighting, clean background.`;
+  }
+
+  private handleImageError(error: { status?: number; message?: string }): Observable<never> {
+    const errorKey =
+      error.status === 400 ? 'errors.imagePromptRejected' : HTTP_ERROR_MESSAGES[error.status ?? 0];
+
+    const message = errorKey
+      ? this.transloco.translate(errorKey)
+      : error.message || this.transloco.translate('errors.imageGenericError');
 
     return throwError(() => new Error(message));
   }

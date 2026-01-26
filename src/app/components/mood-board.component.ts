@@ -3,8 +3,10 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { MoodBoardResponse } from '../models/mood-board.model';
 import { ColorPaletteComponent } from './color-palette.component';
 import { FabricListComponent } from './fabric-list.component';
-import { StyleTagsComponent } from './style-tags.component';
 import { OutfitGridComponent } from './outfit-grid.component';
+import { OutfitImageComponent } from './outfit-image.component';
+import { OutfitImageSkeletonComponent } from './outfit-image-skeleton.component';
+import { StyleTagsComponent } from './style-tags.component';
 
 @Component({
   selector: 'app-mood-board',
@@ -14,6 +16,8 @@ import { OutfitGridComponent } from './outfit-grid.component';
     FabricListComponent,
     StyleTagsComponent,
     OutfitGridComponent,
+    OutfitImageComponent,
+    OutfitImageSkeletonComponent,
   ],
   template: `
     <div class="animate-fade-in">
@@ -40,9 +44,29 @@ import { OutfitGridComponent } from './outfit-grid.component';
 
       <!-- Outfit Suggestions -->
       <app-outfit-grid [outfit]="data().outfitSuggestions" />
+
+      <!-- Outfit Image -->
+      @if (isImageLoading()) {
+        <app-outfit-image-skeleton />
+      }
+
+      @if (imageError()) {
+        <div
+          class="mt-12 glass-card border-luxury-rose bg-luxury-rose/10 p-4 text-center animate-fade-in"
+        >
+          <p class="text-sm text-luxury-rose">{{ imageError() }}</p>
+        </div>
+      }
+
+      @if (outfitImage()) {
+        <app-outfit-image [imageUrl]="outfitImage()!" />
+      }
     </div>
   `,
 })
 export class MoodBoardComponent {
   data = input.required<MoodBoardResponse>();
+  outfitImage = input<string | null>(null);
+  isImageLoading = input(false);
+  imageError = input<string | null>(null);
 }

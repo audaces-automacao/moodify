@@ -40,6 +40,12 @@ const en = {
     accessories: 'Accessories',
   },
   errors: { generic: 'An error occurred' },
+  outfitImage: {
+    title: 'Outfit Visualization',
+    altText: 'AI-generated outfit visualization',
+    generating: 'Generating outfit visualization...',
+    disclaimer: 'AI-generated image for inspiration purposes',
+  },
 };
 
 describe('App', () => {
@@ -61,8 +67,12 @@ describe('App', () => {
   };
 
   beforeEach(async () => {
-    openAIServiceMock = jasmine.createSpyObj('OpenAIService', ['generateMoodBoard']);
+    openAIServiceMock = jasmine.createSpyObj('OpenAIService', [
+      'generateMoodBoard',
+      'generateOutfitImage',
+    ]);
     openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
+    openAIServiceMock.generateOutfitImage.and.returnValue(of('https://example.com/image.png'));
 
     // Mock localStorage
     spyOn(localStorage, 'getItem').and.returnValue('en');
@@ -104,6 +114,12 @@ describe('App', () => {
       expect(component.error()).toBeNull();
       expect(component.examplePrompts()).toBeDefined();
     });
+
+    it('should have correct default image state values', () => {
+      expect(component.outfitImage()).toBeNull();
+      expect(component.isImageLoading()).toBe(false);
+      expect(component.imageError()).toBeNull();
+    });
   });
 
   describe('generateMoodBoard', () => {
@@ -141,6 +157,61 @@ describe('App', () => {
       expect(component.error()).toBe('API Error');
       expect(component.isLoading()).toBe(false);
       expect(component.moodBoard()).toBeNull();
+    });
+
+    it('should reset image error state when generating new mood board', () => {
+      component.imageError.set('Previous error');
+
+      openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
+      component.generateMoodBoard('test');
+
+      // Previous image error should be cleared
+      expect(component.imageError()).toBeNull();
+    });
+
+    it('should trigger image generation on mood board success', () => {
+      openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
+      component.generateMoodBoard('test');
+
+      expect(openAIServiceMock.generateOutfitImage).toHaveBeenCalledWith(
+        mockMoodBoard.outfitSuggestions,
+        mockMoodBoard.styleKeywords,
+      );
+    });
+
+    it('should update outfitImage on successful image generation', () => {
+      openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
+      openAIServiceMock.generateOutfitImage.and.returnValue(of('https://example.com/image.png'));
+
+      component.generateMoodBoard('test');
+
+      expect(component.outfitImage()).toBe('https://example.com/image.png');
+      expect(component.isImageLoading()).toBe(false);
+    });
+
+    it('should update imageError on image generation failure', () => {
+      openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
+      openAIServiceMock.generateOutfitImage.and.returnValue(
+        throwError(() => new Error('Image generation failed')),
+      );
+
+      component.generateMoodBoard('test');
+
+      expect(component.imageError()).toBe('Image generation failed');
+      expect(component.isImageLoading()).toBe(false);
+      expect(component.outfitImage()).toBeNull();
+    });
+
+    it('should not affect mood board display when image generation fails', () => {
+      openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
+      openAIServiceMock.generateOutfitImage.and.returnValue(
+        throwError(() => new Error('Image error')),
+      );
+
+      component.generateMoodBoard('test');
+
+      expect(component.moodBoard()).toEqual(mockMoodBoard);
+      expect(component.error()).toBeNull();
     });
   });
 
