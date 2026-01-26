@@ -1,70 +1,47 @@
-# Testing Guide
+# Testing Guidelines
 
-This document provides detailed testing patterns for the Moodify codebase.
+Testing patterns and conventions for Moodify.
+
+## Test Framework
+
+- **Runner**: Karma
+- **Framework**: Jasmine
+- **Coverage**: karma-coverage
 
 ## Commands
 
 ```bash
-npm test           # Run tests in watch mode
-npm run test:ci    # CI mode: single run with coverage
+npm test             # Interactive test runner with Chrome
+npm run test:ci      # Headless tests with coverage
 ```
 
-**Run tests after any code changes to verify nothing is broken.**
+## Test File Conventions
 
-Coverage reports are generated in `coverage/` directory. Open `coverage/index.html` for the HTML report.
+- Test files: `*.spec.ts` alongside source files
+- Use Angular TestBed for component tests
+- Mock services with Jasmine spies
 
-## Test Patterns
-
-Tests use Jasmine with Angular TestBed. All components are standalone.
-
-### Testing `input.required()`
-
-Use `fixture.componentRef.setInput()` to set required inputs before triggering change detection.
-
-**Reference**: See `src/app/components/color-palette.component.spec.ts:33` for a working example.
+## Test Structure
 
 ```typescript
-const fixture = TestBed.createComponent(MyComponent);
-fixture.componentRef.setInput('myInput', value);
-fixture.detectChanges();
-```
+describe('ComponentName', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ComponentName],
+    }).compileComponents();
+  });
 
-### Testing `output()`
-
-Subscribe to outputs with a Jasmine spy, then trigger the action and verify.
-
-**Reference**: See `src/app/components/mood-input.component.spec.ts:101` for a working example.
-
-```typescript
-const spy = jasmine.createSpy('outputSpy');
-component.myOutput.subscribe(spy);
-// trigger action
-expect(spy).toHaveBeenCalledWith(expectedValue);
-```
-
-### Mocking TranslocoService
-
-Use `TranslocoTestingModule` to provide mock translations in tests.
-
-**Reference**: See `src/app/components/mood-input.component.spec.ts:28` for a working example.
-
-```typescript
-import { TranslocoTestingModule } from '@jsverse/transloco';
-
-TestBed.configureTestingModule({
-  imports: [
-    TranslocoTestingModule.forRoot({
-      langs: { en: { key: 'value' } },
-      translocoConfig: { availableLangs: ['en'], defaultLang: 'en' },
-    }),
-  ],
+  it('should create', () => {
+    const fixture = TestBed.createComponent(ComponentName);
+    expect(fixture.componentInstance).toBeTruthy();
+  });
 });
 ```
 
-## Test File Locations
+## Best Practices
 
-| Pattern | Example Files |
-|---------|---------------|
-| `setInput()` for required inputs | `color-palette.component.spec.ts`, `fabric-list.component.spec.ts`, `outfit-grid.component.spec.ts` |
-| Output testing with spies | `mood-input.component.spec.ts`, `openai.service.spec.ts` |
-| Transloco mocking | All component spec files that render translated text |
+- Test behavior, not implementation details
+- Use meaningful test descriptions
+- Keep tests focused and independent
+- Mock external dependencies
+- Avoid testing Angular internals

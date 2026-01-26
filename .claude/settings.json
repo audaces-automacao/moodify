@@ -7,7 +7,9 @@
       "Bash(npm ls:*)",
       "Bash(npm test:*)",
       "Bash(npx ng test:*)",
-      "Bash(npm run test:ci:*)"
+      "Bash(npm run test:ci:*)",
+      "Bash(npm start:*)",
+      "Bash(npx ng serve:*)"
     ],
     "deny": [
       "Bash(git commit:*)",
@@ -15,18 +17,6 @@
       "Bash(git rebase:*)",
       "Bash(git reset --hard:*)",
       "Bash(git push --force:*)"
-    ]
-  },
-  "hooks": {
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "taskkill /F /FI \"WINDOWTITLE eq*npm*\" 2>nul & taskkill /F /IM node.exe 2>nul || exit 0"
-          }
-        ]
-      }
     ]
   }
 }

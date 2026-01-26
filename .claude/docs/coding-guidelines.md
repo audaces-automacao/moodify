@@ -27,7 +27,7 @@ Keep functions small with a single responsibility. Minimize parameters. Group re
 ## Dependencies and Architecture
 
 ### Minimize Dependencies
-Prefer Angular's built-in features and existing dependencies. Avoid adding new packages unnecessarily.
+Prefer existing dependencies and built-in features. Avoid adding new packages unnecessarily.
 
 ### Pragmatic SOLID
 Apply SOLID principles when they improve clarity and maintainability. Don't add indirection just to "be SOLID."

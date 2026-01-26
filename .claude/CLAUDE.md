@@ -1,50 +1,42 @@
-# CLAUDE.md
+# Moodify
 
-This file provides guidance to Claude Code when working with this repository.
+Angular 21 application with Tailwind CSS v4 and Transloco for internationalization.
+
+## Tech Stack
+
+- **Framework**: Angular 21.1 (standalone components)
+- **Styling**: Tailwind CSS v4 with PostCSS
+- **i18n**: @jsverse/transloco
+- **Testing**: Karma + Jasmine
+- **Linting**: ESLint + Prettier
 
 ## Commands
 
 ```bash
-npm start          # Start dev server at http://localhost:4200
-npm run build      # Production build (outputs to dist/)
-npm run lint       # Run ESLint + Prettier
-npm test           # Run tests in watch mode
-npm run test:ci    # CI mode: single run with coverage
+npm run build        # Production build
+npm run test:ci      # Run tests (headless, with coverage)
+npm run lint         # Lint and format check
 ```
 
-## Testing
+## Development
 
-**Run tests after any code changes to verify nothing is broken.**
+```bash
+npm start            # Dev server at localhost:4200
+npm test             # Interactive test runner
+```
 
-For test patterns and examples, see [testing.md](.claude/docs/testing.md).
+## Guidelines
 
-## Architecture
+Before making changes, review the relevant documentation:
 
-**Moodify** is an AI-powered fashion mood board generator built with Angular 21 and OpenAI.
+- [coding-guidelines.md](.claude/docs/coding-guidelines.md) - Architecture and design principles
+- [testing.md](.claude/docs/testing.md) - Test patterns and conventions
+- [styling.md](.claude/docs/styling.md) - Tailwind CSS usage and design tokens
+- [architecture.md](.claude/docs/architecture.md) - Project structure and data flow
 
-### Tech Stack
-- Angular 21 with standalone components and signals
-- Tailwind CSS v4 + SCSS
-- OpenAI GPT-4o for mood board generation
-- Karma + Jasmine for testing
+## Key Conventions
 
-### Data Flow
-1. `App` component holds main state (`moodBoard`, `isLoading`, `error` signals)
-2. `MoodInputComponent` emits user prompts via `generate` output
-3. `OpenAIService` calls GPT-4o API and returns typed `MoodBoardResponse`
-4. `MoodBoardComponent` displays results via child components
-
-For component patterns and detailed architecture, see [architecture.md](.claude/docs/architecture.md).
-
-### API Configuration
-OpenAI settings are in `src/environments/environment.ts`.
-
-## Styling
-
-Editorial/fashion magazine aesthetic (Vogue-inspired) with custom color tokens and typography.
-
-For design system details, see [styling.md](.claude/docs/styling.md).
-
-## Coding Guidelines
-
-For architectural principles and best practices, see [coding-guidelines.md](.claude/docs/coding-guidelines.md).
+- Use standalone components (no NgModules)
+- Follow Angular signals for state management
+- Use Transloco `translate` pipe for all user-facing text
+- Prefer Tailwind utility classes over custom CSS

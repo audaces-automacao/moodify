@@ -1,43 +1,45 @@
-# Styling Guide
+# Styling Guidelines
 
-This document describes the design system and styling conventions for Moodify.
+Design system and Tailwind CSS conventions for Moodify.
 
-## Design Aesthetic
+## Tailwind CSS v4
 
-Moodify uses an editorial/fashion magazine aesthetic, inspired by publications like Vogue.
+This project uses Tailwind CSS v4 with PostCSS integration.
 
-- Clean, minimal layouts with generous whitespace
-- High contrast typography
-- Subtle animations and transitions
-- Luxurious feel with gold accents
+## Conventions
 
-## Color Tokens
+### Utility-First Approach
+- Prefer Tailwind utility classes over custom CSS
+- Use component extraction for repeated patterns
+- Keep custom CSS minimal
 
-Custom color tokens defined in the Tailwind configuration:
+### Responsive Design
+- Mobile-first approach
+- Use Tailwind breakpoints: `sm:`, `md:`, `lg:`, `xl:`, `2xl:`
 
-| Token | Usage |
-|-------|-------|
-| `editorial-black` | Primary text, headers |
-| `editorial-white` | Backgrounds, contrast text |
-| `editorial-charcoal` | Secondary text, borders |
-| `editorial-gold` | Accents, highlights, CTAs |
-| `editorial-cream` | Subtle backgrounds, cards |
+### Spacing and Layout
+- Use consistent spacing scale
+- Prefer flexbox and grid utilities
+- Use `gap-*` for spacing between children
 
-## Typography
+### Colors
+- Use Tailwind's color palette
+- Define custom colors in CSS variables if needed
+- Maintain consistent color usage for states
 
-| Font | Usage |
-|------|-------|
-| **Playfair Display** | Serif headings, editorial titles |
-| **Inter** | Sans-serif body text, UI elements |
+## Component Patterns
 
-## Styling Approach
+### Buttons
+Use consistent button styles across the application.
 
-- **Tailwind CSS v4**: Utility classes for layout, spacing, colors
-- **SCSS**: Component-specific styles, complex animations
-- **CSS Variables**: Theme tokens for consistency
+### Forms
+Use Angular Forms with Tailwind styling for inputs.
 
-## File Locations
+### Cards and Containers
+Use consistent padding and border radius.
 
-- Global styles: `src/styles.scss`
-- Tailwind config: `tailwind.config.js`
-- Component styles: Inline or `*.component.scss` files
+## Accessibility
+
+- Ensure sufficient color contrast
+- Use semantic HTML elements
+- Include focus states for interactive elements
