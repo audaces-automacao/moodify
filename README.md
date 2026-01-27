@@ -9,7 +9,10 @@ AI-Powered Fashion Mood Board Generator - A demo application showcasing AI capab
 - **Fabric Recommendations**: 3-4 fabric suggestions with textures and seasonal notes
 - **Style Keywords**: Aesthetic descriptors and mood tags
 - **Outfit Suggestions**: Complete outfit breakdown (top, bottom, shoes, accessories, outerwear)
+- **AI Outfit Visualization**: DALL-E generated outfit images based on suggestions
+- **JWT Authentication**: Secure login with protected API routes
 - **Multi-language Support**: English and Portuguese (Brazilian) with auto-detection
+- **Dark/Light Theme**: Toggle between dark and light modes
 - **Bold Editorial Design**: Vogue/Harper's Bazaar inspired aesthetic
 
 ## Tech Stack
@@ -26,7 +29,7 @@ AI-Powered Fashion Mood Board Generator - A demo application showcasing AI capab
 - npm 9+
 - OpenAI API key ([Get one here](https://platform.openai.com/api-keys))
 
-## Setup
+## Getting Started
 
 ### 1. Install Dependencies
 
@@ -34,25 +37,35 @@ AI-Powered Fashion Mood Board Generator - A demo application showcasing AI capab
 npm install
 ```
 
-### 2. Configure OpenAI API Key
+### 2. Start Development Servers
 
-Copy the proxy configuration template and add your API key:
+Set the required environment variables and start both servers:
 
+**Linux/macOS:**
 ```bash
-cp proxy.conf.example.json proxy.conf.json
+OPENAI_API_KEY=sk-your-key JWT_SECRET=dev-secret npm run dev
 ```
 
-Edit `proxy.conf.json` and replace `YOUR_OPENAI_API_KEY_HERE` with your actual API key.
-
-> **Note**: `proxy.conf.json` is gitignored to keep your API key secure.
-
-### 3. Start Development Server
-
-```bash
-npm start
+**Windows (PowerShell):**
+```powershell
+$env:OPENAI_API_KEY="sk-your-key"; $env:JWT_SECRET="dev-secret"; npm run dev
 ```
 
-Open http://localhost:4200 in your browser.
+**Windows (CMD):**
+```cmd
+set OPENAI_API_KEY=sk-your-key && set JWT_SECRET=dev-secret && npm run dev
+```
+
+This starts:
+- Angular dev server at http://localhost:4200
+- Express backend at http://localhost:3000
+
+The Angular dev server proxies all `/api/*` requests to the Express backend, which handles authentication and OpenAI API calls.
+
+### Demo Credentials
+
+- **Email**: `bob@audaces.com`
+- **Password**: `12345`
 
 ## Docker Deployment
 
@@ -67,7 +80,7 @@ docker build -t moodify .
 ### Run the Container
 
 ```bash
-docker run -p 3000:3000 -e OPENAI_API_KEY=sk-your-key moodify
+docker run -p 3000:3000 -e OPENAI_API_KEY=sk-your-key -e JWT_SECRET=your-secret moodify
 ```
 
 Open http://localhost:3000 in your browser.
@@ -77,6 +90,7 @@ Open http://localhost:3000 in your browser.
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `OPENAI_API_KEY` | Yes | - | Your OpenAI API key |
+| `JWT_SECRET` | Yes | - | Secret key for JWT token signing |
 | `PORT` | No | 3000 | Port the server listens on |
 
 ### Docker Compose (Optional)
@@ -92,20 +106,22 @@ services:
       - "3000:3000"
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
 ```
 
 Then run:
 
 ```bash
-OPENAI_API_KEY=sk-your-key docker-compose up
+OPENAI_API_KEY=sk-your-key JWT_SECRET=your-secret docker-compose up
 ```
 
 ## Usage
 
-1. Enter a style description in the text area (e.g., "Parisian chic for a gallery opening")
-2. Or click one of the example prompt chips to auto-fill
-3. Click "Generate Mood Board"
-4. View your AI-generated fashion mood board
+1. Log in with demo credentials (`bob@audaces.com` / `12345`)
+2. Enter a style description in the text area (e.g., "Parisian chic for a gallery opening")
+3. Or click one of the example prompt chips to auto-fill
+4. Click "Generate Mood Board"
+5. View your AI-generated fashion mood board with outfit visualization
 
 ## Example Prompts
 
@@ -119,23 +135,32 @@ OPENAI_API_KEY=sk-your-key docker-compose up
 
 ```
 src/app/
+├── auth/
+│   ├── auth.service.ts               # Token management, login/logout
+│   ├── auth.interceptor.ts           # JWT header injection, 401 handling
+│   ├── auth.guard.ts                 # Route protection
+│   └── login.component.ts            # Login page
 ├── components/
-│   ├── header.component.ts           # App branding
+│   ├── header.component.ts           # App branding + logout button
 │   ├── language-switcher.component.ts # i18n language selector
+│   ├── theme-switcher.component.ts   # Dark/light mode toggle
 │   ├── mood-input.component.ts       # Input + example chips
 │   ├── mood-board.component.ts       # Results container
 │   ├── color-palette.component.ts    # Color swatches
 │   ├── fabric-list.component.ts      # Fabric cards
 │   ├── style-tags.component.ts       # Style keyword tags
 │   ├── outfit-grid.component.ts      # Outfit suggestions
+│   ├── outfit-image.component.ts     # AI-generated outfit image
 │   └── loading-skeleton.component.ts
 ├── services/
 │   └── openai.service.ts             # OpenAI API integration
 ├── models/
 │   └── mood-board.model.ts           # TypeScript interfaces
-├── app.ts                            # Main app component
-├── app.html                          # Main template
+├── app.ts                            # Root component (router-outlet)
+├── app.routes.ts                     # Route definitions
 ├── app.config.ts                     # App configuration
+├── home.component.ts                 # Main mood board page
+├── home.component.html               # Main template
 └── transloco-loader.ts               # i18n translation loader
 ```
 
@@ -171,15 +196,23 @@ Each component and service has a corresponding `.spec.ts` file:
 ```
 src/app/
 ├── app.spec.ts
+├── home.component.spec.ts
+├── auth/
+│   ├── auth.service.spec.ts
+│   ├── auth.interceptor.spec.ts
+│   ├── auth.guard.spec.ts
+│   └── login.component.spec.ts
 ├── components/
 │   ├── header.component.spec.ts
 │   ├── language-switcher.component.spec.ts
+│   ├── theme-switcher.component.spec.ts
 │   ├── mood-input.component.spec.ts
 │   ├── mood-board.component.spec.ts
 │   ├── color-palette.component.spec.ts
 │   ├── fabric-list.component.spec.ts
 │   ├── style-tags.component.spec.ts
 │   ├── outfit-grid.component.spec.ts
+│   ├── outfit-image.component.spec.ts
 │   └── loading-skeleton.component.spec.ts
 ├── services/
 │   └── openai.service.spec.ts

@@ -48,5 +48,3 @@ Thumbs.db
 src/environments/environment.development.ts
 src/environments/environment.prod.ts
 
-# Proxy config with API keys (use proxy.conf.example.json as template)
-proxy.conf.json

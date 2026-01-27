@@ -4,6 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:server": "node server/index.js",
+    "dev": "concurrently -k -n server,angular -c blue,green \"npm run start:server\" \"ng serve\"",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --runner=karma",
@@ -44,6 +46,7 @@
     "@types/jasmine": "^6.0.0",
     "angular-eslint": "21.1.0",
     "autoprefixer": "^10.4.23",
+    "concurrently": "^9.2.1",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { AuthService } from '../auth/auth.service';
 import { LanguageSwitcherComponent } from './language-switcher.component';
 import { ThemeSwitcherComponent } from './theme-switcher.component';
 
@@ -13,6 +14,11 @@ import { ThemeSwitcherComponent } from './theme-switcher.component';
         <div class="flex justify-end gap-3 mb-4 md:mb-0 md:absolute md:right-6 md:top-8 z-10">
           <app-theme-switcher />
           <app-language-switcher />
+          @if (authService.isAuthenticated()) {
+            <button (click)="logout()" class="glass-btn-secondary px-3 py-1.5 text-xs rounded">
+              {{ 'header.logout' | transloco }}
+            </button>
+          }
         </div>
 
         <h1
@@ -29,4 +35,10 @@ import { ThemeSwitcherComponent } from './theme-switcher.component';
     </header>
   `,
 })
-export class HeaderComponent {}
+export class HeaderComponent {
+  authService = inject(AuthService);
+
+  logout(): void {
+    this.authService.logout();
+  }
+}

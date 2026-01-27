@@ -1,7 +1,17 @@
 {
   "header": {
     "title": "MOODIFY",
-    "subtitle": "Mood Board de Moda com IA"
+    "subtitle": "Mood Board de Moda com IA",
+    "logout": "Sair"
+  },
+  "login": {
+    "email": "Email",
+    "emailPlaceholder": "Digite seu email",
+    "password": "Senha",
+    "passwordPlaceholder": "Digite sua senha",
+    "submit": "Entrar",
+    "loggingIn": "Entrando...",
+    "invalidCredentials": "Email ou senha inválidos"
   },
   "moodInput": {
     "label": "Descreva Seu Estilo",

@@ -1,7 +1,17 @@
 {
   "header": {
     "title": "MOODIFY",
-    "subtitle": "AI Fashion Mood Board"
+    "subtitle": "AI Fashion Mood Board",
+    "logout": "Logout"
+  },
+  "login": {
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "submit": "Sign In",
+    "loggingIn": "Signing In...",
+    "invalidCredentials": "Invalid email or password"
   },
   "moodInput": {
     "label": "Describe Your Style",

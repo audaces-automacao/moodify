@@ -156,7 +156,13 @@ Requirements:
     };
 
     return this.http.post<DallEResponse>(environment.dalleApiUrl, request, { headers }).pipe(
-      map((response) => response.data[0].url),
+      map((response) => {
+        const url = response.data?.[0]?.url;
+        if (!url) {
+          throw new Error(this.transloco.translate('errors.imageGenericError'));
+        }
+        return url;
+      }),
       catchError((error) => this.handleImageError(error)),
     );
   }
