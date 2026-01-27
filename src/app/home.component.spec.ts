@@ -193,11 +193,15 @@ describe('HomeComponent', () => {
       );
     });
 
-    it('should update outfitImage on successful image generation', () => {
+    it('should update outfitImage on successful image generation', async () => {
       openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
       openAIServiceMock.generateOutfitImage.and.returnValue(of('https://example.com/image.png'));
+      // Mock preloadImage to resolve immediately
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      spyOn(component as any, 'preloadImage').and.returnValue(Promise.resolve());
 
       component.generateMoodBoard('test');
+      await Promise.resolve(); // Flush microtask queue for the preloadImage promise
 
       expect(component.outfitImage()).toBe('https://example.com/image.png');
       expect(component.isImageLoading()).toBe(false);

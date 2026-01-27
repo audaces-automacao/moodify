@@ -87,13 +87,31 @@ export class HomeComponent implements OnInit {
       .generateOutfitImage(moodBoard.outfitSuggestions, moodBoard.styleKeywords)
       .subscribe({
         next: (imageUrl) => {
-          this.outfitImage.set(imageUrl);
-          this.isImageLoading.set(false);
+          // Preload the image before displaying to avoid visual gap
+          this.preloadImage(imageUrl).then(
+            () => {
+              this.outfitImage.set(imageUrl);
+              this.isImageLoading.set(false);
+            },
+            () => {
+              this.imageError.set(this.transloco.translate('errors.imageGenericError'));
+              this.isImageLoading.set(false);
+            }
+          );
         },
         error: (err) => {
           this.imageError.set(err.message);
           this.isImageLoading.set(false);
         },
       });
+  }
+
+  private preloadImage(url: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve();
+      img.onerror = () => reject();
+      img.src = url;
+    });
   }
 }
