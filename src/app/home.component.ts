@@ -38,14 +38,13 @@ export class HomeComponent implements OnInit {
   private exampleKeys = ['parisian', 'coastal', '90s', 'darkAcademia', 'disco'] as const;
 
   ngOnInit() {
-    // Initialize example prompts immediately with current translations
-    this.updateExamplePrompts();
-
-    // Update prompts and document lang when language changes
-    this.transloco.langChanges$
+    // Subscribe to translation changes - emits when translations are fully loaded
+    // Handles both initial load and language switches
+    this.transloco
+      .selectTranslation()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((lang) => {
-        this.document.documentElement.lang = lang;
+      .subscribe(() => {
+        this.document.documentElement.lang = this.transloco.getActiveLang();
         this.updateExamplePrompts();
       });
   }
