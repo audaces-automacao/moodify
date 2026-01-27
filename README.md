@@ -37,23 +37,28 @@ AI-Powered Fashion Mood Board Generator - A demo application showcasing AI capab
 npm install
 ```
 
-### 2. Start Development Servers
+### 2. Configure Environment Variables
 
-Set the required environment variables and start both servers:
+Copy the sample environment file and add your real values:
 
-**Linux/macOS:**
 ```bash
-OPENAI_API_KEY=sk-your-key JWT_SECRET=dev-secret npm run dev
+cp .env.sample .env
 ```
 
-**Windows (PowerShell):**
-```powershell
-$env:OPENAI_API_KEY="sk-your-key"; $env:JWT_SECRET="dev-secret"; npm run dev
+Then edit `.env` with your actual API key:
+
+```
+OPENAI_API_KEY=sk-your-actual-key
+JWT_SECRET=dev-secret
+PORT=3000
 ```
 
-**Windows (CMD):**
-```cmd
-set OPENAI_API_KEY=sk-your-key && set JWT_SECRET=dev-secret && npm run dev
+> **Note:** The `.env` file is gitignored and will never be committed.
+
+### 3. Start Development Servers
+
+```bash
+npm run dev
 ```
 
 This starts:

@@ -1,10 +1,15 @@
 import express from 'express';
 import compression from 'compression';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Load .env from project root
+dotenv.config({ path: join(__dirname, '../.env') });
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
