@@ -7,8 +7,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
 
-  // Skip auth header for login endpoint
-  if (req.url.includes('/api/auth/login')) {
+  // Skip auth header for login endpoint (use exact matching for security)
+  if (req.url.endsWith('/api/auth/login')) {
     return next(req);
   }
 
@@ -21,7 +21,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(clonedReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 && !req.url.includes('/api/auth/')) {
+      // Use regex for exact auth endpoint matching
+      const isAuthEndpoint = /\/api\/auth\/(login|verify)$/.test(req.url);
+      if (error.status === 401 && !isAuthEndpoint) {
         authService.logout();
       }
       return throwError(() => error);

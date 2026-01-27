@@ -8,7 +8,7 @@ import { interval } from 'rxjs';
   template: `
     <div class="animate-fade-in">
       <!-- Rotating Message -->
-      <div class="text-center mb-10">
+      <div class="text-center mb-10" data-testid="loading-message">
         <p
           class="font-serif text-2xl md:text-3xl text-luxury-champagne italic animate-message-fade"
           [class.animate-message-fade]="shouldAnimate()"
@@ -34,7 +34,7 @@ import { interval } from 'rxjs';
       <!-- Color Palette Skeleton -->
       <div class="mb-12">
         <div class="skeleton-shimmer h-4 w-32 rounded mb-6"></div>
-        <div class="flex flex-wrap gap-4">
+        <div class="flex flex-wrap gap-4" data-testid="color-palette-skeleton">
           @for (i of [1, 2, 3, 4, 5, 6]; track i) {
             <div class="flex flex-col items-center gap-2">
               <div class="skeleton-shimmer w-16 h-16 md:w-20 md:h-20 rounded-lg"></div>
@@ -47,7 +47,7 @@ import { interval } from 'rxjs';
       <!-- Style Tags Skeleton -->
       <div class="mb-12">
         <div class="skeleton-shimmer h-4 w-32 rounded mb-6"></div>
-        <div class="flex flex-wrap gap-3">
+        <div class="flex flex-wrap gap-3" data-testid="style-tags-skeleton">
           @for (i of [1, 2, 3, 4, 5, 6, 7]; track i) {
             <div class="skeleton-shimmer h-9 rounded-full" [style.width.px]="60 + i * 15"></div>
           }
@@ -57,7 +57,7 @@ import { interval } from 'rxjs';
       <!-- Fabrics Skeleton -->
       <div class="mb-12">
         <div class="skeleton-shimmer h-4 w-32 rounded mb-6"></div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" data-testid="fabric-cards-skeleton">
           @for (i of [1, 2, 3, 4]; track i) {
             <div class="glass-card p-6 rounded-lg">
               <div class="skeleton-shimmer h-5 w-24 rounded mb-3"></div>
@@ -73,7 +73,7 @@ import { interval } from 'rxjs';
       <!-- Outfit Skeleton -->
       <div>
         <div class="skeleton-shimmer h-4 w-32 rounded mb-6"></div>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" data-testid="outfit-cards-skeleton">
           @for (i of [1, 2, 3, 4]; track i) {
             <div class="glass-card p-4 rounded-lg">
               <div class="skeleton-shimmer h-3 w-12 rounded mb-3"></div>
@@ -92,6 +92,11 @@ export class LoadingSkeletonComponent implements OnInit {
   private transloco = inject(TranslocoService);
   private destroyRef = inject(DestroyRef);
 
+  // Animation timing constants (in milliseconds)
+  private static readonly MESSAGE_ROTATION_INTERVAL = 3500;
+  private static readonly FADE_OUT_DELAY = 300;
+  private static readonly ANIMATION_DURATION = 600;
+
   stage = input<'moodBoard' | 'image'>('moodBoard');
 
   currentMessage = signal('');
@@ -107,8 +112,8 @@ export class LoadingSkeletonComponent implements OnInit {
   ngOnInit() {
     this.setInitialMessage();
 
-    // Rotate messages every 3.5 seconds
-    interval(3500)
+    // Rotate messages periodically
+    interval(LoadingSkeletonComponent.MESSAGE_ROTATION_INTERVAL)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.rotateMessage());
 
@@ -140,11 +145,11 @@ export class LoadingSkeletonComponent implements OnInit {
     setTimeout(() => {
       this.currentIndex = (this.currentIndex + 1) % messages.length;
       this.currentMessage.set(messages[this.currentIndex]);
-    }, 300);
+    }, LoadingSkeletonComponent.FADE_OUT_DELAY);
 
     // Reset animation flag
     setTimeout(() => {
       this.shouldAnimate.set(false);
-    }, 600);
+    }, LoadingSkeletonComponent.ANIMATION_DURATION);
   }
 }

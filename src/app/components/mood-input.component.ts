@@ -66,8 +66,9 @@ export class MoodInputComponent {
   inputValue = signal('');
 
   onInput(event: Event) {
-    const target = event.target as HTMLTextAreaElement;
-    this.inputValue.set(target.value);
+    if (event.target instanceof HTMLTextAreaElement) {
+      this.inputValue.set(event.target.value);
+    }
   }
 
   selectExample(text: string) {
