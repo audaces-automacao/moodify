@@ -96,7 +96,7 @@ export class HomeComponent implements OnInit {
             () => {
               this.imageError.set(this.transloco.translate('errors.imageGenericError'));
               this.isImageLoading.set(false);
-            }
+            },
           );
         },
         error: (err) => {
