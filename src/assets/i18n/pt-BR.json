@@ -39,7 +39,8 @@
     "errorLabel": "Erro",
     "emptyState": "Seu mood board aparecerá aqui",
     "emptyHint": "Digite uma descrição de estilo acima para gerar",
-    "footer": "Desenvolvido com Angular 21 + Tailwind CSS + OpenAI"
+    "footer": "100% escrito pelo Claude Code",
+    "footerStack": "Angular 21 + Tailwind CSS + OpenAI"
   },
   "errors": {
     "noResponse": "Sem resposta da OpenAI",

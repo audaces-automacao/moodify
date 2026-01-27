@@ -27,7 +27,7 @@ describe('TranslocoHttpLoader', () => {
   it('should fetch English translations', () => {
     const mockTranslations = {
       header: { title: 'MOODIFY' },
-      app: { footer: 'Built with Angular' },
+      app: { footer: '100% written by Claude Code', footerStack: 'Angular 21 + Tailwind CSS + OpenAI' },
     };
 
     loader.getTranslation('en').subscribe((result) => {
@@ -42,7 +42,7 @@ describe('TranslocoHttpLoader', () => {
   it('should fetch Portuguese translations', () => {
     const mockTranslations = {
       header: { title: 'MOODIFY' },
-      app: { footer: 'Feito com Angular' },
+      app: { footer: '100% escrito pelo Claude Code', footerStack: 'Angular 21 + Tailwind CSS + OpenAI' },
     };
 
     loader.getTranslation('pt-BR').subscribe((result) => {
