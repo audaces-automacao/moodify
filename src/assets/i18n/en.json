@@ -76,5 +76,29 @@
   "themeSwitcher": {
     "switchToLight": "Switch to light mode",
     "switchToDark": "Switch to dark mode"
+  },
+  "loading": {
+    "moodBoard": [
+      "Diving into fashion archives...",
+      "Channeling your inner style icon...",
+      "Curating the perfect aesthetic...",
+      "Mixing textures and silhouettes...",
+      "Consulting the color theory gods...",
+      "Weaving together your style story...",
+      "Scouting runway inspiration...",
+      "Translating vibes into visuals...",
+      "Building your fashion vocabulary...",
+      "Finding the soul of your style..."
+    ],
+    "image": [
+      "Sketching your signature look...",
+      "Draping fabrics in the studio...",
+      "Bringing your vision to life...",
+      "Adding the finishing touches...",
+      "Capturing the perfect silhouette...",
+      "Styling the final ensemble...",
+      "Rendering your mood in pixels...",
+      "Creating fashion magic..."
+    ]
   }
 }

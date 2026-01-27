@@ -1,9 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, computed, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslocoService } from '@jsverse/transloco';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-loading-skeleton',
   template: `
     <div class="animate-fade-in">
+      <!-- Rotating Message -->
+      <div class="text-center mb-10">
+        <p
+          class="font-serif text-2xl md:text-3xl text-luxury-champagne italic animate-message-fade"
+          [class.animate-message-fade]="shouldAnimate()"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {{ currentMessage() }}
+        </p>
+      </div>
+
       <!-- Aesthetic Description Skeleton -->
       <div class="mb-12">
         <div class="skeleton-shimmer h-4 w-32 rounded mb-4"></div>
@@ -73,4 +88,63 @@ import { Component } from '@angular/core';
     </div>
   `,
 })
-export class LoadingSkeletonComponent {}
+export class LoadingSkeletonComponent implements OnInit {
+  private transloco = inject(TranslocoService);
+  private destroyRef = inject(DestroyRef);
+
+  stage = input<'moodBoard' | 'image'>('moodBoard');
+
+  currentMessage = signal('');
+  shouldAnimate = signal(false);
+
+  private currentIndex = 0;
+
+  private messages = computed(() => {
+    const key = this.stage() === 'moodBoard' ? 'loading.moodBoard' : 'loading.image';
+    return this.transloco.translate<string[]>(key) || [];
+  });
+
+  ngOnInit() {
+    this.setInitialMessage();
+
+    // Rotate messages every 3.5 seconds
+    interval(3500)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.rotateMessage());
+
+    // Update messages when language changes
+    this.transloco
+      .selectTranslation()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.currentIndex = 0;
+        this.setInitialMessage();
+      });
+  }
+
+  private setInitialMessage() {
+    const messages = this.messages();
+    if (messages.length > 0) {
+      this.currentMessage.set(messages[0]);
+    }
+  }
+
+  private rotateMessage() {
+    const messages = this.messages();
+    if (messages.length === 0) return;
+
+    // Trigger fade animation
+    this.shouldAnimate.set(true);
+
+    // Change message at the middle of the animation (when opacity is 0)
+    setTimeout(() => {
+      this.currentIndex = (this.currentIndex + 1) % messages.length;
+      this.currentMessage.set(messages[this.currentIndex]);
+    }, 300);
+
+    // Reset animation flag
+    setTimeout(() => {
+      this.shouldAnimate.set(false);
+    }, 600);
+  }
+}

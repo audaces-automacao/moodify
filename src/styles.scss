@@ -99,6 +99,13 @@ html[data-theme="light"] {
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
   }
+
+  @keyframes message-fade {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  --animate-message-fade: message-fade 0.6s ease-in-out;
 }
 
 /* Theme transition for smooth switching */

@@ -1,13 +1,31 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslocoTestingModule } from '@jsverse/transloco';
 import { LoadingSkeletonComponent } from './loading-skeleton.component';
 
 describe('LoadingSkeletonComponent', () => {
   let component: LoadingSkeletonComponent;
   let fixture: ComponentFixture<LoadingSkeletonComponent>;
 
+  const translations = {
+    loading: {
+      moodBoard: [
+        'Diving into fashion archives...',
+        'Channeling your inner style icon...',
+        'Curating the perfect aesthetic...',
+      ],
+      image: ['Sketching your signature look...', 'Bringing your vision to life...'],
+    },
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LoadingSkeletonComponent],
+      imports: [
+        LoadingSkeletonComponent,
+        TranslocoTestingModule.forRoot({
+          langs: { en: translations },
+          translocoConfig: { availableLangs: ['en'], defaultLang: 'en' },
+        }),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LoadingSkeletonComponent);
@@ -55,5 +73,23 @@ describe('LoadingSkeletonComponent', () => {
   it('should have skeleton shimmer elements', () => {
     const shimmerElements = fixture.nativeElement.querySelectorAll('.skeleton-shimmer');
     expect(shimmerElements.length).toBeGreaterThan(0);
+  });
+
+  it('should display a message element', () => {
+    const messageElement = fixture.nativeElement.querySelector('.text-center.mb-10 p');
+    expect(messageElement).toBeTruthy();
+  });
+
+  it('should have aria-live attribute for accessibility', () => {
+    const messageElement = fixture.nativeElement.querySelector('[aria-live="polite"]');
+    expect(messageElement).toBeTruthy();
+  });
+
+  it('should have currentMessage signal initialized', () => {
+    expect(component.currentMessage).toBeDefined();
+  });
+
+  it('should have stage input defaulting to moodBoard', () => {
+    expect(component.stage()).toBe('moodBoard');
   });
 });

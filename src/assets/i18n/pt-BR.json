@@ -76,5 +76,29 @@
   "themeSwitcher": {
     "switchToLight": "Mudar para modo claro",
     "switchToDark": "Mudar para modo escuro"
+  },
+  "loading": {
+    "moodBoard": [
+      "Mergulhando nos arquivos da moda...",
+      "Canalizando seu ícone de estilo interior...",
+      "Curando a estética perfeita...",
+      "Misturando texturas e silhuetas...",
+      "Consultando os deuses da teoria das cores...",
+      "Tecendo sua história de estilo...",
+      "Buscando inspiração nas passarelas...",
+      "Traduzindo vibes em visuais...",
+      "Construindo seu vocabulário fashion...",
+      "Encontrando a alma do seu estilo..."
+    ],
+    "image": [
+      "Desenhando seu look exclusivo...",
+      "Drapejando tecidos no ateliê...",
+      "Dando vida à sua visão...",
+      "Adicionando os toques finais...",
+      "Capturando a silhueta perfeita...",
+      "Estilizando o conjunto final...",
+      "Renderizando seu mood em pixels...",
+      "Criando magia fashion..."
+    ]
   }
 }

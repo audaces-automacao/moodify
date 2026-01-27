@@ -1,5 +1,13 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  inject,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { HeaderComponent } from './components/header.component';
@@ -25,6 +33,8 @@ export class HomeComponent implements OnInit {
   private transloco = inject(TranslocoService);
   private document = inject(DOCUMENT);
   private destroyRef = inject(DestroyRef);
+
+  @ViewChild('loadingSection') loadingSection!: ElementRef<HTMLDivElement>;
 
   moodBoard = signal<MoodBoardResponse | null>(null);
   isLoading = signal(false);
@@ -65,6 +75,9 @@ export class HomeComponent implements OnInit {
     this.outfitImage.set(null);
     this.isImageLoading.set(false);
     this.imageError.set(null);
+
+    // Scroll to loading section after DOM updates
+    setTimeout(() => this.scrollToLoading(), 100);
 
     this.openai.generateMoodBoard(prompt).subscribe({
       next: (result) => {
@@ -112,6 +125,13 @@ export class HomeComponent implements OnInit {
       img.onload = () => resolve();
       img.onerror = () => reject();
       img.src = url;
+    });
+  }
+
+  private scrollToLoading() {
+    this.loadingSection?.nativeElement?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
     });
   }
 }
