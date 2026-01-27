@@ -33,6 +33,9 @@
   "colorPalette": {
     "title": "Color Palette"
   },
+  "styleTags": {
+    "title": "Style Keywords"
+  },
   "fabrics": {
     "title": "Fabric Recommendations",
     "textureLabel": "Texture:"
