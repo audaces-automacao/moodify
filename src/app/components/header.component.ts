@@ -21,7 +21,7 @@ import { ThemeSwitcherComponent } from './theme-switcher.component';
           {{ 'header.title' | transloco }}
         </h1>
         <p
-          class="text-uppercase text-center mt-4 text-luxury-silver tracking-[0.3em] animate-fade-in"
+          class="text-uppercase text-center mt-4 text-luxury-silver tracking-normal md:tracking-[0.3em] text-[0.625rem] md:text-sm animate-fade-in"
         >
           {{ 'header.subtitle' | transloco }}
         </p>
