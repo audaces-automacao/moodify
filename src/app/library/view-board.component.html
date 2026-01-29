@@ -1,0 +1,73 @@
+<main class="min-h-screen bg-luxury-void flex flex-col">
+  <app-header />
+
+  <section class="flex-1 container mx-auto px-6 py-12 md:py-16">
+    @if (board()) {
+      <!-- Back Navigation & Actions -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <a
+          routerLink="/library"
+          class="text-luxury-champagne hover:text-luxury-cream transition-colors
+                 flex items-center gap-2 text-sm"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          {{ 'library.viewBoard.backToLibrary' | transloco }}
+        </a>
+
+        <button
+          (click)="onToggleFavorite()"
+          class="glass-btn-secondary px-4 py-2 rounded-lg flex items-center gap-2 text-sm"
+        >
+          @if (board()!.isFavorite) {
+            <svg class="w-5 h-5 fill-luxury-champagne" viewBox="0 0 24 24">
+              <path
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+              />
+            </svg>
+            {{ 'library.viewBoard.unfavorite' | transloco }}
+          } @else {
+            <svg
+              class="w-5 h-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+              />
+            </svg>
+            {{ 'library.viewBoard.favorite' | transloco }}
+          }
+        </button>
+      </div>
+
+      <!-- Board Header -->
+      <div class="mb-8">
+        <h2 class="font-serif text-3xl md:text-4xl text-luxury-cream mb-2">
+          {{ board()!.name }}
+        </h2>
+        <p class="text-luxury-silver text-sm">
+          {{ 'library.viewBoard.savedOn' | transloco: { date: formatDate(board()!.createdAt) } }}
+        </p>
+        <p class="text-luxury-silver/70 text-xs mt-1 italic">
+          {{ 'library.viewBoard.prompt' | transloco }}: "{{ board()!.prompt }}"
+        </p>
+      </div>
+
+      <!-- Reuse existing MoodBoardComponent -->
+      <div class="max-w-4xl mx-auto">
+        <app-mood-board [data]="board()!.moodBoard" [outfitImage]="board()!.outfitImageUrl" />
+      </div>
+    }
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-luxury-graphite py-6 mt-auto">
+    <p class="text-uppercase text-center text-luxury-silver tracking-widest text-xs">
+      {{ 'app.footer' | transloco }}
+    </p>
+  </footer>
+</main>

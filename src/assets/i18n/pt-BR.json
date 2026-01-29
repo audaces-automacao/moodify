@@ -2,7 +2,8 @@
   "header": {
     "title": "MOODIFY",
     "subtitle": "Mood Board de Moda com IA",
-    "logout": "Sair"
+    "logout": "Sair",
+    "library": "Biblioteca"
   },
   "login": {
     "email": "Email",
@@ -79,6 +80,48 @@
   "themeSwitcher": {
     "switchToLight": "Mudar para modo claro",
     "switchToDark": "Mudar para modo escuro"
+  },
+  "library": {
+    "title": "Meus Mood Boards",
+    "subtitle": "{{ count }} boards salvos",
+    "saveButton": "Salvar na Biblioteca",
+    "filters": {
+      "all": "Todos",
+      "favorites": "Favoritos"
+    },
+    "empty": {
+      "title": "Nenhum mood board salvo ainda",
+      "hint": "Gere e salve seu primeiro mood board",
+      "createButton": "Criar Mood Board"
+    },
+    "noFavorites": "Nenhum favorito ainda",
+    "card": {
+      "favorite": "Adicionar aos favoritos",
+      "unfavorite": "Remover dos favoritos",
+      "delete": "Excluir"
+    },
+    "saveDialog": {
+      "title": "Salvar Mood Board",
+      "nameLabel": "Nome",
+      "namePlaceholder": "ex., Vibes de Férias de Verão",
+      "save": "Salvar",
+      "cancel": "Cancelar"
+    },
+    "deleteDialog": {
+      "title": "Excluir Mood Board?",
+      "message": "Tem certeza que deseja excluir \"{{ name }}\"? Esta ação não pode ser desfeita."
+    },
+    "confirmDialog": {
+      "confirm": "Excluir",
+      "cancel": "Cancelar"
+    },
+    "viewBoard": {
+      "backToLibrary": "Voltar para Biblioteca",
+      "savedOn": "Salvo em {{ date }}",
+      "prompt": "Prompt original",
+      "favorite": "Adicionar aos Favoritos",
+      "unfavorite": "Remover dos Favoritos"
+    }
   },
   "loading": {
     "moodBoard": [

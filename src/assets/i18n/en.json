@@ -2,7 +2,8 @@
   "header": {
     "title": "MOODIFY",
     "subtitle": "AI Fashion Mood Board",
-    "logout": "Logout"
+    "logout": "Logout",
+    "library": "Library"
   },
   "login": {
     "email": "Email",
@@ -79,6 +80,48 @@
   "themeSwitcher": {
     "switchToLight": "Switch to light mode",
     "switchToDark": "Switch to dark mode"
+  },
+  "library": {
+    "title": "My Mood Boards",
+    "subtitle": "{{ count }} saved boards",
+    "saveButton": "Save to Library",
+    "filters": {
+      "all": "All",
+      "favorites": "Favorites"
+    },
+    "empty": {
+      "title": "No saved mood boards yet",
+      "hint": "Generate and save your first mood board",
+      "createButton": "Create Mood Board"
+    },
+    "noFavorites": "No favorites yet",
+    "card": {
+      "favorite": "Add to favorites",
+      "unfavorite": "Remove from favorites",
+      "delete": "Delete"
+    },
+    "saveDialog": {
+      "title": "Save Mood Board",
+      "nameLabel": "Name",
+      "namePlaceholder": "e.g., Summer Vacation Vibes",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "deleteDialog": {
+      "title": "Delete Mood Board?",
+      "message": "Are you sure you want to delete \"{{ name }}\"? This action cannot be undone."
+    },
+    "confirmDialog": {
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "viewBoard": {
+      "backToLibrary": "Back to Library",
+      "savedOn": "Saved on {{ date }}",
+      "prompt": "Original prompt",
+      "favorite": "Add to Favorites",
+      "unfavorite": "Remove from Favorites"
+    }
   },
   "loading": {
     "moodBoard": [

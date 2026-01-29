@@ -1,5 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { of, throwError } from 'rxjs';
 import { HomeComponent } from './home.component';
@@ -12,6 +13,7 @@ const en = {
     title: 'MOODIFY',
     subtitle: 'AI-Powered Fashion Mood Board Generator',
     logout: 'Logout',
+    library: 'Library',
   },
   moodInput: {
     label: 'Describe Your Style',
@@ -51,6 +53,16 @@ const en = {
     altText: 'AI-generated outfit visualization',
     generating: 'Generating outfit visualization...',
     disclaimer: 'AI-generated image for inspiration purposes',
+  },
+  library: {
+    saveButton: 'Save to Library',
+    saveDialog: {
+      title: 'Save Mood Board',
+      nameLabel: 'Name',
+      namePlaceholder: 'e.g., Summer Vacation Vibes',
+      save: 'Save',
+      cancel: 'Cancel',
+    },
   },
 };
 
@@ -101,6 +113,7 @@ describe('HomeComponent', () => {
       ],
       providers: [
         provideHttpClient(),
+        provideRouter([]),
         { provide: OpenAIService, useValue: openAIServiceMock },
         { provide: AuthService, useValue: authServiceMock },
       ],
