@@ -6,14 +6,12 @@ AI-Powered Fashion Mood Board Generator built with Angular 21, Tailwind CSS v4, 
 
 ## Tech Stack
 
-- **Framework**: Angular 21 (standalone components, signals, functional guards/interceptors)
-- **Styling**: Tailwind CSS v4 with PostCSS
+- **Frontend**: Angular 21 (standalone components, signals, functional guards/interceptors), Tailwind CSS v4
+- **Backend**: Express.js proxy with JWT auth middleware (`server/index.js`)
 - **AI**: OpenAI GPT-4o + DALL-E via `src/app/services/openai.service.ts`
-- **Auth**: JWT authentication via `src/app/auth/` module
-- **i18n**: @jsverse/transloco (English, Portuguese)
+- **i18n**: @jsverse/transloco (EN, PT-BR)
 - **Testing**: Karma + Jasmine (80% coverage minimum)
 - **Linting**: ESLint + angular-eslint + Prettier
-- **Backend**: Express.js proxy server with JWT middleware (`server/index.js`)
 
 ## Commands
 
@@ -49,7 +47,7 @@ npm run lint       # ESLint + Prettier
 
 Read the relevant doc before making changes:
 
-- [coding-guidelines.md](.claude/docs/coding-guidelines.md) - For new features, refactoring, code structure
-- [testing.md](.claude/docs/testing.md) - For writing or modifying tests
-- [styling.md](.claude/docs/styling.md) - For UI components, CSS, visual changes
-- [architecture.md](.claude/docs/architecture.md) - For understanding project structure, data flow
+- [`coding-guidelines.md`](.claude/docs/coding-guidelines.md) - For new features, refactoring, code structure
+- [`testing.md`](.claude/docs/testing.md) - For writing or modifying tests
+- [`styling.md`](.claude/docs/styling.md) - For UI components, CSS, visual changes
+- [`architecture.md`](.claude/docs/architecture.md) - For understanding project structure, data flow

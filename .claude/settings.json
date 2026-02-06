@@ -2,12 +2,14 @@
   "permissions": {
     "allow": [
       "Bash(npm run build*)",
+      "Bash(npm run dev*)",
       "Bash(npm run lint*)",
       "Bash(npm run test*)",
       "Bash(npm run start*)",
       "Bash(npm run watch*)",
       "Bash(npm ls*)",
       "Bash(npm install*)",
+      "Bash(npx prettier*)",
       "Bash(npx ng build*)",
       "Bash(npx ng serve*)",
       "Bash(npx ng test*)",

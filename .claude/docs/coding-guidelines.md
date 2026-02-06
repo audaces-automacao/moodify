@@ -16,6 +16,32 @@ Choose clear, concise solutions. Reduce duplication but don't sacrifice readabil
 ### Readability Over Cleverness
 Use explicit control flow and simple data flow. Prioritize correctness over clever tricks.
 
+## Angular Conventions
+
+### Standalone Components
+All components are standalone (no NgModules). Use `imports` array in `@Component` decorator for dependencies.
+
+### Dependency Injection
+Use `inject()` function, not constructor injection:
+- `private service = inject(ServiceName);` (see `home.component.ts:32-35`)
+
+### Signals for State
+Use Angular signals for reactive state:
+- `signal<T>()` for component state (see `home.component.ts:39-46`)
+- `computed()` for derived state
+- Avoid manual `ChangeDetectorRef` usage
+
+### Functional Guards and Interceptors
+Use functional style, not class-based:
+- Guards: `CanActivateFn` (see `auth.guard.ts:6`)
+- Interceptors: `HttpInterceptorFn` (see `auth.interceptor.ts:6`)
+
+### Subscription Cleanup
+Use `takeUntilDestroyed(destroyRef)` for subscription management (see `home.component.ts:11`)
+
+### i18n
+Use `TranslocoPipe` in templates. Translation keys in `public/i18n/{en,pt}.json`.
+
 ## Naming and Structure
 
 ### Domain-Accurate Naming
