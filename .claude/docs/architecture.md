@@ -12,8 +12,11 @@ src/app/
 │   ├── auth.guard.ts        # Route protection (CanActivateFn)
 │   └── login.component.ts   # Login page
 ├── components/          # UI components (standalone)
-├── services/            # Business logic and API calls
-├── models/              # TypeScript interfaces
+├── services/
+│   ├── openai.service.ts    # OpenAI API integration
+│   └── theme.service.ts     # Dark/light theme management
+├── models/
+│   └── mood-board.model.ts  # TypeScript interfaces
 ├── app.ts               # Root component (router-outlet only)
 ├── app.routes.ts        # Route definitions with lazy loading
 ├── app.config.ts        # Application configuration
@@ -26,6 +29,11 @@ server/
 
 ## Key Components
 
+### Layout & Navigation
+- `header.component.ts` - App branding + logout button
+- `language-switcher.component.ts` - i18n language selector
+- `theme-switcher.component.ts` - Dark/light mode toggle
+
 ### Input Flow
 - `mood-input.component.ts` - Text input + example prompt chips
 - Emits user prompt to parent `home.component.ts`
@@ -36,9 +44,13 @@ server/
 - `fabric-list.component.ts` - Fabric recommendation cards
 - `style-tags.component.ts` - Style keyword tag cloud
 - `outfit-grid.component.ts` - Outfit suggestion grid
+- `outfit-image.component.ts` - AI-generated outfit visualization
+- `loading-skeleton.component.ts` - Loading placeholder for mood board
+- `outfit-image-skeleton.component.ts` - Loading placeholder for outfit image
 
 ### Services
 - `openai.service.ts` - OpenAI API integration, prompt engineering, response parsing
+- `theme.service.ts` - Dark/light theme state management and persistence
 
 ### Models
 - `mood-board.model.ts` - TypeScript interfaces for `MoodBoard`, `Color`, `Fabric`, `OutfitItem`
