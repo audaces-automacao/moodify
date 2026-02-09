@@ -28,7 +28,7 @@ server/
 
 ### Input Flow
 - `mood-input.component.ts` - Text input + example prompt chips
-- Emits user prompt to parent `app.ts`
+- Emits user prompt to parent `home.component.ts`
 
 ### Display Components
 - `mood-board.component.ts` - Results container, orchestrates child components
@@ -90,6 +90,10 @@ The Express server (`server/index.js`) provides:
 
 ### Middleware
 - `authMiddleware` - Validates JWT from `Authorization` header, attaches `req.user`
+- `helmet` - Security headers with Content Security Policy
+- `cors` - Cross-origin request handling
+- `compression` - Response compression
+- `express-rate-limit` - API rate limiting
 
 ### Environment Variables
 - `OPENAI_API_KEY` - OpenAI API key (required)

@@ -56,3 +56,21 @@ Access signal values via `component.signalName()` call syntax (see `mood-input.c
 - Coverage reports in `coverage/` directory
 - View HTML report: `coverage/index.html`
 - Minimum threshold: 80% statements, branches, functions, lines
+
+## Server-Side Tests (Backend)
+
+The Express backend (`server/`) uses Jest + Supertest with its own test setup.
+
+### Commands
+
+```bash
+cd server && npm test    # Run backend tests (Jest with --experimental-vm-modules)
+```
+
+### Test Structure
+- `server/index.spec.js` - API endpoint and middleware tests
+- Config: `server/jest.config.js`
+
+### Mocking
+- HTTP requests: Supertest for endpoint testing
+- External APIs: Mock OpenAI calls to avoid real API hits
