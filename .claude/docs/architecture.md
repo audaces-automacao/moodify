@@ -1,6 +1,6 @@
-# Architecture Overview
+# Frontend Architecture
 
-Moodify is an Angular 21 standalone application that generates AI-powered fashion mood boards with JWT authentication.
+Moodify is an Angular 21 standalone application that generates AI-powered fashion mood boards.
 
 ## Directory Structure
 
@@ -22,9 +22,6 @@ src/app/
 ├── app.config.ts        # Application configuration
 ├── home.component.ts    # Main mood board page
 └── transloco-loader.ts  # i18n translation loader
-
-server/
-└── index.js             # Express backend with JWT auth middleware
 ```
 
 ## Key Components
@@ -87,27 +84,3 @@ server/
 - Translation files: `public/i18n/{en,pt}.json`
 - `transloco-loader.ts` handles async loading
 - `language-switcher.component.ts` toggles locale
-
-## Backend Architecture
-
-The Express server (`server/index.js`) provides:
-
-### Endpoints
-| Endpoint | Method | Auth | Description |
-|----------|--------|------|-------------|
-| `/api/auth/login` | POST | No | Validate credentials, return JWT |
-| `/api/auth/verify` | GET | Yes | Validate token, return user info |
-| `/api/chat/completions` | POST | Yes | Proxy to OpenAI Chat API |
-| `/api/images/generations` | POST | Yes | Proxy to OpenAI Images API |
-
-### Middleware
-- `authMiddleware` - Validates JWT from `Authorization` header, attaches `req.user`
-- `helmet` - Security headers with Content Security Policy
-- `cors` - Cross-origin request handling
-- `compression` - Response compression
-- `express-rate-limit` - API rate limiting
-
-### Environment Variables
-- `OPENAI_API_KEY` - OpenAI API key (required)
-- `JWT_SECRET` - Secret for signing JWTs (required)
-- `PORT` - Server port (default: 3000)

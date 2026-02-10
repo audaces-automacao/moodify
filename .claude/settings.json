@@ -15,7 +15,10 @@
       "Bash(npx ng test*)",
       "Bash(npx ng lint*)",
       "Bash(npx ng generate*)",
-      "Bash(npx ng update*)"
+      "Bash(npx ng update*)",
+      "Bash(cd server && npm test*)",
+      "Bash(cd server && npm start*)",
+      "Bash(cd server && npm install*)"
     ],
     "deny": [
       "Bash(git commit*)",
