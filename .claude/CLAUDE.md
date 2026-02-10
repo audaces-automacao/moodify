@@ -17,6 +17,8 @@ AI-Powered Fashion Mood Board Generator. Multi-project repository with 2 compone
 npm run dev        # Full stack: Express backend + Angular dev server
 npm run build      # Production build to dist/
 npm run lint       # ESLint + Prettier
+test.cmd           # Run all tests (backend + frontend)
+test-coverage.cmd  # Run all tests with coverage reports
 ```
 
 ## Environment Variables

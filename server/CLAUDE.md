@@ -22,6 +22,7 @@ Express.js backend proxy with JWT authentication and OpenAI API relay. Built wit
 cd server
 npm start          # Start server (requires .env at project root)
 npm test           # Run Jest tests (--experimental-vm-modules)
+# Or from project root: test.cmd runs both backend + frontend tests
 ```
 
 ## Documentation

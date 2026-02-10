@@ -185,14 +185,26 @@ npm run lint
 
 ## Testing
 
-```bash
-npm test           # Run tests in watch mode
-npm run test:ci    # CI mode: single run with coverage
+### Run All Tests
+
+```cmd
+test.cmd               # Run all tests (backend + frontend)
+test-coverage.cmd      # Run all tests with coverage reports
 ```
 
-Coverage reports are generated in the `coverage/` directory. Open `coverage/index.html` to view the HTML report.
+### Individual Test Commands
 
-**Minimum Coverage Expectations: 80%**
+```bash
+npm test               # Frontend tests in watch mode
+npm run test:ci        # Frontend: single run with coverage
+cd server && npm test  # Backend tests (Jest)
+```
+
+Coverage reports:
+- Frontend: `coverage/index.html`
+- Backend: `server/coverage/`
+
+**Minimum Coverage: 80%** (statements, branches, functions, lines)
 
 ### Test Structure
 

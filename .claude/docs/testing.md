@@ -4,9 +4,15 @@ Moodify frontend uses Vitest for unit testing with 80% minimum coverage. Tests r
 
 ## Commands
 
+```cmd
+test.cmd               # Run ALL tests (backend + frontend)
+test-coverage.cmd      # Run ALL tests with coverage reports
+```
+
 ```bash
-npm test           # Watch mode - auto-reruns on changes
-npm run test:ci    # Single run with coverage (CI)
+npm test           # Frontend only: watch mode
+npm run test:ci    # Frontend only: single run with coverage (CI)
+cd server && npm test  # Backend only
 ```
 
 > **Windows Note**: Run test commands from PowerShell or cmd.exe. Git Bash (MSYS2) has a known incompatibility with Vitest's worker initialization that causes "Vitest failed to find the runner" errors.
