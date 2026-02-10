@@ -7,14 +7,16 @@ import { ThemeService, Theme } from '../services/theme.service';
 describe('ThemeSwitcherComponent', () => {
   let component: ThemeSwitcherComponent;
   let fixture: ComponentFixture<ThemeSwitcherComponent>;
-  let themeServiceMock: jasmine.SpyObj<ThemeService>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let themeServiceMock: any;
   let themeSignal: ReturnType<typeof signal<Theme>>;
 
   function createComponent(initialTheme: Theme = 'dark') {
     themeSignal = signal<Theme>(initialTheme);
-    themeServiceMock = jasmine.createSpyObj('ThemeService', ['toggleTheme'], {
+    themeServiceMock = {
+      toggleTheme: vi.fn().mockName('ThemeService.toggleTheme'),
       theme: themeSignal,
-    });
+    };
 
     TestBed.configureTestingModule({
       imports: [

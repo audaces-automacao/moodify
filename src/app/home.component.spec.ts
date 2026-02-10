@@ -57,8 +57,10 @@ const en = {
 describe('HomeComponent', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
-  let openAIServiceMock: jasmine.SpyObj<OpenAIService>;
-  let authServiceMock: jasmine.SpyObj<AuthService>;
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  let openAIServiceMock: any;
+  let authServiceMock: any;
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   const mockMoodBoard: MoodBoardResponse = {
     colorPalette: [{ name: 'Blue', hex: '#0000FF', usage: 'primary' }],
@@ -74,19 +76,25 @@ describe('HomeComponent', () => {
   };
 
   beforeEach(async () => {
-    openAIServiceMock = jasmine.createSpyObj('OpenAIService', [
-      'generateMoodBoard',
-      'generateOutfitImage',
-    ]);
-    openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
-    openAIServiceMock.generateOutfitImage.and.returnValue(of('https://example.com/image.png'));
+    // jsdom does not implement scrollIntoView
+    Element.prototype.scrollIntoView = vi.fn();
 
-    authServiceMock = jasmine.createSpyObj('AuthService', ['logout', 'isAuthenticated']);
-    authServiceMock.isAuthenticated.and.returnValue(true);
+    openAIServiceMock = {
+      generateMoodBoard: vi.fn().mockName('OpenAIService.generateMoodBoard'),
+      generateOutfitImage: vi.fn().mockName('OpenAIService.generateOutfitImage'),
+    };
+    openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
+    openAIServiceMock.generateOutfitImage.mockReturnValue(of('https://example.com/image.png'));
+
+    authServiceMock = {
+      logout: vi.fn().mockName('AuthService.logout'),
+      isAuthenticated: vi.fn().mockName('AuthService.isAuthenticated'),
+    };
+    authServiceMock.isAuthenticated.mockReturnValue(true);
 
     // Mock localStorage
-    spyOn(localStorage, 'getItem').and.returnValue('en');
-    spyOn(localStorage, 'setItem');
+    vi.spyOn(localStorage, 'getItem').mockReturnValue('en');
+    vi.spyOn(localStorage, 'setItem');
 
     await TestBed.configureTestingModule({
       imports: [
@@ -139,7 +147,7 @@ describe('HomeComponent', () => {
   describe('generateMoodBoard', () => {
     it('should clear previous state and call service with prompt', () => {
       let subscribeCalled = false;
-      openAIServiceMock.generateMoodBoard.and.returnValue({
+      openAIServiceMock.generateMoodBoard.mockReturnValue({
         subscribe: () => {
           subscribeCalled = true;
         },
@@ -156,7 +164,7 @@ describe('HomeComponent', () => {
     });
 
     it('should update state on success', () => {
-      openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
+      openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
       component.generateMoodBoard('test');
 
       expect(component.moodBoard()).toEqual(mockMoodBoard);
@@ -165,7 +173,7 @@ describe('HomeComponent', () => {
     });
 
     it('should update state on failure', () => {
-      openAIServiceMock.generateMoodBoard.and.returnValue(throwError(() => new Error('API Error')));
+      openAIServiceMock.generateMoodBoard.mockReturnValue(throwError(() => new Error('API Error')));
       component.generateMoodBoard('test');
 
       expect(component.error()).toBe('API Error');
@@ -176,7 +184,7 @@ describe('HomeComponent', () => {
     it('should reset image error state when generating new mood board', () => {
       component.imageError.set('Previous error');
 
-      openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
+      openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
       component.generateMoodBoard('test');
 
       // Previous image error should be cleared
@@ -184,7 +192,7 @@ describe('HomeComponent', () => {
     });
 
     it('should trigger image generation on mood board success', () => {
-      openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
+      openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
       component.generateMoodBoard('test');
 
       expect(openAIServiceMock.generateOutfitImage).toHaveBeenCalledWith(
@@ -194,11 +202,11 @@ describe('HomeComponent', () => {
     });
 
     it('should update outfitImage on successful image generation', async () => {
-      openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
-      openAIServiceMock.generateOutfitImage.and.returnValue(of('https://example.com/image.png'));
+      openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
+      openAIServiceMock.generateOutfitImage.mockReturnValue(of('https://example.com/image.png'));
       // Mock preloadImage to resolve immediately
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      spyOn(component as any, 'preloadImage').and.returnValue(Promise.resolve());
+      vi.spyOn(component as any, 'preloadImage').mockReturnValue(Promise.resolve());
 
       component.generateMoodBoard('test');
       await Promise.resolve(); // Flush microtask queue for the preloadImage promise
@@ -208,8 +216,8 @@ describe('HomeComponent', () => {
     });
 
     it('should update imageError on image generation failure', () => {
-      openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
-      openAIServiceMock.generateOutfitImage.and.returnValue(
+      openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
+      openAIServiceMock.generateOutfitImage.mockReturnValue(
         throwError(() => new Error('Image generation failed')),
       );
 
@@ -221,8 +229,8 @@ describe('HomeComponent', () => {
     });
 
     it('should not affect mood board display when image generation fails', () => {
-      openAIServiceMock.generateMoodBoard.and.returnValue(of(mockMoodBoard));
-      openAIServiceMock.generateOutfitImage.and.returnValue(
+      openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
+      openAIServiceMock.generateOutfitImage.mockReturnValue(
         throwError(() => new Error('Image error')),
       );
 

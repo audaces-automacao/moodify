@@ -22,12 +22,18 @@ const en = {
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
-  let authServiceMock: jasmine.SpyObj<AuthService>;
-  let routerMock: jasmine.SpyObj<Router>;
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  let authServiceMock: any;
+  let routerMock: any;
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   beforeEach(async () => {
-    authServiceMock = jasmine.createSpyObj('AuthService', ['login']);
-    routerMock = jasmine.createSpyObj('Router', ['navigate']);
+    authServiceMock = {
+      login: vi.fn().mockName('AuthService.login'),
+    };
+    routerMock = {
+      navigate: vi.fn().mockName('Router.navigate'),
+    };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -89,7 +95,7 @@ describe('LoginComponent', () => {
     });
 
     it('should call authService.login with credentials', () => {
-      authServiceMock.login.and.returnValue(of(true));
+      authServiceMock.login.mockReturnValue(of(true));
       component.email = 'bob@audaces.com';
       component.password = '12345';
 
@@ -99,7 +105,7 @@ describe('LoginComponent', () => {
     });
 
     it('should set loading state during login', () => {
-      authServiceMock.login.and.returnValue(of(true));
+      authServiceMock.login.mockReturnValue(of(true));
       component.email = 'bob@audaces.com';
       component.password = '12345';
 
@@ -112,7 +118,7 @@ describe('LoginComponent', () => {
     });
 
     it('should navigate to home on successful login', () => {
-      authServiceMock.login.and.returnValue(of(true));
+      authServiceMock.login.mockReturnValue(of(true));
       component.email = 'bob@audaces.com';
       component.password = '12345';
 
@@ -123,7 +129,7 @@ describe('LoginComponent', () => {
     });
 
     it('should show error on failed login', () => {
-      authServiceMock.login.and.returnValue(of(false));
+      authServiceMock.login.mockReturnValue(of(false));
       component.email = 'wrong@email.com';
       component.password = 'wrongpassword';
 
@@ -134,7 +140,7 @@ describe('LoginComponent', () => {
     });
 
     it('should show error on login error', () => {
-      authServiceMock.login.and.returnValue(throwError(() => new Error('Network error')));
+      authServiceMock.login.mockReturnValue(throwError(() => new Error('Network error')));
       component.email = 'bob@audaces.com';
       component.password = '12345';
 
@@ -146,7 +152,7 @@ describe('LoginComponent', () => {
 
     it('should clear previous error on new submit', () => {
       component.error.set(true);
-      authServiceMock.login.and.returnValue(of(true));
+      authServiceMock.login.mockReturnValue(of(true));
       component.email = 'bob@audaces.com';
       component.password = '12345';
 

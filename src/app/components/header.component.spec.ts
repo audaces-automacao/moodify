@@ -15,8 +15,8 @@ describe('HeaderComponent', () => {
 
   beforeEach(async () => {
     // Mock localStorage for LanguageSwitcherComponent
-    spyOn(localStorage, 'getItem').and.returnValue('en');
-    spyOn(localStorage, 'setItem');
+    vi.spyOn(localStorage, 'getItem').mockReturnValue('en');
+    vi.spyOn(localStorage, 'setItem');
 
     await TestBed.configureTestingModule({
       imports: [

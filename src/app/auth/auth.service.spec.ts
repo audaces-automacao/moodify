@@ -7,10 +7,13 @@ import { AuthService } from './auth.service';
 describe('AuthService', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
-  let routerMock: jasmine.SpyObj<Router>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let routerMock: any;
 
   beforeEach(() => {
-    routerMock = jasmine.createSpyObj('Router', ['navigate']);
+    routerMock = {
+      navigate: vi.fn().mockName('Router.navigate'),
+    };
 
     TestBed.configureTestingModule({
       providers: [

@@ -3,17 +3,24 @@ import { ThemeService } from './theme.service';
 
 describe('ThemeService', () => {
   let service: ThemeService;
-  let localStorageSpy: jasmine.SpyObj<Storage>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let localStorageSpy: any;
 
   function createService(storedTheme: string | null, prefersDark = true): ThemeService {
-    localStorageSpy = jasmine.createSpyObj('localStorage', ['getItem', 'setItem']);
-    localStorageSpy.getItem.and.returnValue(storedTheme);
-    spyOnProperty(window, 'localStorage', 'get').and.returnValue(localStorageSpy);
+    localStorageSpy = {
+      getItem: vi.fn().mockName('localStorage.getItem'),
+      setItem: vi.fn().mockName('localStorage.setItem'),
+    };
+    localStorageSpy.getItem.mockReturnValue(storedTheme);
+    vi.spyOn(window, 'localStorage', 'get').mockReturnValue(localStorageSpy);
 
-    // Mock matchMedia
-    spyOn(window, 'matchMedia').and.returnValue({
-      matches: prefersDark,
-    } as MediaQueryList);
+    // Mock matchMedia (jsdom does not implement it)
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockReturnValue({
+        matches: prefersDark,
+      } as MediaQueryList),
+    );
 
     TestBed.configureTestingModule({
       providers: [ThemeService],

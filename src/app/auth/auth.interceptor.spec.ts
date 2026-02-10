@@ -7,10 +7,14 @@ import { AuthService } from './auth.service';
 describe('authInterceptor', () => {
   let httpClient: HttpClient;
   let httpMock: HttpTestingController;
-  let authServiceMock: jasmine.SpyObj<AuthService>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let authServiceMock: any;
 
   beforeEach(() => {
-    authServiceMock = jasmine.createSpyObj('AuthService', ['getToken', 'logout']);
+    authServiceMock = {
+      getToken: vi.fn().mockName('AuthService.getToken'),
+      logout: vi.fn().mockName('AuthService.logout'),
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -29,7 +33,7 @@ describe('authInterceptor', () => {
   });
 
   it('should skip auth header for login endpoint', () => {
-    authServiceMock.getToken.and.returnValue('test-token');
+    authServiceMock.getToken.mockReturnValue('test-token');
 
     httpClient.post('/api/auth/login', {}).subscribe();
 
@@ -39,7 +43,7 @@ describe('authInterceptor', () => {
   });
 
   it('should add Authorization header when token exists', () => {
-    authServiceMock.getToken.and.returnValue('test-token');
+    authServiceMock.getToken.mockReturnValue('test-token');
 
     httpClient.get('/api/chat/completions').subscribe();
 
@@ -49,7 +53,7 @@ describe('authInterceptor', () => {
   });
 
   it('should pass through request when no token exists', () => {
-    authServiceMock.getToken.and.returnValue(null);
+    authServiceMock.getToken.mockReturnValue(null);
 
     httpClient.get('/api/chat/completions').subscribe();
 
@@ -59,7 +63,7 @@ describe('authInterceptor', () => {
   });
 
   it('should call logout on 401 response for non-auth endpoints', () => {
-    authServiceMock.getToken.and.returnValue('expired-token');
+    authServiceMock.getToken.mockReturnValue('expired-token');
 
     httpClient.get('/api/chat/completions').subscribe({
       error: () => {
@@ -72,7 +76,7 @@ describe('authInterceptor', () => {
   });
 
   it('should not call logout on 401 for auth endpoints', () => {
-    authServiceMock.getToken.and.returnValue('test-token');
+    authServiceMock.getToken.mockReturnValue('test-token');
 
     httpClient.get('/api/auth/verify').subscribe({
       error: () => {
@@ -85,7 +89,7 @@ describe('authInterceptor', () => {
   });
 
   it('should not call logout on non-401 errors', () => {
-    authServiceMock.getToken.and.returnValue('test-token');
+    authServiceMock.getToken.mockReturnValue('test-token');
 
     httpClient.get('/api/chat/completions').subscribe({
       error: () => {

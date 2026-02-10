@@ -8,7 +8,7 @@ AI-Powered Fashion Mood Board Generator. Multi-project repository with 2 compone
 
 | Subproject | Purpose | Stack |
 |------------|---------|-------|
-| `.` (root) | Angular frontend app | Angular 21, Tailwind CSS v4, TS, Karma+Jasmine |
+| `.` (root) | Angular frontend app | Angular 21, Tailwind CSS v4, TS, Vitest |
 | `server/` | Express backend proxy | Express.js, JWT, Jest+Supertest |
 
 ## Commands

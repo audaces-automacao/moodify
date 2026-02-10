@@ -98,7 +98,7 @@ describe('MoodInputComponent', () => {
   });
 
   it('should emit generate event on button click', () => {
-    const spy = jasmine.createSpy('generateSpy');
+    const spy = vi.fn();
     component.generate.subscribe(spy);
 
     component.inputValue.set('Test prompt');
@@ -111,7 +111,7 @@ describe('MoodInputComponent', () => {
   });
 
   it('should not emit generate event when input is whitespace only', () => {
-    const spy = jasmine.createSpy('generateSpy');
+    const spy = vi.fn();
     component.generate.subscribe(spy);
 
     component.inputValue.set('   ');
@@ -124,7 +124,7 @@ describe('MoodInputComponent', () => {
   });
 
   it('should not emit generate event when loading', () => {
-    const spy = jasmine.createSpy('generateSpy');
+    const spy = vi.fn();
     component.generate.subscribe(spy);
 
     fixture.componentRef.setInput('isLoading', true);
@@ -133,7 +133,7 @@ describe('MoodInputComponent', () => {
 
     // Call onSubmit directly since button is disabled
     const event = new Event('submit');
-    spyOn(event, 'preventDefault');
+    vi.spyOn(event, 'preventDefault');
     component.onSubmit(event);
 
     expect(spy).not.toHaveBeenCalled();
@@ -165,7 +165,7 @@ describe('MoodInputComponent', () => {
   });
 
   it('should emit on Enter key press', () => {
-    const spy = jasmine.createSpy('generateSpy');
+    const spy = vi.fn();
     component.generate.subscribe(spy);
 
     component.inputValue.set('Enter test');
@@ -173,7 +173,7 @@ describe('MoodInputComponent', () => {
 
     const textarea = fixture.nativeElement.querySelector('textarea');
     const event = new KeyboardEvent('keydown', { key: 'Enter' });
-    spyOn(event, 'preventDefault');
+    vi.spyOn(event, 'preventDefault');
     textarea.dispatchEvent(event);
 
     expect(spy).toHaveBeenCalledWith('Enter test');

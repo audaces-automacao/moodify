@@ -6,15 +6,19 @@ describe('LanguageSwitcherComponent', () => {
   let component: LanguageSwitcherComponent;
   let fixture: ComponentFixture<LanguageSwitcherComponent>;
   let translocoService: TranslocoService;
-  let localStorageSpy: jasmine.SpyObj<Storage>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let localStorageSpy: any;
 
   beforeEach(async () => {
     // Create localStorage mock
-    localStorageSpy = jasmine.createSpyObj('localStorage', ['getItem', 'setItem']);
-    localStorageSpy.getItem.and.returnValue('en');
+    localStorageSpy = {
+      getItem: vi.fn().mockName('localStorage.getItem'),
+      setItem: vi.fn().mockName('localStorage.setItem'),
+    };
+    localStorageSpy.getItem.mockReturnValue('en');
 
     // Replace localStorage
-    spyOnProperty(window, 'localStorage', 'get').and.returnValue(localStorageSpy);
+    vi.spyOn(window, 'localStorage', 'get').mockReturnValue(localStorageSpy);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -27,7 +31,7 @@ describe('LanguageSwitcherComponent', () => {
     }).compileComponents();
 
     translocoService = TestBed.inject(TranslocoService);
-    spyOn(translocoService, 'setActiveLang');
+    vi.spyOn(translocoService, 'setActiveLang');
 
     fixture = TestBed.createComponent(LanguageSwitcherComponent);
     component = fixture.componentInstance;
@@ -93,9 +97,13 @@ describe('LanguageSwitcherComponent initialization', () => {
     component: LanguageSwitcherComponent;
     fixture: ComponentFixture<LanguageSwitcherComponent>;
   } {
-    const localStorageSpy = jasmine.createSpyObj('localStorage', ['getItem', 'setItem']);
-    localStorageSpy.getItem.and.returnValue(storedLang);
-    spyOnProperty(window, 'localStorage', 'get').and.returnValue(localStorageSpy);
+    const localStorageSpy = {
+      getItem: vi.fn().mockName('localStorage.getItem'),
+      setItem: vi.fn().mockName('localStorage.setItem'),
+    };
+    localStorageSpy.getItem.mockReturnValue(storedLang);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.spyOn(window, 'localStorage', 'get').mockReturnValue(localStorageSpy as any);
 
     TestBed.configureTestingModule({
       imports: [

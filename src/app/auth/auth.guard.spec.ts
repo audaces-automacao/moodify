@@ -5,15 +5,22 @@ import { authGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 
 describe('authGuard', () => {
-  let authServiceMock: jasmine.SpyObj<AuthService>;
-  let routerMock: jasmine.SpyObj<Router>;
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  let authServiceMock: any;
+  let routerMock: any;
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   let loginUrlTree: UrlTree;
 
   beforeEach(() => {
     loginUrlTree = { toString: () => '/login' } as UrlTree;
-    authServiceMock = jasmine.createSpyObj('AuthService', ['verifyToken', 'isAuthenticated']);
-    routerMock = jasmine.createSpyObj('Router', ['createUrlTree']);
-    routerMock.createUrlTree.and.returnValue(loginUrlTree);
+    authServiceMock = {
+      verifyToken: vi.fn().mockName('AuthService.verifyToken'),
+      isAuthenticated: vi.fn().mockName('AuthService.isAuthenticated'),
+    };
+    routerMock = {
+      createUrlTree: vi.fn().mockName('Router.createUrlTree'),
+    };
+    routerMock.createUrlTree.mockReturnValue(loginUrlTree);
 
     TestBed.configureTestingModule({
       providers: [
@@ -24,7 +31,7 @@ describe('authGuard', () => {
   });
 
   it('should return true when already authenticated', () => {
-    authServiceMock.isAuthenticated.and.returnValue(true);
+    authServiceMock.isAuthenticated.mockReturnValue(true);
 
     TestBed.runInInjectionContext(() => {
       const result = authGuard({} as never, {} as never);
@@ -35,8 +42,8 @@ describe('authGuard', () => {
   });
 
   it('should call verifyToken when not authenticated', () => {
-    authServiceMock.isAuthenticated.and.returnValue(false);
-    authServiceMock.verifyToken.and.returnValue(of(true));
+    authServiceMock.isAuthenticated.mockReturnValue(false);
+    authServiceMock.verifyToken.mockReturnValue(of(true));
 
     TestBed.runInInjectionContext(() => {
       const result = authGuard({} as never, {} as never);
@@ -52,8 +59,8 @@ describe('authGuard', () => {
   });
 
   it('should return UrlTree to login when token is invalid', () => {
-    authServiceMock.isAuthenticated.and.returnValue(false);
-    authServiceMock.verifyToken.and.returnValue(of(false));
+    authServiceMock.isAuthenticated.mockReturnValue(false);
+    authServiceMock.verifyToken.mockReturnValue(of(false));
 
     TestBed.runInInjectionContext(() => {
       const result = authGuard({} as never, {} as never);
@@ -68,8 +75,8 @@ describe('authGuard', () => {
   });
 
   it('should return true when token is valid', () => {
-    authServiceMock.isAuthenticated.and.returnValue(false);
-    authServiceMock.verifyToken.and.returnValue(of(true));
+    authServiceMock.isAuthenticated.mockReturnValue(false);
+    authServiceMock.verifyToken.mockReturnValue(of(true));
 
     TestBed.runInInjectionContext(() => {
       const result = authGuard({} as never, {} as never);

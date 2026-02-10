@@ -81,6 +81,6 @@ describe('OutfitImageComponent', () => {
     fixture.detectChanges();
 
     const img = fixture.nativeElement.querySelector('img');
-    expect(img.loading).toBe('lazy');
+    expect(img.getAttribute('loading')).toBe('lazy');
   });
 });

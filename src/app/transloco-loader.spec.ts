@@ -72,7 +72,9 @@ describe('TranslocoHttpLoader', () => {
     let errorResponse: unknown;
 
     loader.getTranslation('invalid').subscribe({
-      next: () => fail('should have failed'),
+      next: () => {
+        throw new Error('should have failed');
+      },
       error: (error) => {
         errorResponse = error;
       },

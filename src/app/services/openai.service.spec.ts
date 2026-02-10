@@ -1,13 +1,14 @@
-import { TestBed } from '@angular/core/testing';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
 import { TranslocoService } from '@jsverse/transloco';
 import { OpenAIService } from './openai.service';
 
 describe('OpenAIService', () => {
   let service: OpenAIService;
   let httpMock: HttpTestingController;
-  let translocoServiceMock: jasmine.SpyObj<TranslocoService>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let translocoServiceMock: any;
 
   const validMoodBoardResponse = {
     colorPalette: [{ name: 'Blue', hex: '#0000FF', usage: 'primary' }],
@@ -33,10 +34,13 @@ describe('OpenAIService', () => {
   };
 
   beforeEach(() => {
-    translocoServiceMock = jasmine.createSpyObj('TranslocoService', ['getActiveLang', 'translate']);
-    translocoServiceMock.getActiveLang.and.returnValue('en');
+    translocoServiceMock = {
+      getActiveLang: vi.fn().mockName('TranslocoService.getActiveLang'),
+      translate: vi.fn().mockName('TranslocoService.translate'),
+    };
+    translocoServiceMock.getActiveLang.mockReturnValue('en');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (translocoServiceMock.translate as any).and.callFake((key: string) => key);
+    (translocoServiceMock.translate as any).mockImplementation((key: string) => key);
 
     TestBed.configureTestingModule({
       providers: [
@@ -70,12 +74,11 @@ describe('OpenAIService', () => {
       req.flush(mockOpenAIResponse);
     });
 
-    it('should parse valid JSON response', (done) => {
+    it('should parse valid JSON response', () => {
       service.generateMoodBoard('test').subscribe({
         next: (result) => {
           expect(result.aestheticDescription).toBe('Test aesthetic description');
           expect(result.colorPalette.length).toBe(1);
-          done();
         },
       });
 
@@ -83,7 +86,7 @@ describe('OpenAIService', () => {
       req.flush(mockOpenAIResponse);
     });
 
-    it('should strip markdown code blocks from response', (done) => {
+    it('should strip markdown code blocks from response', () => {
       const jsonContent = JSON.stringify(validMoodBoardResponse);
       const responseWithMarkdown = {
         choices: [{ message: { content: '```json\n' + jsonContent + '\n```' } }],
@@ -92,7 +95,6 @@ describe('OpenAIService', () => {
       service.generateMoodBoard('test').subscribe({
         next: (result) => {
           expect(result.aestheticDescription).toBe('Test aesthetic description');
-          done();
         },
       });
 
@@ -100,7 +102,7 @@ describe('OpenAIService', () => {
       req.flush(responseWithMarkdown);
     });
 
-    it('should strip json code blocks without newline', (done) => {
+    it('should strip json code blocks without newline', () => {
       const jsonContent = JSON.stringify(validMoodBoardResponse);
       const responseWithMarkdown = {
         choices: [{ message: { content: '```json' + jsonContent + '```' } }],
@@ -109,7 +111,6 @@ describe('OpenAIService', () => {
       service.generateMoodBoard('test').subscribe({
         next: (result) => {
           expect(result.aestheticDescription).toBe('Test aesthetic description');
-          done();
         },
       });
 
@@ -117,7 +118,7 @@ describe('OpenAIService', () => {
       req.flush(responseWithMarkdown);
     });
 
-    it('should throw error when no content in response', (done) => {
+    it('should throw error when no content in response', () => {
       const emptyResponse = {
         choices: [{ message: { content: '' } }],
       };
@@ -125,7 +126,6 @@ describe('OpenAIService', () => {
       service.generateMoodBoard('test').subscribe({
         error: () => {
           expect(translocoServiceMock.translate).toHaveBeenCalledWith('errors.noResponse');
-          done();
         },
       });
 
@@ -133,7 +133,7 @@ describe('OpenAIService', () => {
       req.flush(emptyResponse);
     });
 
-    it('should throw error on invalid JSON', (done) => {
+    it('should throw error on invalid JSON', () => {
       const invalidJsonResponse = {
         choices: [{ message: { content: 'not valid json' } }],
       };
@@ -141,7 +141,6 @@ describe('OpenAIService', () => {
       service.generateMoodBoard('test').subscribe({
         error: () => {
           expect(translocoServiceMock.translate).toHaveBeenCalledWith('errors.parseError');
-          done();
         },
       });
 
@@ -149,11 +148,10 @@ describe('OpenAIService', () => {
       req.flush(invalidJsonResponse);
     });
 
-    it('should handle 401 error', (done) => {
+    it('should handle 401 error', () => {
       service.generateMoodBoard('test').subscribe({
         error: () => {
           expect(translocoServiceMock.translate).toHaveBeenCalledWith('errors.invalidApiKey');
-          done();
         },
       });
 
@@ -161,11 +159,10 @@ describe('OpenAIService', () => {
       req.flush(null, { status: 401, statusText: 'Unauthorized' });
     });
 
-    it('should handle 429 error (rate limited)', (done) => {
+    it('should handle 429 error (rate limited)', () => {
       service.generateMoodBoard('test').subscribe({
         error: () => {
           expect(translocoServiceMock.translate).toHaveBeenCalledWith('errors.rateLimited');
-          done();
         },
       });
 
@@ -173,11 +170,10 @@ describe('OpenAIService', () => {
       req.flush(null, { status: 429, statusText: 'Too Many Requests' });
     });
 
-    it('should handle 500 error', (done) => {
+    it('should handle 500 error', () => {
       service.generateMoodBoard('test').subscribe({
         error: () => {
           expect(translocoServiceMock.translate).toHaveBeenCalledWith('errors.serviceUnavailable');
-          done();
         },
       });
 
@@ -185,12 +181,11 @@ describe('OpenAIService', () => {
       req.flush(null, { status: 500, statusText: 'Internal Server Error' });
     });
 
-    it('should handle generic error (non 401/429/500)', (done) => {
+    it('should handle generic error (non 401/429/500)', () => {
       service.generateMoodBoard('test').subscribe({
         error: (err) => {
           // For non-specific errors, it uses the error message or falls back to generic
           expect(err).toBeTruthy();
-          done();
         },
       });
 
@@ -199,7 +194,7 @@ describe('OpenAIService', () => {
     });
 
     it('should use English prompt when active lang is en', () => {
-      translocoServiceMock.getActiveLang.and.returnValue('en');
+      translocoServiceMock.getActiveLang.mockReturnValue('en');
 
       service.generateMoodBoard('test').subscribe();
 
@@ -209,7 +204,7 @@ describe('OpenAIService', () => {
     });
 
     it('should use Portuguese prompt when active lang is pt-BR', () => {
-      translocoServiceMock.getActiveLang.and.returnValue('pt-BR');
+      translocoServiceMock.getActiveLang.mockReturnValue('pt-BR');
 
       service.generateMoodBoard('test').subscribe();
 
@@ -292,11 +287,10 @@ describe('OpenAIService', () => {
       req.flush(mockDallEResponse);
     });
 
-    it('should return image URL on success', (done) => {
+    it('should return image URL on success', () => {
       service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe({
         next: (url) => {
           expect(url).toBe('https://example.com/generated-image.png');
-          done();
         },
       });
 
@@ -322,11 +316,10 @@ describe('OpenAIService', () => {
       req.flush(mockDallEResponse);
     });
 
-    it('should handle 400 error (content policy)', (done) => {
+    it('should handle 400 error (content policy)', () => {
       service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe({
         error: () => {
           expect(translocoServiceMock.translate).toHaveBeenCalledWith('errors.imagePromptRejected');
-          done();
         },
       });
 
@@ -334,11 +327,10 @@ describe('OpenAIService', () => {
       req.flush(null, { status: 400, statusText: 'Bad Request' });
     });
 
-    it('should handle 401 error', (done) => {
+    it('should handle 401 error', () => {
       service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe({
         error: () => {
           expect(translocoServiceMock.translate).toHaveBeenCalledWith('errors.invalidApiKey');
-          done();
         },
       });
 
@@ -346,11 +338,10 @@ describe('OpenAIService', () => {
       req.flush(null, { status: 401, statusText: 'Unauthorized' });
     });
 
-    it('should handle 429 error (rate limited)', (done) => {
+    it('should handle 429 error (rate limited)', () => {
       service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe({
         error: () => {
           expect(translocoServiceMock.translate).toHaveBeenCalledWith('errors.rateLimited');
-          done();
         },
       });
 
@@ -358,12 +349,11 @@ describe('OpenAIService', () => {
       req.flush(null, { status: 429, statusText: 'Too Many Requests' });
     });
 
-    it('should handle generic error', (done) => {
+    it('should handle generic error', () => {
       service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe({
         error: (err) => {
           // For non-mapped status codes, it uses the error message from HttpErrorResponse
           expect(err).toBeTruthy();
-          done();
         },
       });
 
