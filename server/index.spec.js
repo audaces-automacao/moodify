@@ -47,9 +47,7 @@ function createTestApp() {
 
   function validateChatRequest(body) {
     if (!body || !Array.isArray(body.messages)) return false;
-    return body.messages.every(
-      (m) => typeof m.role === 'string' && typeof m.content === 'string',
-    );
+    return body.messages.every((m) => typeof m.role === 'string' && typeof m.content === 'string');
   }
 
   function validateImageRequest(body) {
@@ -72,7 +70,7 @@ function createTestApp() {
           connectSrc: ["'self'"],
         },
       },
-    })
+    }),
   );
   app.use(cors(corsOptions));
   app.use(compression());
@@ -141,18 +139,14 @@ describe('Server API', () => {
     });
 
     it('should return 400 for missing email', async () => {
-      const res = await request(app)
-        .post('/api/auth/login')
-        .send({ password: '12345' });
+      const res = await request(app).post('/api/auth/login').send({ password: '12345' });
 
       expect(res.status).toBe(400);
       expect(res.body.error).toBe('Email and password are required');
     });
 
     it('should return 400 for missing password', async () => {
-      const res = await request(app)
-        .post('/api/auth/login')
-        .send({ email: 'bob@audaces.com' });
+      const res = await request(app).post('/api/auth/login').send({ email: 'bob@audaces.com' });
 
       expect(res.status).toBe(400);
       expect(res.body.error).toBe('Email and password are required');

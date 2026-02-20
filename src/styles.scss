@@ -1,19 +1,19 @@
-@use "tailwindcss";
+@use 'tailwindcss';
 
 /* Theme-specific CSS custom properties */
 :root,
-html[data-theme="dark"] {
+html[data-theme='dark'] {
   /* Dark theme colors */
-  --theme-void: #0A0A0A;
+  --theme-void: #0a0a0a;
   --theme-obsidian: #141414;
-  --theme-onyx: #1C1C1C;
-  --theme-graphite: #2A2A2A;
-  --theme-silver: #8A8A8A;
-  --theme-champagne: #C9A961;
-  --theme-gold: #D4AF37;
-  --theme-cream: #E8E4DC;
-  --theme-white: #F5F5F5;
-  --theme-rose: #6B2D3D;
+  --theme-onyx: #1c1c1c;
+  --theme-graphite: #2a2a2a;
+  --theme-silver: #8a8a8a;
+  --theme-champagne: #c9a961;
+  --theme-gold: #d4af37;
+  --theme-cream: #e8e4dc;
+  --theme-white: #f5f5f5;
+  --theme-rose: #6b2d3d;
 
   /* Glassmorphism colors */
   --glass-bg: rgba(20, 20, 20, 0.8);
@@ -28,22 +28,22 @@ html[data-theme="dark"] {
   --skeleton-highlight: rgba(42, 42, 42, 0.5);
 
   /* Scrollbar */
-  --scrollbar-track: #0A0A0A;
-  --scrollbar-thumb: #2A2A2A;
+  --scrollbar-track: #0a0a0a;
+  --scrollbar-thumb: #2a2a2a;
 }
 
-html[data-theme="light"] {
+html[data-theme='light'] {
   /* Light theme colors */
-  --theme-void: #FAFAFA;
-  --theme-obsidian: #F5F5F3;
-  --theme-onyx: #EDECE8;
-  --theme-graphite: #D4D3CF;
-  --theme-silver: #6B6B6B;
-  --theme-champagne: #B8983C;
-  --theme-gold: #C49E2C;
-  --theme-cream: #1A1A1A;
-  --theme-white: #0A0A0A;
-  --theme-rose: #8B3D4D;
+  --theme-void: #fafafa;
+  --theme-obsidian: #f5f5f3;
+  --theme-onyx: #edece8;
+  --theme-graphite: #d4d3cf;
+  --theme-silver: #6b6b6b;
+  --theme-champagne: #b8983c;
+  --theme-gold: #c49e2c;
+  --theme-cream: #1a1a1a;
+  --theme-white: #0a0a0a;
+  --theme-rose: #8b3d4d;
 
   /* Glassmorphism colors - adjusted for light backgrounds */
   --glass-bg: rgba(255, 255, 255, 0.7);
@@ -58,8 +58,8 @@ html[data-theme="light"] {
   --skeleton-highlight: rgba(200, 200, 195, 0.5);
 
   /* Scrollbar */
-  --scrollbar-track: #FAFAFA;
-  --scrollbar-thumb: #D4D3CF;
+  --scrollbar-track: #fafafa;
+  --scrollbar-thumb: #d4d3cf;
 }
 
 /* Custom theme configuration for Tailwind v4 */
@@ -96,13 +96,22 @@ html[data-theme="light"] {
   }
 
   @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
   }
 
   @keyframes message-fade {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
   }
 
   --animate-message-fade: message-fade 0.6s ease-in-out;
@@ -114,7 +123,10 @@ html {
 }
 
 html * {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Disable transitions for reduced motion preference */
@@ -141,7 +153,12 @@ body {
 
 /* Champagne gold gradient text */
 .text-gradient-gold {
-  background: linear-gradient(135deg, var(--theme-champagne) 0%, var(--theme-gold) 50%, var(--theme-champagne) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--theme-champagne) 0%,
+    var(--theme-gold) 50%,
+    var(--theme-champagne) 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

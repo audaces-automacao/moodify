@@ -1,10 +1,10 @@
-import express from 'express';
 import compression from 'compression';
 import cors from 'cors';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
-import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import express from 'express';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import jwt from 'jsonwebtoken';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -72,9 +72,7 @@ function authMiddleware(req, res, next) {
 // Request validation functions
 function validateChatRequest(body) {
   if (!body || !Array.isArray(body.messages)) return false;
-  return body.messages.every(
-    (m) => typeof m.role === 'string' && typeof m.content === 'string',
-  );
+  return body.messages.every((m) => typeof m.role === 'string' && typeof m.content === 'string');
 }
 
 function validateImageRequest(body) {
@@ -98,7 +96,7 @@ app.use(
         connectSrc: ["'self'"],
       },
     },
-  })
+  }),
 );
 app.use(cors(corsOptions));
 app.use(compression());
