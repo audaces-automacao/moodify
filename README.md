@@ -156,9 +156,11 @@ src/app/
 │   ├── style-tags.component.ts       # Style keyword tags
 │   ├── outfit-grid.component.ts      # Outfit suggestions
 │   ├── outfit-image.component.ts     # AI-generated outfit image
+│   ├── outfit-image-skeleton.component.ts # Loading placeholder for outfit image
 │   └── loading-skeleton.component.ts
 ├── services/
-│   └── openai.service.ts             # OpenAI API integration
+│   ├── openai.service.ts             # OpenAI API integration
+│   └── theme.service.ts              # Dark/light theme management
 ├── models/
 │   └── mood-board.model.ts           # TypeScript interfaces
 ├── app.ts                            # Root component (router-outlet)
@@ -230,9 +232,12 @@ src/app/
 │   ├── style-tags.component.spec.ts
 │   ├── outfit-grid.component.spec.ts
 │   ├── outfit-image.component.spec.ts
+│   ├── outfit-image-skeleton.component.spec.ts
 │   └── loading-skeleton.component.spec.ts
 ├── services/
-│   └── openai.service.spec.ts
+│   ├── openai.service.spec.ts
+│   └── theme.service.spec.ts
+├── app.routes.spec.ts
 └── transloco-loader.spec.ts
 ```
 
