@@ -12,7 +12,7 @@ const filePath = (data.tool_input || {}).file_path || '';
 if (!filePath) process.exit(0);
 
 const exts = ['.js', '.jsx', '.ts', '.tsx', '.vue', '.svelte', '.css', '.scss', '.html'];
-if (!exts.some((ext) => filePath.endsWith(ext))) process.exit(0);
+if (!exts.some(ext => filePath.endsWith(ext))) process.exit(0);
 
 let dir = path.dirname(path.resolve(filePath));
 while (dir !== path.dirname(dir)) {
