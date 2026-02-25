@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
 import { catchError, map, Observable, throwError } from 'rxjs';
@@ -51,10 +51,6 @@ export class OpenAIService {
   private transloco = inject(TranslocoService);
 
   generateMoodBoard(prompt: string): Observable<MoodBoardResponse> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-    });
-
     const request: OpenAIRequest = {
       model: environment.openaiModel,
       messages: [
@@ -65,9 +61,9 @@ export class OpenAIService {
       max_tokens: 1500,
     };
 
-    return this.http.post<OpenAIResponse>(environment.openaiApiUrl, request, { headers }).pipe(
-      map((response) => this.parseResponse(response)),
-      catchError((error) => this.handleError(error)),
+    return this.http.post<OpenAIResponse>(environment.openaiApiUrl, request).pipe(
+      map(response => this.parseResponse(response)),
+      catchError(error => this.handleError(error))
     );
   }
 
@@ -142,10 +138,6 @@ Requirements:
   }
 
   generateOutfitImage(outfit: OutfitSuggestion, styleKeywords: string[]): Observable<string> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-    });
-
     const request: DallERequest = {
       model: environment.dalleModel,
       prompt: this.buildImagePrompt(outfit, styleKeywords),
@@ -155,15 +147,15 @@ Requirements:
       response_format: 'url',
     };
 
-    return this.http.post<DallEResponse>(environment.dalleApiUrl, request, { headers }).pipe(
-      map((response) => {
+    return this.http.post<DallEResponse>(environment.dalleApiUrl, request).pipe(
+      map(response => {
         const url = response.data?.[0]?.url;
         if (!url) {
           throw new Error(this.transloco.translate('errors.imageGenericError'));
         }
         return url;
       }),
-      catchError((error) => this.handleImageError(error)),
+      catchError(error => this.handleImageError(error))
     );
   }
 

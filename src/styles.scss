@@ -148,7 +148,7 @@ body {
 }
 
 .text-uppercase {
-  @apply uppercase tracking-widest text-xs font-medium;
+  @apply uppercase tracking-[0.2em] text-xs font-medium;
 }
 
 /* Champagne gold gradient text */

@@ -10,7 +10,7 @@ Express.js backend proxy with JWT authentication and OpenAI API relay. Built wit
 
 ## Why
 
-- Single entry point: `index.js` — all routes, middleware, and config in one file
+- Two-file structure: `index.js` (routes, config, startup) + `middleware.js` (reusable middleware factories and helpers)
 - JWT auth middleware validates tokens on protected routes
 - Proxies to OpenAI Chat and Images APIs (keeps API key server-side)
 - Serves Angular production build as static files with SPA fallback

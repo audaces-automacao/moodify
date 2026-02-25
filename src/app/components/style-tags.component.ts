@@ -17,7 +17,7 @@ const TAG_STYLES = [
   imports: [TranslocoPipe],
   template: `
     <section class="mb-12">
-      <h3 class="text-uppercase text-luxury-silver mb-6 tracking-[0.2em]">
+      <h3 class="text-uppercase text-luxury-silver mb-6">
         {{ 'styleTags.title' | transloco }}
       </h3>
       <div class="flex flex-wrap gap-3">

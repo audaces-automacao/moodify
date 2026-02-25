@@ -6,7 +6,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
   imports: [TranslocoPipe],
   template: `
     <section class="mt-12 animate-fade-in">
-      <h3 class="text-uppercase text-luxury-silver mb-6 tracking-[0.2em]">
+      <h3 class="text-uppercase text-luxury-silver mb-6">
         {{ 'outfitImage.title' | transloco }}
       </h3>
       <div class="glass-card p-4 rounded-lg overflow-hidden">

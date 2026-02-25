@@ -7,7 +7,7 @@ import { FabricRecommendation } from '../models/mood-board.model';
   imports: [TranslocoPipe],
   template: `
     <section class="mb-12">
-      <h3 class="text-uppercase text-luxury-silver mb-6 tracking-[0.2em]">
+      <h3 class="text-uppercase text-luxury-silver mb-6">
         {{ 'fabrics.title' | transloco }}
       </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -1,10 +1,14 @@
-import request from 'supertest';
 import express from 'express';
-import compression from 'compression';
-import cors from 'cors';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
 import jwt from 'jsonwebtoken';
+import request from 'supertest';
+import {
+  applyMiddleware,
+  createAuthLimiter,
+  createAuthMiddleware,
+  createCorsOptions,
+  validateChatRequest,
+  validateImageRequest,
+} from './middleware.js';
 
 // Test configuration
 const JWT_SECRET = 'test-secret';
@@ -17,64 +21,11 @@ const VALID_USER = {
 function createTestApp() {
   const app = express();
 
-  const corsOptions = {
-    origin: ['http://localhost:4200', 'http://localhost:3000'],
-    credentials: true,
-  };
+  const corsOptions = createCorsOptions();
+  const authMiddleware = createAuthMiddleware(JWT_SECRET);
+  const authLimiter = createAuthLimiter();
 
-  const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 5,
-    message: { error: 'Too many login attempts, please try again later' },
-    standardHeaders: true,
-    legacyHeaders: false,
-  });
-
-  function authMiddleware(req, res, next) {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'No token provided' });
-    }
-    const token = authHeader.split(' ')[1];
-    try {
-      const decoded = jwt.verify(token, JWT_SECRET);
-      req.user = decoded;
-      next();
-    } catch {
-      return res.status(401).json({ error: 'Invalid or expired token' });
-    }
-  }
-
-  function validateChatRequest(body) {
-    if (!body || !Array.isArray(body.messages)) return false;
-    return body.messages.every((m) => typeof m.role === 'string' && typeof m.content === 'string');
-  }
-
-  function validateImageRequest(body) {
-    if (!body || typeof body.prompt !== 'string') return false;
-    if (body.n !== undefined && typeof body.n !== 'number') return false;
-    if (body.size !== undefined && typeof body.size !== 'string') return false;
-    return true;
-  }
-
-  app.use(
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrcAttr: ["'unsafe-inline'"],
-          styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-          fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-          imgSrc: ["'self'", 'data:', 'https://oaidalleapiprodscus.blob.core.windows.net'],
-          connectSrc: ["'self'"],
-        },
-      },
-    }),
-  );
-  app.use(cors(corsOptions));
-  app.use(compression());
-  app.use(express.json({ limit: '1mb' }));
+  applyMiddleware(app, corsOptions);
 
   // Auth endpoints
   app.post('/api/auth/login', authLimiter, (req, res) => {

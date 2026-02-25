@@ -4,8 +4,8 @@ import { MoodBoardResponse } from '../models/mood-board.model';
 import { ColorPaletteComponent } from './color-palette.component';
 import { FabricListComponent } from './fabric-list.component';
 import { OutfitGridComponent } from './outfit-grid.component';
-import { OutfitImageComponent } from './outfit-image.component';
 import { OutfitImageSkeletonComponent } from './outfit-image-skeleton.component';
+import { OutfitImageComponent } from './outfit-image.component';
 import { StyleTagsComponent } from './style-tags.component';
 
 @Component({
@@ -23,7 +23,7 @@ import { StyleTagsComponent } from './style-tags.component';
     <div class="animate-fade-in">
       <!-- Aesthetic Description -->
       <section class="mb-12">
-        <h3 class="text-uppercase text-luxury-silver mb-4 tracking-[0.2em]">
+        <h3 class="text-uppercase text-luxury-silver mb-4">
           {{ 'moodBoard.aestheticOverview' | transloco }}
         </h3>
         <div class="border-l-4 border-luxury-champagne pl-6 py-2">

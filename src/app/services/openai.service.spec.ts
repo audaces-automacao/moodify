@@ -69,14 +69,13 @@ describe('OpenAIService', () => {
 
       const req = httpMock.expectOne('/api/chat/completions');
       expect(req.request.method).toBe('POST');
-      expect(req.request.headers.get('Content-Type')).toBe('application/json');
       expect(req.request.body.messages[1].content).toContain('Parisian chic');
       req.flush(mockOpenAIResponse);
     });
 
     it('should parse valid JSON response', () => {
       service.generateMoodBoard('test').subscribe({
-        next: (result) => {
+        next: result => {
           expect(result.aestheticDescription).toBe('Test aesthetic description');
           expect(result.colorPalette.length).toBe(1);
         },
@@ -93,7 +92,7 @@ describe('OpenAIService', () => {
       };
 
       service.generateMoodBoard('test').subscribe({
-        next: (result) => {
+        next: result => {
           expect(result.aestheticDescription).toBe('Test aesthetic description');
         },
       });
@@ -109,7 +108,7 @@ describe('OpenAIService', () => {
       };
 
       service.generateMoodBoard('test').subscribe({
-        next: (result) => {
+        next: result => {
           expect(result.aestheticDescription).toBe('Test aesthetic description');
         },
       });
@@ -183,7 +182,7 @@ describe('OpenAIService', () => {
 
     it('should handle generic error (non 401/429/500)', () => {
       service.generateMoodBoard('test').subscribe({
-        error: (err) => {
+        error: err => {
           // For non-specific errors, it uses the error message or falls back to generic
           expect(err).toBeTruthy();
         },
@@ -246,7 +245,6 @@ describe('OpenAIService', () => {
 
       const req = httpMock.expectOne('/api/images/generations');
       expect(req.request.method).toBe('POST');
-      expect(req.request.headers.get('Content-Type')).toBe('application/json');
       req.flush(mockDallEResponse);
     });
 
@@ -289,7 +287,7 @@ describe('OpenAIService', () => {
 
     it('should return image URL on success', () => {
       service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe({
-        next: (url) => {
+        next: url => {
           expect(url).toBe('https://example.com/generated-image.png');
         },
       });
@@ -351,7 +349,7 @@ describe('OpenAIService', () => {
 
     it('should handle generic error', () => {
       service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe({
-        error: (err) => {
+        error: err => {
           // For non-mapped status codes, it uses the error message from HttpErrorResponse
           expect(err).toBeTruthy();
         },

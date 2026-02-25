@@ -2,9 +2,10 @@
 
 Express.js backend proxy that handles JWT authentication and relays requests to OpenAI APIs.
 
-## Entry Point
+## File Structure
 
-Single file: `server/index.js` — all routes, middleware, and configuration.
+- `index.js` — Routes, configuration, and startup
+- `middleware.js` — Reusable middleware factories and helpers
 
 ## Endpoints
 
@@ -17,22 +18,22 @@ Single file: `server/index.js` — all routes, middleware, and configuration.
 
 ## Middleware Stack
 
-Applied in order:
-1. `helmet` — Security headers with Content Security Policy (`index.js:86-100`)
-2. `cors` — Cross-origin handling, configurable via `ALLOWED_ORIGINS` (`index.js:22-28`)
-3. `compression` — Response compression (`index.js:102`)
-4. `express.json` — Body parsing with 1MB limit (`index.js:103`)
-5. `authLimiter` — Rate limiting on auth endpoints: 5 attempts/15 min (`index.js:31-37`)
-6. `authMiddleware` — JWT validation, attaches `req.user` (`index.js:54-70`)
+Applied in order via `applyMiddleware()` (`middleware.js:71-76`):
+1. `helmet` — Security headers with Content Security Policy (`middleware.js:8-20`)
+2. `cors` — Cross-origin handling, configurable via `ALLOWED_ORIGINS` (`middleware.js:64-69`)
+3. `compression` — Response compression (`middleware.js:74`)
+4. `express.json` — Body parsing with 1MB limit (`middleware.js:75`)
+5. `authLimiter` — Rate limiting on auth endpoints: 5 attempts/15 min (`middleware.js:54-62`)
+6. `authMiddleware` — JWT validation, attaches `req.user` (`middleware.js:22-40`)
 
 ## Request Validation
 
-- `validateChatRequest` — Validates `messages` array with `role` and `content` strings (`index.js:73-76`)
-- `validateImageRequest` — Validates `prompt` string with optional `n` and `size` (`index.js:78-83`)
+- `validateChatRequest` — Validates `messages` array with `role` and `content` strings (`middleware.js:42-45`)
+- `validateImageRequest` — Validates `prompt` string with optional `n` and `size` (`middleware.js:47-52`)
 
 ## Static File Serving
 
-In production, serves Angular build from `dist/moodify/browser/` with SPA fallback (`index.js:173-180`).
+In production, serves Angular build from `dist/moodify/browser/` with SPA fallback (`index.js:102-108`).
 
 ## Environment Variables
 

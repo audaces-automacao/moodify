@@ -7,7 +7,7 @@ import { ColorSwatch } from '../models/mood-board.model';
   imports: [TranslocoPipe],
   template: `
     <section class="mb-12">
-      <h3 class="text-uppercase text-luxury-silver mb-6 tracking-[0.2em]">
+      <h3 class="text-uppercase text-luxury-silver mb-6">
         {{ 'colorPalette.title' | transloco }}
       </h3>
       <div class="flex flex-wrap gap-6 justify-center md:justify-start">

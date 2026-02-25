@@ -12,7 +12,7 @@ interface OutfitItem {
   imports: [TranslocoPipe],
   template: `
     <section class="mb-12">
-      <h3 class="text-uppercase text-luxury-silver mb-6 tracking-[0.2em]">
+      <h3 class="text-uppercase text-luxury-silver mb-6">
         {{ 'outfits.title' | transloco }}
       </h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

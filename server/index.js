@@ -1,12 +1,17 @@
-import compression from 'compression';
-import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
-import rateLimit from 'express-rate-limit';
-import helmet from 'helmet';
 import jwt from 'jsonwebtoken';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import {
+  applyMiddleware,
+  createAuthLimiter,
+  createAuthMiddleware,
+  createCorsOptions,
+  createOpenAIProxy,
+  validateChatRequest,
+  validateImageRequest,
+} from './middleware.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -17,24 +22,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const JWT_SECRET = process.env.JWT_SECRET;
-
-// CORS configuration
-const corsOptions = {
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || [
-    'http://localhost:4200',
-    'http://localhost:3000',
-  ],
-  credentials: true,
-};
-
-// Rate limiter for auth endpoints (5 attempts per 15 minutes)
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-  message: { error: 'Too many login attempts, please try again later' },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
 
 if (!OPENAI_API_KEY) {
   console.error('FATAL: OPENAI_API_KEY environment variable is required');
@@ -51,56 +38,12 @@ const VALID_USER = {
   password: '12345',
 };
 
-function authMiddleware(req, res, next) {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
-
-  const token = authHeader.split(' ')[1];
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch {
-    return res.status(401).json({ error: 'Invalid or expired token' });
-  }
-}
-
-// Request validation functions
-function validateChatRequest(body) {
-  if (!body || !Array.isArray(body.messages)) return false;
-  return body.messages.every((m) => typeof m.role === 'string' && typeof m.content === 'string');
-}
-
-function validateImageRequest(body) {
-  if (!body || typeof body.prompt !== 'string') return false;
-  if (body.n !== undefined && typeof body.n !== 'number') return false;
-  if (body.size !== undefined && typeof body.size !== 'string') return false;
-  return true;
-}
+const corsOptions = createCorsOptions(process.env.ALLOWED_ORIGINS?.split(','));
+const authMiddleware = createAuthMiddleware(JWT_SECRET);
+const authLimiter = createAuthLimiter();
 
 // Middleware
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrcAttr: ["'unsafe-inline'"],
-        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-        imgSrc: ["'self'", 'data:', 'https://oaidalleapiprodscus.blob.core.windows.net'],
-        connectSrc: ["'self'"],
-      },
-    },
-  }),
-);
-app.use(cors(corsOptions));
-app.use(compression());
-app.use(express.json({ limit: '1mb' }));
+applyMiddleware(app, corsOptions);
 
 // Auth endpoints (no auth required)
 app.post('/api/auth/login', authLimiter, (req, res) => {
@@ -122,53 +65,38 @@ app.get('/api/auth/verify', authMiddleware, (req, res) => {
   res.json({ valid: true, email: req.user.email });
 });
 
-// Proxy endpoint for chat completions (protected)
-app.post('/api/chat/completions', authMiddleware, async (req, res) => {
-  if (!validateChatRequest(req.body)) {
-    return res.status(400).json({ error: 'Invalid request body' });
-  }
+// Proxy endpoints (protected)
+app.post(
+  '/api/chat/completions',
+  authMiddleware,
+  (req, res, next) => {
+    if (!validateChatRequest(req.body)) {
+      return res.status(400).json({ error: 'Invalid request body' });
+    }
+    next();
+  },
+  createOpenAIProxy(
+    OPENAI_API_KEY,
+    'https://api.openai.com/v1/chat/completions',
+    'Chat completions'
+  )
+);
 
-  try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify(req.body),
-    });
-
-    const data = await response.json();
-    res.status(response.status).json(data);
-  } catch (error) {
-    console.error('Chat completions proxy error:', error);
-    res.status(500).json({ error: 'Proxy error' });
-  }
-});
-
-// Proxy endpoint for image generation (protected)
-app.post('/api/images/generations', authMiddleware, async (req, res) => {
-  if (!validateImageRequest(req.body)) {
-    return res.status(400).json({ error: 'Invalid request body' });
-  }
-
-  try {
-    const response = await fetch('https://api.openai.com/v1/images/generations', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify(req.body),
-    });
-
-    const data = await response.json();
-    res.status(response.status).json(data);
-  } catch (error) {
-    console.error('Image generation proxy error:', error);
-    res.status(500).json({ error: 'Proxy error' });
-  }
-});
+app.post(
+  '/api/images/generations',
+  authMiddleware,
+  (req, res, next) => {
+    if (!validateImageRequest(req.body)) {
+      return res.status(400).json({ error: 'Invalid request body' });
+    }
+    next();
+  },
+  createOpenAIProxy(
+    OPENAI_API_KEY,
+    'https://api.openai.com/v1/images/generations',
+    'Image generation'
+  )
+);
 
 // Serve static files
 const staticPath = join(__dirname, '../dist/moodify/browser');
