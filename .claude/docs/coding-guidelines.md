@@ -61,6 +61,14 @@ Apply SOLID principles when they improve clarity and maintainability. Don't add 
 ### Extract Abstractions Sparingly
 Only create abstractions for clarity. Ensure high cohesion, low coupling, and minimal side effects.
 
+## Testing
+
+### Test Alongside Code
+New features need tests. Bug fixes need regression tests. Don't consider a change complete until tests pass.
+
+### Verify After Changes
+Run the test suite after implementation to catch unintended breakage. Check that existing tests still pass before moving on.
+
 ## Documentation
 
 ### Comment Intent, Not Code
