@@ -14,7 +14,9 @@ import { HeaderComponent } from './components/header.component';
 import { LoadingSkeletonComponent } from './components/loading-skeleton.component';
 import { MoodBoardComponent } from './components/mood-board.component';
 import { ExamplePrompt, MoodInputComponent } from './components/mood-input.component';
+import { SaveBoardDialogComponent } from './components/save-board-dialog.component';
 import { MoodBoardResponse } from './models/mood-board.model';
+import { MoodBoardStorageService } from './services/mood-board-storage.service';
 import { OpenAIService } from './services/openai.service';
 
 @Component({
@@ -25,6 +27,7 @@ import { OpenAIService } from './services/openai.service';
     MoodInputComponent,
     LoadingSkeletonComponent,
     MoodBoardComponent,
+    SaveBoardDialogComponent,
   ],
   templateUrl: './home.component.html',
 })
@@ -33,6 +36,7 @@ export class HomeComponent implements OnInit {
   private transloco = inject(TranslocoService);
   private document = inject(DOCUMENT);
   private destroyRef = inject(DestroyRef);
+  private storage = inject(MoodBoardStorageService);
 
   @ViewChild('loadingSection') loadingSection!: ElementRef<HTMLDivElement>;
 
@@ -44,6 +48,9 @@ export class HomeComponent implements OnInit {
   outfitImage = signal<string | null>(null);
   isImageLoading = signal(false);
   imageError = signal<string | null>(null);
+
+  showSaveDialog = signal(false);
+  currentPrompt = signal('');
 
   private exampleKeys = ['parisian', 'coastal', '90s', 'darkAcademia', 'disco'] as const;
 
@@ -75,6 +82,7 @@ export class HomeComponent implements OnInit {
     this.outfitImage.set(null);
     this.isImageLoading.set(false);
     this.imageError.set(null);
+    this.currentPrompt.set(prompt);
 
     // Scroll to loading section after DOM updates
     setTimeout(() => this.scrollToLoading(), 100);
@@ -133,5 +141,26 @@ export class HomeComponent implements OnInit {
       behavior: 'smooth',
       block: 'start',
     });
+  }
+
+  openSaveDialog(): void {
+    this.showSaveDialog.set(true);
+  }
+
+  onSaveBoard(name: string): void {
+    const moodBoard = this.moodBoard();
+    if (moodBoard) {
+      this.storage.save({
+        name,
+        prompt: this.currentPrompt(),
+        moodBoard,
+        outfitImageUrl: this.outfitImage(),
+      });
+      this.showSaveDialog.set(false);
+    }
+  }
+
+  onCancelSave(): void {
+    this.showSaveDialog.set(false);
   }
 }

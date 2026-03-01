@@ -1,0 +1,95 @@
+<main class="min-h-screen bg-luxury-void flex flex-col">
+  <app-header />
+
+  <section class="flex-1 container mx-auto px-6 py-12 md:py-16">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+      <div>
+        <h2 class="font-serif text-3xl md:text-4xl text-luxury-cream mb-2">
+          {{ 'library.title' | transloco }}
+        </h2>
+        <p class="text-luxury-silver text-sm">
+          {{ 'library.subtitle' | transloco: { count: displayedBoards().length } }}
+        </p>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="flex gap-2 mt-4 md:mt-0">
+        <button
+          (click)="setFilter('all')"
+          [class.glass-btn-primary]="filterMode() === 'all'"
+          [class.glass-btn-secondary]="filterMode() !== 'all'"
+          class="px-4 py-2 rounded-lg text-sm uppercase tracking-wider"
+        >
+          {{ 'library.filters.all' | transloco }}
+        </button>
+        <button
+          (click)="setFilter('favorites')"
+          [class.glass-btn-primary]="filterMode() === 'favorites'"
+          [class.glass-btn-secondary]="filterMode() !== 'favorites'"
+          class="px-4 py-2 rounded-lg text-sm uppercase tracking-wider"
+        >
+          {{ 'library.filters.favorites' | transloco }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    @if (isEmpty()) {
+      <div class="text-center py-16 border border-dashed border-luxury-graphite/50 rounded-lg">
+        <p class="font-serif text-2xl text-luxury-silver/70 italic">
+          {{ 'library.empty.title' | transloco }}
+        </p>
+        <p class="text-uppercase text-xs text-luxury-silver/50 mt-4">
+          {{ 'library.empty.hint' | transloco }}
+        </p>
+        <a
+          routerLink="/"
+          class="glass-btn-primary inline-block mt-6 px-6 py-3 rounded-lg text-sm uppercase tracking-wider"
+        >
+          {{ 'library.empty.createButton' | transloco }}
+        </a>
+      </div>
+    }
+
+    <!-- Board Grid -->
+    @if (!isEmpty()) {
+      @if (displayedBoards().length === 0) {
+        <!-- No favorites yet -->
+        <div class="text-center py-16 border border-dashed border-luxury-graphite/50 rounded-lg">
+          <p class="font-serif text-2xl text-luxury-silver/70 italic">
+            {{ 'library.noFavorites' | transloco }}
+          </p>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+          @for (board of displayedBoards(); track board.id) {
+            <app-board-card
+              [board]="board"
+              (view)="onViewBoard($event)"
+              (favorite)="onToggleFavorite($event)"
+              (delete)="onRequestDelete($event)"
+            />
+          }
+        </div>
+      }
+    }
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-luxury-graphite py-6 mt-auto">
+    <p class="text-uppercase text-center text-luxury-silver tracking-widest text-xs">
+      {{ 'app.footer' | transloco }}
+    </p>
+  </footer>
+
+  <!-- Delete Confirmation Dialog -->
+  @if (boardToDelete()) {
+    <app-confirm-dialog
+      [title]="getDeleteTitle()"
+      [message]="getDeleteMessage()"
+      (confirmed)="onConfirmDelete()"
+      (dismissed)="onCancelDelete()"
+    />
+  }
+</main>

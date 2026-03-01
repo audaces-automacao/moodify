@@ -26,3 +26,14 @@ export interface OutfitSuggestion {
   accessories: string[];
   outerwear?: string;
 }
+
+export interface SavedMoodBoard {
+  id: string;
+  name: string;
+  prompt: string;
+  moodBoard: MoodBoardResponse;
+  outfitImageUrl: string | null;
+  isFavorite: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
