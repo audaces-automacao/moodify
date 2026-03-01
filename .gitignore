@@ -47,6 +47,4 @@ Thumbs.db
 
 # Environment files with real API keys
 .env
-src/environments/environment.development.ts
-src/environments/environment.prod.ts
 

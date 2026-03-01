@@ -37,23 +37,20 @@ AI-Powered Fashion Mood Board Generator - A demo application showcasing AI capab
 npm install
 ```
 
-### 2. Configure Environment Variables
-
-Copy the sample environment file and add your real values:
+### 2. Configure API Keys
 
 ```bash
 cp .env.sample .env
 ```
 
-Then edit `.env` with your actual API key:
+Edit `.env` with your actual values:
 
 ```
 OPENAI_API_KEY=sk-your-actual-key
 JWT_SECRET=dev-secret
-PORT=3000
 ```
 
-> **Note:** The `.env` file is gitignored and will never be committed.
+> The `.env` file is gitignored and will never be committed.
 
 ### 3. Start Development Servers
 
@@ -65,7 +62,7 @@ This starts:
 - Angular dev server at http://localhost:4200
 - Express backend at http://localhost:3000
 
-The Angular dev server proxies all `/api/*` requests to the Express backend, which handles authentication and OpenAI API calls.
+The Angular dev server proxies `/api/*` requests to the Express backend, which handles authentication and OpenAI API calls.
 
 ### Demo Credentials
 
