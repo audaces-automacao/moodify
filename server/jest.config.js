@@ -3,6 +3,6 @@ export default {
   transform: {},
   moduleFileExtensions: ['js', 'mjs'],
   testMatch: ['**/*.spec.js'],
-  collectCoverageFrom: ['index.js'],
+  collectCoverageFrom: ['index.js', 'middleware.js'],
   coverageDirectory: 'coverage',
 };
