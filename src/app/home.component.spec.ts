@@ -2,10 +2,10 @@ import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { of, throwError } from 'rxjs';
+import { AuthService } from './auth/auth.service';
 import { HomeComponent } from './home.component';
 import { MoodBoardResponse } from './models/mood-board.model';
 import { OpenAIService } from './services/openai.service';
-import { AuthService } from './auth/auth.service';
 
 const en = {
   header: {
@@ -197,7 +197,7 @@ describe('HomeComponent', () => {
 
       expect(openAIServiceMock.generateOutfitImage).toHaveBeenCalledWith(
         mockMoodBoard.outfitSuggestions,
-        mockMoodBoard.styleKeywords,
+        mockMoodBoard.styleKeywords
       );
     });
 
@@ -218,7 +218,7 @@ describe('HomeComponent', () => {
     it('should update imageError on image generation failure', () => {
       openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
       openAIServiceMock.generateOutfitImage.mockReturnValue(
-        throwError(() => new Error('Image generation failed')),
+        throwError(() => new Error('Image generation failed'))
       );
 
       component.generateMoodBoard('test');
@@ -231,7 +231,7 @@ describe('HomeComponent', () => {
     it('should not affect mood board display when image generation fails', () => {
       openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
       openAIServiceMock.generateOutfitImage.mockReturnValue(
-        throwError(() => new Error('Image error')),
+        throwError(() => new Error('Image error'))
       );
 
       component.generateMoodBoard('test');

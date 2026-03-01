@@ -1,9 +1,9 @@
-import { ApplicationConfig, isDevMode, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { ApplicationConfig, isDevMode, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideTransloco } from '@jsverse/transloco';
-import { authInterceptor } from './auth/auth.interceptor';
 import { routes } from './app.routes';
+import { authInterceptor } from './auth/auth.interceptor';
 import { TranslocoHttpLoader } from './transloco-loader';
 
 const AVAILABLE_LANGS = ['en', 'pt-BR'] as const;

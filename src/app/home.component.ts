@@ -61,10 +61,10 @@ export class HomeComponent implements OnInit {
 
   private updateExamplePrompts() {
     this.examplePrompts.set(
-      this.exampleKeys.map((key) => ({
+      this.exampleKeys.map(key => ({
         key,
         text: this.transloco.translate(`examples.${key}`),
-      })),
+      }))
     );
   }
 
@@ -80,12 +80,12 @@ export class HomeComponent implements OnInit {
     setTimeout(() => this.scrollToLoading(), 100);
 
     this.openai.generateMoodBoard(prompt).subscribe({
-      next: (result) => {
+      next: result => {
         this.moodBoard.set(result);
         this.isLoading.set(false);
         this.generateOutfitImage(result);
       },
-      error: (err) => {
+      error: err => {
         this.error.set(err.message);
         this.isLoading.set(false);
       },
@@ -99,7 +99,7 @@ export class HomeComponent implements OnInit {
     this.openai
       .generateOutfitImage(moodBoard.outfitSuggestions, moodBoard.styleKeywords)
       .subscribe({
-        next: (imageUrl) => {
+        next: imageUrl => {
           // Preload the image before displaying to avoid visual gap
           this.preloadImage(imageUrl).then(
             () => {
@@ -109,10 +109,10 @@ export class HomeComponent implements OnInit {
             () => {
               this.imageError.set(this.transloco.translate('errors.imageGenericError'));
               this.isImageLoading.set(false);
-            },
+            }
           );
         },
-        error: (err) => {
+        error: err => {
           this.imageError.set(err.message);
           this.isImageLoading.set(false);
         },

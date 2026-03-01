@@ -49,7 +49,7 @@ describe('AuthService', () => {
     it('should store token and update signals on successful login', () => {
       const mockResponse = { token: 'jwt-token', email: 'bob@audaces.com' };
 
-      service.login('bob@audaces.com', '12345').subscribe((result) => {
+      service.login('bob@audaces.com', '12345').subscribe(result => {
         expect(result).toBe(true);
         expect(localStorage.getItem('auth_token')).toBe('jwt-token');
         expect(service.isAuthenticated()).toBe(true);
@@ -63,7 +63,7 @@ describe('AuthService', () => {
     });
 
     it('should return false on failed login', () => {
-      service.login('wrong@email.com', 'wrong').subscribe((result) => {
+      service.login('wrong@email.com', 'wrong').subscribe(result => {
         expect(result).toBe(false);
         expect(localStorage.getItem('auth_token')).toBeNull();
         expect(service.isAuthenticated()).toBe(false);
@@ -91,7 +91,7 @@ describe('AuthService', () => {
 
   describe('verifyToken', () => {
     it('should return false when no token exists', () => {
-      service.verifyToken().subscribe((result) => {
+      service.verifyToken().subscribe(result => {
         expect(result).toBe(false);
       });
 
@@ -102,7 +102,7 @@ describe('AuthService', () => {
       localStorage.setItem('auth_token', 'valid-token');
       const mockResponse = { valid: true, email: 'bob@audaces.com' };
 
-      service.verifyToken().subscribe((result) => {
+      service.verifyToken().subscribe(result => {
         expect(result).toBe(true);
         expect(service.isAuthenticated()).toBe(true);
         expect(service.userEmail()).toBe('bob@audaces.com');
@@ -116,7 +116,7 @@ describe('AuthService', () => {
     it('should call logout and return false on invalid token', () => {
       localStorage.setItem('auth_token', 'invalid-token');
 
-      service.verifyToken().subscribe((result) => {
+      service.verifyToken().subscribe(result => {
         expect(result).toBe(false);
         expect(service.isAuthenticated()).toBe(false);
         expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);

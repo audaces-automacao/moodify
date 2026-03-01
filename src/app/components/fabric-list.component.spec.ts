@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { FabricListComponent } from './fabric-list.component';
 import { FabricRecommendation } from '../models/mood-board.model';
+import { FabricListComponent } from './fabric-list.component';
 
 describe('FabricListComponent', () => {
   let component: FabricListComponent;
@@ -63,7 +63,7 @@ describe('FabricListComponent', () => {
   it('should display all fabric properties with texture label', () => {
     const html = fixture.nativeElement.innerHTML;
 
-    mockFabrics.forEach((fabric) => {
+    mockFabrics.forEach(fabric => {
       expect(html).toContain(fabric.name);
       expect(html).toContain(fabric.description);
       expect(html).toContain(fabric.texture);

@@ -39,7 +39,7 @@ describe('StyleTagsComponent', () => {
 
   it('should display tag text', () => {
     const html = fixture.nativeElement.innerHTML;
-    mockTags.forEach((tag) => {
+    mockTags.forEach(tag => {
       expect(html).toContain(tag);
     });
   });

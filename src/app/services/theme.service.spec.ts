@@ -19,7 +19,7 @@ describe('ThemeService', () => {
       'matchMedia',
       vi.fn().mockReturnValue({
         matches: prefersDark,
-      } as MediaQueryList),
+      } as MediaQueryList)
     );
 
     TestBed.configureTestingModule({

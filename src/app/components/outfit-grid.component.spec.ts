@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { OutfitGridComponent } from './outfit-grid.component';
 import { OutfitSuggestion } from '../models/mood-board.model';
+import { OutfitGridComponent } from './outfit-grid.component';
 
 describe('OutfitGridComponent', () => {
   let component: OutfitGridComponent;
@@ -95,7 +95,7 @@ describe('OutfitGridComponent', () => {
 
     const html = fixture.nativeElement.innerHTML;
     const accessoryItems = fixture.nativeElement.querySelectorAll(
-      '.mt-6 .flex.flex-wrap.gap-3 span',
+      '.mt-6 .flex.flex-wrap.gap-3 span'
     );
 
     expect(html).toContain('Gold watch');

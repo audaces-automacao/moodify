@@ -82,7 +82,7 @@ export class LoginComponent {
     this.error.set(false);
 
     this.authService.login(this.email, this.password).subscribe({
-      next: (success) => {
+      next: success => {
         this.isLoading.set(false);
         if (success) {
           this.router.navigate(['/']);

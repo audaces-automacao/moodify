@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
 import { TranslocoHttpLoader } from './transloco-loader';
 
 describe('TranslocoHttpLoader', () => {
@@ -33,7 +33,7 @@ describe('TranslocoHttpLoader', () => {
       },
     };
 
-    loader.getTranslation('en').subscribe((result) => {
+    loader.getTranslation('en').subscribe(result => {
       expect(result).toEqual(mockTranslations);
     });
 
@@ -51,7 +51,7 @@ describe('TranslocoHttpLoader', () => {
       },
     };
 
-    loader.getTranslation('pt-BR').subscribe((result) => {
+    loader.getTranslation('pt-BR').subscribe(result => {
       expect(result).toEqual(mockTranslations);
     });
 
@@ -75,7 +75,7 @@ describe('TranslocoHttpLoader', () => {
       next: () => {
         throw new Error('should have failed');
       },
-      error: (error) => {
+      error: error => {
         errorResponse = error;
       },
     });

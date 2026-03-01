@@ -57,7 +57,7 @@ export class LanguageSwitcherComponent implements OnInit {
 
   ngOnInit() {
     // Subscribe to language changes for when user switches language
-    this.transloco.langChanges$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((lang) => {
+    this.transloco.langChanges$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(lang => {
       this.currentLang.set(lang);
     });
   }

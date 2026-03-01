@@ -1,8 +1,8 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { signal } from '@angular/core';
+import { Theme, ThemeService } from '../services/theme.service';
 import { ThemeSwitcherComponent } from './theme-switcher.component';
-import { ThemeService, Theme } from '../services/theme.service';
 
 describe('ThemeSwitcherComponent', () => {
   let component: ThemeSwitcherComponent;

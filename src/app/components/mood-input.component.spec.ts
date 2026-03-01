@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MoodInputComponent, ExamplePrompt } from './mood-input.component';
+import { ExamplePrompt, MoodInputComponent } from './mood-input.component';
 
 describe('MoodInputComponent', () => {
   let component: MoodInputComponent;

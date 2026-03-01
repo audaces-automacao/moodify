@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslocoTestingModule, TranslocoService } from '@jsverse/transloco';
+import { TranslocoService, TranslocoTestingModule } from '@jsverse/transloco';
 import { LanguageSwitcherComponent } from './language-switcher.component';
 
 describe('LanguageSwitcherComponent', () => {
@@ -92,7 +92,7 @@ describe('LanguageSwitcherComponent', () => {
 describe('LanguageSwitcherComponent initialization', () => {
   function createComponent(
     storedLang: string | null,
-    defaultLang: string,
+    defaultLang: string
   ): {
     component: LanguageSwitcherComponent;
     fixture: ComponentFixture<LanguageSwitcherComponent>;

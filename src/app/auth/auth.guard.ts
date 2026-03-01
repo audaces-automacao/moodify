@@ -16,5 +16,5 @@ export const authGuard: CanActivateFn = () => {
   // Return UrlTree to redirect to login on failure
   return authService
     .verifyToken()
-    .pipe(map((isValid) => isValid || router.createUrlTree(['/login'])));
+    .pipe(map(isValid => isValid || router.createUrlTree(['/login'])));
 };

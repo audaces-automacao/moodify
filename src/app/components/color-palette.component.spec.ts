@@ -50,7 +50,7 @@ describe('ColorPaletteComponent', () => {
 
   it('should display color names, hex codes, and usage labels', () => {
     const html = fixture.nativeElement.innerHTML;
-    mockColors.forEach((color) => {
+    mockColors.forEach(color => {
       expect(html).toContain(color.name);
       expect(html).toContain(color.hex);
       expect(html).toContain(color.usage);

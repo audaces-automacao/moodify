@@ -29,13 +29,13 @@ export class AuthService {
 
   login(email: string, password: string): Observable<boolean> {
     return this.http.post<LoginResponse>('/api/auth/login', { email, password }).pipe(
-      tap((response) => {
+      tap(response => {
         localStorage.setItem(this.TOKEN_KEY, response.token);
         this.isAuthenticated.set(true);
         this.userEmail.set(response.email);
       }),
       map(() => true),
-      catchError(() => of(false)),
+      catchError(() => of(false))
     );
   }
 
@@ -53,7 +53,7 @@ export class AuthService {
     }
 
     return this.http.get<VerifyResponse>('/api/auth/verify').pipe(
-      tap((response) => {
+      tap(response => {
         this.isAuthenticated.set(true);
         this.userEmail.set(response.email);
       }),
@@ -61,7 +61,7 @@ export class AuthService {
       catchError(() => {
         this.logout();
         return of(false);
-      }),
+      })
     );
   }
 }

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MoodBoardComponent } from './mood-board.component';
 import { MoodBoardResponse } from '../models/mood-board.model';
+import { MoodBoardComponent } from './mood-board.component';
 
 describe('MoodBoardComponent', () => {
   let component: MoodBoardComponent;

@@ -44,28 +44,28 @@ describe('LoadingSkeletonComponent', () => {
 
   it('should render 6 color palette skeleton items', () => {
     const colorSection = fixture.nativeElement.querySelectorAll(
-      '[data-testid="color-palette-skeleton"] > div',
+      '[data-testid="color-palette-skeleton"] > div'
     );
     expect(colorSection.length).toBe(6);
   });
 
   it('should render 7 style tag skeleton items', () => {
     const tagSkeletons = fixture.nativeElement.querySelectorAll(
-      '[data-testid="style-tags-skeleton"] > div',
+      '[data-testid="style-tags-skeleton"] > div'
     );
     expect(tagSkeletons.length).toBe(7);
   });
 
   it('should render 4 fabric card skeletons', () => {
     const fabricCards = fixture.nativeElement.querySelectorAll(
-      '[data-testid="fabric-cards-skeleton"] > div',
+      '[data-testid="fabric-cards-skeleton"] > div'
     );
     expect(fabricCards.length).toBe(4);
   });
 
   it('should render 4 outfit skeleton cards', () => {
     const outfitCards = fixture.nativeElement.querySelectorAll(
-      '[data-testid="outfit-cards-skeleton"] > div',
+      '[data-testid="outfit-cards-skeleton"] > div'
     );
     expect(outfitCards.length).toBe(4);
   });

@@ -49,7 +49,7 @@ describe('authGuard', () => {
       const result = authGuard({} as never, {} as never);
 
       if (result instanceof Object && 'subscribe' in result) {
-        result.subscribe((value) => {
+        result.subscribe(value => {
           expect(value).toBe(true);
         });
       }
@@ -66,7 +66,7 @@ describe('authGuard', () => {
       const result = authGuard({} as never, {} as never);
 
       if (result instanceof Object && 'subscribe' in result) {
-        result.subscribe((value) => {
+        result.subscribe(value => {
           expect(value).toBe(loginUrlTree);
           expect(routerMock.createUrlTree).toHaveBeenCalledWith(['/login']);
         });
@@ -82,7 +82,7 @@ describe('authGuard', () => {
       const result = authGuard({} as never, {} as never);
 
       if (result instanceof Object && 'subscribe' in result) {
-        result.subscribe((value) => {
+        result.subscribe(value => {
           expect(value).toBe(true);
         });
       }
