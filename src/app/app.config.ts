@@ -6,7 +6,10 @@ import { routes } from './app.routes';
 import { authInterceptor } from './auth/auth.interceptor';
 import { TranslocoHttpLoader } from './transloco-loader';
 
-const AVAILABLE_LANGS = ['en', 'pt-BR'] as const;
+export const AVAILABLE_LANGUAGES = [
+  { code: 'en', label: 'English' },
+  { code: 'pt-BR', label: 'Português' },
+] as const;
 const DEFAULT_LANG = 'en';
 export const LANGUAGE_STORAGE_KEY = 'preferredLanguage';
 
@@ -17,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor])),
     provideTransloco({
       config: {
-        availableLangs: [...AVAILABLE_LANGS],
+        availableLangs: AVAILABLE_LANGUAGES.map(l => l.code),
         defaultLang: getDefaultLanguage(),
         reRenderOnLangChange: true,
         prodMode: !isDevMode(),
@@ -29,7 +32,7 @@ export const appConfig: ApplicationConfig = {
 
 function getDefaultLanguage(): string {
   const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-  if (stored && AVAILABLE_LANGS.includes(stored as (typeof AVAILABLE_LANGS)[number])) {
+  if (stored && AVAILABLE_LANGUAGES.some(l => l.code === stored)) {
     return stored;
   }
 

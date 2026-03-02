@@ -53,7 +53,6 @@ describe('AuthService', () => {
         expect(result).toBe(true);
         expect(localStorage.getItem('auth_token')).toBe('jwt-token');
         expect(service.isAuthenticated()).toBe(true);
-        expect(service.userEmail()).toBe('bob@audaces.com');
       });
 
       const req = httpMock.expectOne('/api/auth/login');
@@ -78,13 +77,11 @@ describe('AuthService', () => {
     it('should clear token, reset signals, and navigate to login', () => {
       localStorage.setItem('auth_token', 'test-token');
       service.isAuthenticated.set(true);
-      service.userEmail.set('bob@audaces.com');
 
       service.logout();
 
       expect(localStorage.getItem('auth_token')).toBeNull();
       expect(service.isAuthenticated()).toBe(false);
-      expect(service.userEmail()).toBeNull();
       expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
     });
   });
@@ -105,7 +102,6 @@ describe('AuthService', () => {
       service.verifyToken().subscribe(result => {
         expect(result).toBe(true);
         expect(service.isAuthenticated()).toBe(true);
-        expect(service.userEmail()).toBe('bob@audaces.com');
       });
 
       const req = httpMock.expectOne('/api/auth/verify');

@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { finalize } from 'rxjs';
 import { HeaderComponent } from './components/header.component';
 import { LoadingSkeletonComponent } from './components/loading-skeleton.component';
 import { MoodBoardComponent } from './components/mood-board.component';
@@ -79,17 +80,16 @@ export class HomeComponent implements OnInit {
     // Scroll to loading section after DOM updates
     setTimeout(() => this.scrollToLoading(), 100);
 
-    this.openai.generateMoodBoard(prompt).subscribe({
-      next: result => {
-        this.moodBoard.set(result);
-        this.isLoading.set(false);
-        this.generateOutfitImage(result);
-      },
-      error: err => {
-        this.error.set(err.message);
-        this.isLoading.set(false);
-      },
-    });
+    this.openai
+      .generateMoodBoard(prompt)
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: result => {
+          this.moodBoard.set(result);
+          this.generateOutfitImage(result);
+        },
+        error: err => this.error.set(err.message),
+      });
   }
 
   private generateOutfitImage(moodBoard: MoodBoardResponse) {
@@ -101,16 +101,12 @@ export class HomeComponent implements OnInit {
       .subscribe({
         next: imageUrl => {
           // Preload the image before displaying to avoid visual gap
-          this.preloadImage(imageUrl).then(
-            () => {
-              this.outfitImage.set(imageUrl);
-              this.isImageLoading.set(false);
-            },
-            () => {
-              this.imageError.set(this.transloco.translate('errors.imageGenericError'));
-              this.isImageLoading.set(false);
-            }
-          );
+          this.preloadImage(imageUrl)
+            .then(
+              () => this.outfitImage.set(imageUrl),
+              () => this.imageError.set(this.transloco.translate('errors.imageGenericError'))
+            )
+            .finally(() => this.isImageLoading.set(false));
         },
         error: err => {
           this.imageError.set(err.message);

@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { of, throwError } from 'rxjs';
+import { NEVER, of, throwError } from 'rxjs';
 import { AuthService } from './auth/auth.service';
 import { HomeComponent } from './home.component';
 import { MoodBoardResponse } from './models/mood-board.model';
@@ -146,12 +146,7 @@ describe('HomeComponent', () => {
 
   describe('generateMoodBoard', () => {
     it('should clear previous state and call service with prompt', () => {
-      let subscribeCalled = false;
-      openAIServiceMock.generateMoodBoard.mockReturnValue({
-        subscribe: () => {
-          subscribeCalled = true;
-        },
-      } as unknown as ReturnType<typeof of>);
+      openAIServiceMock.generateMoodBoard.mockReturnValue(NEVER);
 
       component.moodBoard.set(mockMoodBoard);
       component.error.set('Previous error');
@@ -160,7 +155,6 @@ describe('HomeComponent', () => {
       expect(component.moodBoard()).toBeNull();
       expect(component.error()).toBeNull();
       expect(openAIServiceMock.generateMoodBoard).toHaveBeenCalledWith('test prompt');
-      expect(subscribeCalled).toBe(true);
     });
 
     it('should update state on success', () => {
@@ -209,7 +203,9 @@ describe('HomeComponent', () => {
       vi.spyOn(component as any, 'preloadImage').mockReturnValue(Promise.resolve());
 
       component.generateMoodBoard('test');
-      await Promise.resolve(); // Flush microtask queue for the preloadImage promise
+      // Flush microtask queue: one for .then(), one for .finally()
+      await Promise.resolve();
+      await Promise.resolve();
 
       expect(component.outfitImage()).toBe('https://example.com/image.png');
       expect(component.isImageLoading()).toBe(false);

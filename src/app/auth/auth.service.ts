@@ -21,7 +21,6 @@ export class AuthService {
   private readonly TOKEN_KEY = 'auth_token';
 
   isAuthenticated = signal(false);
-  userEmail = signal<string | null>(null);
 
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
@@ -32,7 +31,6 @@ export class AuthService {
       tap(response => {
         localStorage.setItem(this.TOKEN_KEY, response.token);
         this.isAuthenticated.set(true);
-        this.userEmail.set(response.email);
       }),
       map(() => true),
       catchError(() => of(false))
@@ -42,7 +40,6 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
     this.isAuthenticated.set(false);
-    this.userEmail.set(null);
     this.router.navigate(['/login']);
   }
 
@@ -53,9 +50,8 @@ export class AuthService {
     }
 
     return this.http.get<VerifyResponse>('/api/auth/verify').pipe(
-      tap(response => {
+      tap(() => {
         this.isAuthenticated.set(true);
-        this.userEmail.set(response.email);
       }),
       map(() => true),
       catchError(() => {

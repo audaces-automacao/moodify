@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoService } from '@jsverse/transloco';
-import { LANGUAGE_STORAGE_KEY } from '../app.config';
+import { AVAILABLE_LANGUAGES, LANGUAGE_STORAGE_KEY } from '../app.config';
 
 @Component({
   selector: 'app-language-switcher',
@@ -48,10 +48,7 @@ export class LanguageSwitcherComponent implements OnInit {
   private transloco = inject(TranslocoService);
   private destroyRef = inject(DestroyRef);
 
-  availableLangs = [
-    { code: 'en', label: 'English' },
-    { code: 'pt-BR', label: 'Português' },
-  ];
+  availableLangs = AVAILABLE_LANGUAGES;
 
   currentLang = signal(localStorage.getItem(LANGUAGE_STORAGE_KEY) || 'en');
 

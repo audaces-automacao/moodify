@@ -21,8 +21,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(clonedReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      // Use regex for exact auth endpoint matching
-      const isAuthEndpoint = /\/api\/auth\/(login|verify)$/.test(req.url);
+      const isAuthEndpoint =
+        req.url.endsWith('/api/auth/login') || req.url.endsWith('/api/auth/verify');
       if (error.status === 401 && !isAuthEndpoint) {
         authService.logout();
       }
