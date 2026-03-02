@@ -21,9 +21,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(clonedReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      const isAuthEndpoint =
-        req.url.endsWith('/api/auth/login') || req.url.endsWith('/api/auth/verify');
-      if (error.status === 401 && !isAuthEndpoint) {
+      if (error.status === 401 && !req.url.endsWith('/api/auth/verify')) {
         authService.logout();
       }
       return throwError(() => error);
