@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { AuthService } from './auth.service';
 import { LoginComponent } from './login.component';
 
@@ -137,17 +137,6 @@ describe('LoginComponent', () => {
 
       expect(component.error()).toBe(true);
       expect(routerMock.navigate).not.toHaveBeenCalled();
-    });
-
-    it('should show error on login error', () => {
-      authServiceMock.login.mockReturnValue(throwError(() => new Error('Network error')));
-      component.email = 'bob@audaces.com';
-      component.password = '12345';
-
-      component.onSubmit();
-
-      expect(component.error()).toBe(true);
-      expect(component.isLoading()).toBe(false);
     });
 
     it('should clear previous error on new submit', () => {

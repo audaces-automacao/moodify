@@ -1,6 +1,7 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoService } from '@jsverse/transloco';
+import { LANGUAGE_STORAGE_KEY } from '../app.config';
 
 @Component({
   selector: 'app-language-switcher',
@@ -52,11 +53,9 @@ export class LanguageSwitcherComponent implements OnInit {
     { code: 'pt-BR', label: 'Português' },
   ];
 
-  // Initialize from localStorage directly (same source as app.config.ts)
-  currentLang = signal(localStorage.getItem('preferredLanguage') || 'en');
+  currentLang = signal(localStorage.getItem(LANGUAGE_STORAGE_KEY) || 'en');
 
   ngOnInit() {
-    // Subscribe to language changes for when user switches language
     this.transloco.langChanges$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(lang => {
       this.currentLang.set(lang);
     });
@@ -66,6 +65,6 @@ export class LanguageSwitcherComponent implements OnInit {
     const select = event.target as HTMLSelectElement;
     const lang = select.value;
     this.transloco.setActiveLang(lang);
-    localStorage.setItem('preferredLanguage', lang);
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
   }
 }

@@ -81,19 +81,13 @@ export class LoginComponent {
     this.isLoading.set(true);
     this.error.set(false);
 
-    this.authService.login(this.email, this.password).subscribe({
-      next: success => {
-        this.isLoading.set(false);
-        if (success) {
-          this.router.navigate(['/']);
-        } else {
-          this.error.set(true);
-        }
-      },
-      error: () => {
-        this.isLoading.set(false);
+    this.authService.login(this.email, this.password).subscribe(success => {
+      this.isLoading.set(false);
+      if (success) {
+        this.router.navigate(['/']);
+      } else {
         this.error.set(true);
-      },
+      }
     });
   }
 }

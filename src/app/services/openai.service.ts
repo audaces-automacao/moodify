@@ -128,11 +128,15 @@ Requirements:
       .trim();
   }
 
-  private handleError(error: { status?: number; message?: string }): Observable<never> {
-    const errorKey = HTTP_ERROR_MESSAGES[error.status ?? 0];
+  private handleError(
+    error: { status?: number; message?: string },
+    extraStatusMap: Record<number, string> = {},
+    fallbackKey = 'errors.generic'
+  ): Observable<never> {
+    const errorKey = extraStatusMap[error.status ?? 0] ?? HTTP_ERROR_MESSAGES[error.status ?? 0];
     const message = errorKey
       ? this.transloco.translate(errorKey)
-      : error.message || this.transloco.translate('errors.generic');
+      : error.message || this.transloco.translate(fallbackKey);
 
     return throwError(() => new Error(message));
   }
@@ -155,7 +159,9 @@ Requirements:
         }
         return url;
       }),
-      catchError(error => this.handleImageError(error))
+      catchError(error =>
+        this.handleError(error, { 400: 'errors.imagePromptRejected' }, 'errors.imageGenericError')
+      )
     );
   }
 
@@ -173,16 +179,5 @@ Requirements:
     const styleDescription = styleKeywords.slice(0, 5).join(', ');
 
     return `Fashion editorial photograph of a complete outfit on a mannequin or flat lay: ${outfitDescription}. Style: ${styleDescription}. High-end fashion photography, luxury magazine aesthetic, professional lighting, clean background.`;
-  }
-
-  private handleImageError(error: { status?: number; message?: string }): Observable<never> {
-    const errorKey =
-      error.status === 400 ? 'errors.imagePromptRejected' : HTTP_ERROR_MESSAGES[error.status ?? 0];
-
-    const message = errorKey
-      ? this.transloco.translate(errorKey)
-      : error.message || this.transloco.translate('errors.imageGenericError');
-
-    return throwError(() => new Error(message));
   }
 }

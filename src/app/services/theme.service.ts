@@ -18,26 +18,17 @@ export class ThemeService {
     this.applyTheme(this.theme());
   }
 
-  /**
-   * Toggle between dark and light themes
-   */
   toggleTheme(): void {
     const newTheme: Theme = this.theme() === 'dark' ? 'light' : 'dark';
     this.setTheme(newTheme);
   }
 
-  /**
-   * Set a specific theme
-   */
   setTheme(theme: Theme): void {
     this.theme.set(theme);
     this.applyTheme(theme);
     this.persistTheme(theme);
   }
 
-  /**
-   * Get initial theme from storage, system preference, or default
-   */
   private getInitialTheme(): Theme {
     // Check localStorage first
     const stored = localStorage.getItem(THEME_STORAGE_KEY);
@@ -54,16 +45,10 @@ export class ThemeService {
     return DEFAULT_THEME;
   }
 
-  /**
-   * Apply theme to DOM by setting data-theme attribute
-   */
   private applyTheme(theme: Theme): void {
     this.document.documentElement.setAttribute('data-theme', theme);
   }
 
-  /**
-   * Persist theme preference to localStorage
-   */
   private persistTheme(theme: Theme): void {
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   }

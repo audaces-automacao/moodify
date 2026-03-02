@@ -36,7 +36,7 @@ import { ThemeSwitcherComponent } from './theme-switcher.component';
   `,
 })
 export class HeaderComponent {
-  authService = inject(AuthService);
+  protected authService = inject(AuthService);
 
   logout(): void {
     this.authService.logout();

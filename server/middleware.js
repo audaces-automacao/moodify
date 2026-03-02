@@ -75,6 +75,15 @@ export function applyMiddleware(app, corsOptions) {
   app.use(express.json({ limit: '1mb' }));
 }
 
+export function createValidationMiddleware(validatorFn) {
+  return (req, res, next) => {
+    if (!validatorFn(req.body)) {
+      return res.status(400).json({ error: 'Invalid request body' });
+    }
+    next();
+  };
+}
+
 export function createOpenAIProxy(apiKey, url, label) {
   return async (req, res) => {
     try {

@@ -9,6 +9,7 @@ import {
   createAuthMiddleware,
   createCorsOptions,
   createOpenAIProxy,
+  createValidationMiddleware,
   validateChatRequest,
   validateImageRequest,
 } from './middleware.js';
@@ -69,12 +70,7 @@ app.get('/api/auth/verify', authMiddleware, (req, res) => {
 app.post(
   '/api/chat/completions',
   authMiddleware,
-  (req, res, next) => {
-    if (!validateChatRequest(req.body)) {
-      return res.status(400).json({ error: 'Invalid request body' });
-    }
-    next();
-  },
+  createValidationMiddleware(validateChatRequest),
   createOpenAIProxy(
     OPENAI_API_KEY,
     'https://api.openai.com/v1/chat/completions',
@@ -85,12 +81,7 @@ app.post(
 app.post(
   '/api/images/generations',
   authMiddleware,
-  (req, res, next) => {
-    if (!validateImageRequest(req.body)) {
-      return res.status(400).json({ error: 'Invalid request body' });
-    }
-    next();
-  },
+  createValidationMiddleware(validateImageRequest),
   createOpenAIProxy(
     OPENAI_API_KEY,
     'https://api.openai.com/v1/images/generations',
