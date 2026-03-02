@@ -45,3 +45,9 @@ Read the relevant doc before making changes:
 - `.claude/docs/testing.md` - For frontend (Angular) tests
 - `.claude/docs/styling.md` - For UI components, CSS, visual changes
 - `.claude/docs/architecture.md` - For frontend architecture and data flow
+
+## Agents
+
+After implementing features or fixing bugs:
+- `.claude/agents/code-simplifier.md` — simplifies recently changed code
+- `.claude/agents/test-guardian.md` — flags missing test coverage
