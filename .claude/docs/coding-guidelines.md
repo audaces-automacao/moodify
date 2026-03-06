@@ -1,75 +1,16 @@
-# Coding Guidelines
+# Coding principles for Moodify
 
-These guidelines inform architectural and design decisions when working on Moodify.
+## Follow Existing Patterns
+Match the codebase's architecture, naming, and style. Prefer framework and standard-library solutions over custom code or new dependencies. When introducing a different approach, ensure it's a clear improvement and document the rationale. Apply new patterns consistently — don't leave the codebase in a mixed state.
 
-## Core Principles
+## Keep It Simple (KISS)
+Default to the simplest design that meets current requirements. Prefer clear, explicit solutions over compact or clever tricks. Avoid speculative abstractions — extract helpers and layers only when they improve clarity or reduce duplication. Remove dead code — unused functions, unreachable branches, and commented-out blocks add noise without value.
 
-### Follow Existing Patterns
-Match the codebase's architecture, naming, and style. Don't introduce new patterns unless necessary.
+## Single Responsibility (SRP) / Manage Complexity
+Keep functions, classes, and modules focused on a single responsibility. When a unit handles multiple concerns, mixes abstraction levels, or has deeply nested control flow — decompose it. Deep nesting and long methods signal missing abstractions, not a need for more simplicity. Group related parameters into objects when it improves readability.
 
-### Keep It Simple (KISS)
-Default to the simplest change that works. Avoid speculative abstractions and keep diffs minimal.
+## Domain-Accurate Naming
+Use names that reflect the domain. Prefer typed interfaces over primitives when it clarifies meaning. Comment only non-obvious intent and tradeoffs — don't narrate what the code already expresses.
 
-### Prefer Clarity
-Choose clear, concise solutions. Reduce duplication but don't sacrifice readability for fewer lines.
-
-### Readability Over Cleverness
-Use explicit control flow and simple data flow. Prioritize correctness over clever tricks.
-
-## Angular Conventions
-
-### Standalone Components
-All components are standalone (no NgModules). Use `imports` array in `@Component` decorator for dependencies.
-
-### Dependency Injection
-Use `inject()` function, not constructor injection:
-- `private service = inject(ServiceName);` (see `home.component.ts:32-35`)
-
-### Signals for State
-Use Angular signals for reactive state:
-- `signal<T>()` for component state (see `home.component.ts:39-46`)
-- `computed()` for derived state
-- Avoid manual `ChangeDetectorRef` usage
-
-### Functional Guards and Interceptors
-Use functional style, not class-based:
-- Guards: `CanActivateFn` (see `auth.guard.ts:6`)
-- Interceptors: `HttpInterceptorFn` (see `auth.interceptor.ts:6`)
-
-### Subscription Cleanup
-Use `takeUntilDestroyed(destroyRef)` for subscription management (see `home.component.ts:11`)
-
-### i18n
-Use `TranslocoPipe` in templates. Translation keys in `public/i18n/{en,pt}.json`.
-
-## Naming and Structure
-
-### Domain-Accurate Naming
-Use names that reflect the domain. Prefer typed interfaces over primitives when it clarifies meaning.
-
-### Small, Focused Functions (SRP)
-Keep functions small with a single responsibility. Minimize parameters. Group related inputs into objects when it improves readability.
-
-## Dependencies and Architecture
-
-### Minimize Dependencies
-Prefer existing dependencies and built-in features. Avoid adding new packages unnecessarily.
-
-### Pragmatic SOLID
-Apply SOLID principles when they improve clarity and maintainability. Don't add indirection just to "be SOLID."
-
-### Extract Abstractions Sparingly
-Only create abstractions for clarity. Ensure high cohesion, low coupling, and minimal side effects.
-
-## Testing
-
-### Test Alongside Code
-New features need tests. Bug fixes need regression tests. Don't consider a change complete until tests pass.
-
-### Verify After Changes
-Run the test suite after implementation to catch unintended breakage. Check that existing tests still pass before moving on.
-
-## Documentation
-
-### Comment Intent, Not Code
-Comment only non-obvious intent and tradeoffs. Don't narrate what the code already expresses.
+## Pragmatic Abstractions
+Apply SOLID principles and extract abstractions when they improve clarity, reduce duplication, or enable testing. Don't add indirection for its own sake. Ensure high cohesion, low coupling, and minimal side effects. Evolve patterns when the codebase outgrows them — but migrate deliberately, not speculatively.
