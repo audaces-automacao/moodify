@@ -81,6 +81,6 @@ src/app/
 ## i18n Architecture
 
 - `@jsverse/transloco` for translations
-- Translation files: `public/i18n/{en,pt}.json`
+- Translation files: `src/assets/i18n/{en,pt-BR}.json`
 - `transloco-loader.ts` handles async loading
 - `language-switcher.component.ts` toggles locale
