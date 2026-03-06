@@ -70,7 +70,10 @@ app.get('/api/auth/verify', authMiddleware, (req, res) => {
 app.post(
   '/api/chat/completions',
   authMiddleware,
-  createValidationMiddleware(validateChatRequest),
+  createValidationMiddleware(
+    validateChatRequest,
+    'Invalid chat request: messages array with role and content required'
+  ),
   createOpenAIProxy(
     OPENAI_API_KEY,
     'https://api.openai.com/v1/chat/completions',
@@ -81,7 +84,7 @@ app.post(
 app.post(
   '/api/images/generations',
   authMiddleware,
-  createValidationMiddleware(validateImageRequest),
+  createValidationMiddleware(validateImageRequest, 'Invalid image request: prompt string required'),
   createOpenAIProxy(
     OPENAI_API_KEY,
     'https://api.openai.com/v1/images/generations',

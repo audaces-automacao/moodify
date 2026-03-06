@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -69,6 +70,7 @@ import { AuthService } from './auth.service';
 export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   email = '';
   password = '';
@@ -81,13 +83,16 @@ export class LoginComponent {
     this.isLoading.set(true);
     this.error.set(false);
 
-    this.authService.login(this.email, this.password).subscribe(success => {
-      this.isLoading.set(false);
-      if (success) {
-        this.router.navigate(['/']);
-      } else {
-        this.error.set(true);
-      }
-    });
+    this.authService
+      .login(this.email, this.password)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(success => {
+        this.isLoading.set(false);
+        if (success) {
+          this.router.navigate(['/']);
+        } else {
+          this.error.set(true);
+        }
+      });
   }
 }

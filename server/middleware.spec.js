@@ -246,6 +246,7 @@ describe('createOpenAIProxy', () => {
         Authorization: 'Bearer test-api-key',
       },
       body: JSON.stringify(mockReq.body),
+      signal: expect.any(AbortSignal),
     });
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.json).toHaveBeenCalledWith(mockData);
@@ -277,7 +278,7 @@ describe('createOpenAIProxy', () => {
     await proxy(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(500);
-    expect(mockRes.json).toHaveBeenCalledWith({ error: 'Proxy error' });
+    expect(mockRes.json).toHaveBeenCalledWith({ error: 'Chat failed' });
     expect(console.error).toHaveBeenCalledWith('Chat proxy error:', expect.any(Error));
   });
 

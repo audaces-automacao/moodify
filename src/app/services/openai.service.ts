@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
 import { catchError, map, Observable, throwError } from 'rxjs';
@@ -63,7 +63,7 @@ export class OpenAIService {
 
     return this.http.post<OpenAIResponse>(environment.openaiApiUrl, request).pipe(
       map(response => this.parseResponse(response)),
-      catchError(error => this.handleError(error))
+      catchError(error => this.handleError(error, HTTP_ERROR_MESSAGES, 'errors.generic'))
     );
   }
 
@@ -129,11 +129,11 @@ Requirements:
   }
 
   private handleError(
-    error: { status?: number; message?: string },
-    extraStatusMap: Record<number, string> = {},
-    fallbackKey = 'errors.generic'
+    error: HttpErrorResponse,
+    statusMap: Record<number, string>,
+    fallbackKey: string
   ): Observable<never> {
-    const errorKey = extraStatusMap[error.status ?? 0] ?? HTTP_ERROR_MESSAGES[error.status ?? 0];
+    const errorKey = statusMap[error.status];
     const message = errorKey
       ? this.transloco.translate(errorKey)
       : error.message || this.transloco.translate(fallbackKey);
@@ -160,7 +160,11 @@ Requirements:
         return url;
       }),
       catchError(error =>
-        this.handleError(error, { 400: 'errors.imagePromptRejected' }, 'errors.imageGenericError')
+        this.handleError(
+          error,
+          { ...HTTP_ERROR_MESSAGES, 400: 'errors.imagePromptRejected' },
+          'errors.imageGenericError'
+        )
       )
     );
   }

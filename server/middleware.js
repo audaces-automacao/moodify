@@ -75,10 +75,10 @@ export function applyMiddleware(app, corsOptions) {
   app.use(express.json({ limit: '1mb' }));
 }
 
-export function createValidationMiddleware(validatorFn) {
+export function createValidationMiddleware(validatorFn, errorMessage = 'Invalid request body') {
   return (req, res, next) => {
     if (!validatorFn(req.body)) {
-      return res.status(400).json({ error: 'Invalid request body' });
+      return res.status(400).json({ error: errorMessage });
     }
     next();
   };
@@ -94,13 +94,14 @@ export function createOpenAIProxy(apiKey, url, label) {
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify(req.body),
+        signal: AbortSignal.timeout(30000),
       });
 
       const data = await response.json();
       res.status(response.status).json(data);
     } catch (error) {
       console.error(`${label} proxy error:`, error);
-      res.status(500).json({ error: 'Proxy error' });
+      res.status(500).json({ error: `${label} failed` });
     }
   };
 }
