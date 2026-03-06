@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslocoTestingModule } from '@jsverse/transloco';
+import { AuthService } from '../auth/auth.service';
 import { HeaderComponent } from './header.component';
 
 describe('HeaderComponent', () => {
@@ -71,5 +72,40 @@ describe('HeaderComponent', () => {
   it('should have subtitle with animation class', () => {
     const subtitle = fixture.nativeElement.querySelector('p');
     expect(subtitle.classList).toContain('animate-fade-in');
+  });
+
+  describe('logout', () => {
+    it('should call authService.logout when logout button is clicked', async () => {
+      const authServiceMock = {
+        logout: vi.fn(),
+        isAuthenticated: vi.fn().mockReturnValue(true),
+      };
+
+      await TestBed.resetTestingModule()
+        .configureTestingModule({
+          imports: [
+            HeaderComponent,
+            TranslocoTestingModule.forRoot({
+              langs: {
+                en: { ...translations, header: { ...translations.header, logout: 'Logout' } },
+              },
+              translocoConfig: { availableLangs: ['en'], defaultLang: 'en' },
+            }),
+          ],
+          providers: [{ provide: AuthService, useValue: authServiceMock }],
+        })
+        .compileComponents();
+
+      const authFixture = TestBed.createComponent(HeaderComponent);
+      authFixture.detectChanges();
+
+      const buttons: NodeListOf<HTMLButtonElement> =
+        authFixture.nativeElement.querySelectorAll('button');
+      const logoutButton = Array.from(buttons).find(btn => btn.textContent?.trim() === 'Logout');
+      expect(logoutButton).toBeTruthy();
+      logoutButton!.click();
+
+      expect(authServiceMock.logout).toHaveBeenCalled();
+    });
   });
 });

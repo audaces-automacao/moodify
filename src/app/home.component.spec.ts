@@ -224,6 +224,22 @@ describe('HomeComponent', () => {
       expect(component.outfitImage()).toBeNull();
     });
 
+    it('should set imageError when preloadImage rejects', async () => {
+      openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
+      openAIServiceMock.generateOutfitImage.mockReturnValue(of('https://example.com/image.png'));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      vi.spyOn(component as any, 'preloadImage').mockReturnValue(Promise.reject());
+
+      component.generateMoodBoard('test');
+      // Flush microtask queue: one for .then(), one for .finally()
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(component.imageError()).toBe('errors.imageGenericError');
+      expect(component.outfitImage()).toBeNull();
+      expect(component.isImageLoading()).toBe(false);
+    });
+
     it('should not affect mood board display when image generation fails', () => {
       openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
       openAIServiceMock.generateOutfitImage.mockReturnValue(

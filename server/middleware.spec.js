@@ -4,6 +4,7 @@ import {
   createAuthMiddleware,
   createCorsOptions,
   createOpenAIProxy,
+  createValidationMiddleware,
   validateChatRequest,
   validateImageRequest,
 } from './middleware.js';
@@ -303,5 +304,64 @@ describe('createOpenAIProxy', () => {
         }),
       })
     );
+  });
+});
+
+describe('createValidationMiddleware', () => {
+  let mockRes;
+
+  beforeEach(() => {
+    mockRes = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+  });
+
+  it('should call next when validator returns true', () => {
+    const validator = jest.fn().mockReturnValue(true);
+    const middleware = createValidationMiddleware(validator);
+    const mockReq = { body: { data: 'valid' } };
+    const mockNext = jest.fn();
+
+    middleware(mockReq, mockRes, mockNext);
+
+    expect(validator).toHaveBeenCalledWith({ data: 'valid' });
+    expect(mockNext).toHaveBeenCalled();
+    expect(mockRes.status).not.toHaveBeenCalled();
+  });
+
+  it('should return 400 when validator returns false', () => {
+    const validator = jest.fn().mockReturnValue(false);
+    const middleware = createValidationMiddleware(validator);
+    const mockReq = { body: { data: 'invalid' } };
+    const mockNext = jest.fn();
+
+    middleware(mockReq, mockRes, mockNext);
+
+    expect(validator).toHaveBeenCalledWith({ data: 'invalid' });
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockRes.json).toHaveBeenCalledWith({ error: 'Invalid request body' });
+    expect(mockNext).not.toHaveBeenCalled();
+  });
+
+  it('should work with validateChatRequest', () => {
+    const middleware = createValidationMiddleware(validateChatRequest);
+    const mockReq = { body: { messages: [{ role: 'user', content: 'Hi' }] } };
+    const mockNext = jest.fn();
+
+    middleware(mockReq, mockRes, mockNext);
+
+    expect(mockNext).toHaveBeenCalled();
+  });
+
+  it('should reject invalid chat request via middleware', () => {
+    const middleware = createValidationMiddleware(validateChatRequest);
+    const mockReq = { body: { prompt: 'not messages' } };
+    const mockNext = jest.fn();
+
+    middleware(mockReq, mockRes, mockNext);
+
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockNext).not.toHaveBeenCalled();
   });
 });

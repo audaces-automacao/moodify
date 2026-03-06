@@ -358,5 +358,27 @@ describe('OpenAIService', () => {
       const req = httpMock.expectOne('/api/images/generations');
       req.flush(null, { status: 503, statusText: 'Service Unavailable' });
     });
+
+    it('should throw error when response has no image URL', () => {
+      service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe({
+        error: () => {
+          expect(translocoServiceMock.translate).toHaveBeenCalledWith('errors.imageGenericError');
+        },
+      });
+
+      const req = httpMock.expectOne('/api/images/generations');
+      req.flush({ created: 1234567890, data: [{}] });
+    });
+
+    it('should throw error when response data array is empty', () => {
+      service.generateOutfitImage(mockOutfit, mockStyleKeywords).subscribe({
+        error: () => {
+          expect(translocoServiceMock.translate).toHaveBeenCalledWith('errors.imageGenericError');
+        },
+      });
+
+      const req = httpMock.expectOne('/api/images/generations');
+      req.flush({ created: 1234567890, data: [] });
+    });
   });
 });
