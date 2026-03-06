@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from '../auth/auth.service';
 import { LanguageSwitcherComponent } from './language-switcher.component';
@@ -6,7 +7,7 @@ import { ThemeSwitcherComponent } from './theme-switcher.component';
 
 @Component({
   selector: 'app-header',
-  imports: [TranslocoPipe, LanguageSwitcherComponent, ThemeSwitcherComponent],
+  imports: [RouterLink, TranslocoPipe, LanguageSwitcherComponent, ThemeSwitcherComponent],
   template: `
     <header class="border-b border-luxury-graphite py-8 md:py-12 relative">
       <div class="container mx-auto px-6">
@@ -15,6 +16,9 @@ import { ThemeSwitcherComponent } from './theme-switcher.component';
           <app-theme-switcher />
           <app-language-switcher />
           @if (authService.isAuthenticated()) {
+            <a routerLink="/library" class="glass-btn-secondary px-3 py-1.5 text-xs rounded">
+              {{ 'header.library' | transloco }}
+            </a>
             <button (click)="logout()" class="glass-btn-secondary px-3 py-1.5 text-xs rounded">
               {{ 'header.logout' | transloco }}
             </button>
