@@ -253,6 +253,50 @@ describe('HomeComponent', () => {
     });
   });
 
+  describe('preloadImage', () => {
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    it('should resolve when image loads successfully', async () => {
+      vi.stubGlobal(
+        'Image',
+        class {
+          onload: (() => void) | null = null;
+          onerror: (() => void) | null = null;
+          set src(_url: string) {
+            // Simulate successful load
+            this.onload?.();
+          }
+        }
+      );
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await expect(
+        (component as any).preloadImage('https://example.com/img.png')
+      ).resolves.toBeUndefined();
+    });
+
+    it('should reject when image fails to load', async () => {
+      vi.stubGlobal(
+        'Image',
+        class {
+          onload: (() => void) | null = null;
+          onerror: (() => void) | null = null;
+          set src(_url: string) {
+            // Simulate load error
+            this.onerror?.();
+          }
+        }
+      );
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await expect(
+        (component as any).preloadImage('https://example.com/bad.png')
+      ).rejects.toBeUndefined();
+    });
+  });
+
   describe('UI rendering', () => {
     it('should render header component', () => {
       const header = fixture.nativeElement.querySelector('app-header');

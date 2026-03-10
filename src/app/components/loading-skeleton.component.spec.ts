@@ -110,4 +110,76 @@ describe('LoadingSkeletonComponent', () => {
     // The component should initialize without errors, proving constants are valid
     expect(component).toBeTruthy();
   });
+
+  describe('rotateMessage', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should rotate to next message after interval', () => {
+      // Re-create with fake timers active
+      const localFixture = TestBed.createComponent(LoadingSkeletonComponent);
+      const localComponent = localFixture.componentInstance;
+      localFixture.detectChanges();
+
+      const firstMessage = localComponent.currentMessage();
+      expect(firstMessage).toBe('Diving into fashion archives...');
+
+      // Advance past the rotation interval (3500ms)
+      vi.advanceTimersByTime(3500);
+
+      // After the fade-out delay (300ms), message should change
+      vi.advanceTimersByTime(300);
+      expect(localComponent.currentMessage()).toBe('Channeling your inner style icon...');
+    });
+
+    it('should toggle shouldAnimate during rotation', () => {
+      const localFixture = TestBed.createComponent(LoadingSkeletonComponent);
+      const localComponent = localFixture.componentInstance;
+      localFixture.detectChanges();
+
+      expect(localComponent.shouldAnimate()).toBe(false);
+
+      // Trigger rotation
+      vi.advanceTimersByTime(3500);
+      expect(localComponent.shouldAnimate()).toBe(true);
+
+      // After animation duration (600ms), animation flag resets
+      vi.advanceTimersByTime(600);
+      expect(localComponent.shouldAnimate()).toBe(false);
+    });
+
+    it('should wrap around to first message after last', () => {
+      const localFixture = TestBed.createComponent(LoadingSkeletonComponent);
+      const localComponent = localFixture.componentInstance;
+      localFixture.detectChanges();
+
+      // Rotate through all 3 messages (3 intervals)
+      for (let i = 0; i < 3; i++) {
+        vi.advanceTimersByTime(3500);
+        vi.advanceTimersByTime(600); // let animation complete
+      }
+
+      // Should wrap back to first message
+      expect(localComponent.currentMessage()).toBe('Diving into fashion archives...');
+    });
+
+    it('should handle empty messages without error', () => {
+      // Create component with no translations loaded for the key
+      const emptyFixture = TestBed.createComponent(LoadingSkeletonComponent);
+      const emptyComponent = emptyFixture.componentInstance;
+
+      // Override the computed messages to return empty
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (emptyComponent as any).messages = () => [];
+      emptyFixture.detectChanges();
+
+      // Trigger rotation — should not throw
+      expect(() => vi.advanceTimersByTime(3500)).not.toThrow();
+    });
+  });
 });
