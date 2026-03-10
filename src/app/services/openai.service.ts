@@ -45,6 +45,11 @@ const HTTP_ERROR_MESSAGES: Record<number, string> = {
   500: 'errors.serviceUnavailable',
 };
 
+const IMAGE_HTTP_ERROR_MESSAGES: Record<number, string> = {
+  ...HTTP_ERROR_MESSAGES,
+  400: 'errors.imagePromptRejected',
+};
+
 @Injectable({ providedIn: 'root' })
 export class OpenAIService {
   private http = inject(HttpClient);
@@ -160,11 +165,7 @@ Requirements:
         return url;
       }),
       catchError(error =>
-        this.handleError(
-          error,
-          { ...HTTP_ERROR_MESSAGES, 400: 'errors.imagePromptRejected' },
-          'errors.imageGenericError'
-        )
+        this.handleError(error, IMAGE_HTTP_ERROR_MESSAGES, 'errors.imageGenericError')
       )
     );
   }

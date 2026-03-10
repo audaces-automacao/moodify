@@ -10,7 +10,7 @@ export const AVAILABLE_LANGUAGES = [
   { code: 'en', label: 'English' },
   { code: 'pt-BR', label: 'Português' },
 ] as const;
-const DEFAULT_LANG = 'en';
+export const DEFAULT_LANG = 'en';
 export const LANGUAGE_STORAGE_KEY = 'preferredLanguage';
 
 export const appConfig: ApplicationConfig = {

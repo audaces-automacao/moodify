@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoService } from '@jsverse/transloco';
 import { interval } from 'rxjs';
@@ -97,16 +97,13 @@ export class LoadingSkeletonComponent implements OnInit {
   private static readonly FADE_OUT_DELAY = 300;
   private static readonly ANIMATION_DURATION = 600;
 
-  stage = input<'moodBoard' | 'image'>('moodBoard');
-
   currentMessage = signal('');
   shouldAnimate = signal(false);
 
   private currentIndex = 0;
 
   private messages = computed(() => {
-    const key = this.stage() === 'moodBoard' ? 'loading.moodBoard' : 'loading.image';
-    return this.transloco.translate<string[]>(key) || [];
+    return this.transloco.translate<string[]>('loading.moodBoard') || [];
   });
 
   ngOnInit() {

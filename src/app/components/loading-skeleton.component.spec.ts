@@ -13,7 +13,6 @@ describe('LoadingSkeletonComponent', () => {
         'Channeling your inner style icon...',
         'Curating the perfect aesthetic...',
       ],
-      image: ['Sketching your signature look...', 'Bringing your vision to life...'],
     },
   };
 
@@ -87,10 +86,6 @@ describe('LoadingSkeletonComponent', () => {
 
   it('should have currentMessage signal initialized', () => {
     expect(component.currentMessage).toBeDefined();
-  });
-
-  it('should have stage input defaulting to moodBoard', () => {
-    expect(component.stage()).toBe('moodBoard');
   });
 
   it('should set initial message from translations', async () => {
