@@ -31,7 +31,21 @@ describe('routes', () => {
     expect(wildcardRoute?.redirectTo).toBe('');
   });
 
-  it('should have exactly 3 routes configured', () => {
-    expect(routes.length).toBe(3);
+  it('should have a library route', () => {
+    const libraryRoute = routes.find((r) => r.path === 'library');
+    expect(libraryRoute).toBeDefined();
+    expect(libraryRoute?.loadComponent).toBeDefined();
+    expect(libraryRoute?.canActivate).toContain(authGuard);
+  });
+
+  it('should have a library detail route with id param', () => {
+    const libraryDetailRoute = routes.find((r) => r.path === 'library/:id');
+    expect(libraryDetailRoute).toBeDefined();
+    expect(libraryDetailRoute?.loadComponent).toBeDefined();
+    expect(libraryDetailRoute?.canActivate).toContain(authGuard);
+  });
+
+  it('should have exactly 5 routes configured', () => {
+    expect(routes.length).toBe(5);
   });
 });
