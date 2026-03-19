@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslocoTestingModule } from '@jsverse/transloco';
+import { TranslocoService, TranslocoTestingModule } from '@jsverse/transloco';
+import { EMPTY } from 'rxjs';
 import { LoadingSkeletonComponent } from './loading-skeleton.component';
 
 describe('LoadingSkeletonComponent', () => {
@@ -176,5 +177,28 @@ describe('LoadingSkeletonComponent', () => {
       // Trigger rotation — should not throw
       expect(() => vi.advanceTimersByTime(3500)).not.toThrow();
     });
+  });
+});
+
+describe('LoadingSkeletonComponent (falsy translate)', () => {
+  beforeEach(async () => {
+    const translocoMock = {
+      translate: vi.fn().mockReturnValue(null),
+      selectTranslation: vi.fn().mockReturnValue(EMPTY),
+    };
+
+    await TestBed.configureTestingModule({
+      imports: [LoadingSkeletonComponent],
+      providers: [{ provide: TranslocoService, useValue: translocoMock }],
+    }).compileComponents();
+  });
+
+  it('should fall back to empty array when translate returns falsy', () => {
+    const localFixture = TestBed.createComponent(LoadingSkeletonComponent);
+    const localComponent = localFixture.componentInstance;
+    localFixture.detectChanges();
+
+    // messages() returns [] via || [] fallback, so currentMessage stays empty
+    expect(localComponent.currentMessage()).toBe('');
   });
 });

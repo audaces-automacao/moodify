@@ -183,5 +183,25 @@ describe('LoginComponent', () => {
       const errorElement = fixture.nativeElement.querySelector('.bg-luxury-rose\\/20');
       expect(errorElement).toBeFalsy();
     });
+
+    it('should show loading text on button when isLoading is true', async () => {
+      component.isLoading.set(true);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const button = fixture.nativeElement.querySelector('button[type="submit"]');
+      expect(button.textContent.trim()).toBe('Signing In...');
+      expect(button.disabled).toBe(true);
+    });
+
+    it('should show submit text on button when isLoading is false', async () => {
+      component.isLoading.set(false);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const button = fixture.nativeElement.querySelector('button[type="submit"]');
+      expect(button.textContent.trim()).toBe('Sign In');
+      expect(button.disabled).toBe(false);
+    });
   });
 });
