@@ -4,40 +4,12 @@ import { TranslocoService } from '@jsverse/transloco';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { MoodBoardResponse, OutfitSuggestion } from '../models/mood-board.model';
-
-interface OpenAIMessage {
-  role: 'system' | 'user' | 'assistant';
-  content: string;
-}
-
-interface OpenAIRequest {
-  model: string;
-  messages: OpenAIMessage[];
-  temperature: number;
-  max_tokens: number;
-}
-
-interface OpenAIResponse {
-  choices: {
-    message: {
-      content: string;
-    };
-  }[];
-}
-
-interface DallERequest {
-  model: string;
-  prompt: string;
-  n: number;
-  size: '1024x1024' | '1792x1024' | '1024x1792';
-  quality: 'standard' | 'hd';
-  response_format: 'url' | 'b64_json';
-}
-
-interface DallEResponse {
-  created: number;
-  data: { url: string; revised_prompt?: string }[];
-}
+import {
+  DallERequest,
+  DallEResponse,
+  OpenAIRequest,
+  OpenAIResponse,
+} from '../models/openai-api.model';
 
 const HTTP_ERROR_MESSAGES: Record<number, string> = {
   401: 'errors.invalidApiKey',

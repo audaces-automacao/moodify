@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoService } from '@jsverse/transloco';
 import { interval } from 'rxjs';
@@ -102,9 +102,9 @@ export class LoadingSkeletonComponent implements OnInit {
 
   private currentIndex = 0;
 
-  private messages = computed(() => {
+  private getMessages(): string[] {
     return this.transloco.translate<string[]>('loading.moodBoard') || [];
-  });
+  }
 
   ngOnInit() {
     this.setInitialMessage();
@@ -125,14 +125,14 @@ export class LoadingSkeletonComponent implements OnInit {
   }
 
   private setInitialMessage() {
-    const messages = this.messages();
+    const messages = this.getMessages();
     if (messages.length > 0) {
       this.currentMessage.set(messages[0]);
     }
   }
 
   private rotateMessage() {
-    const messages = this.messages();
+    const messages = this.getMessages();
     if (messages.length === 0) return;
 
     // Trigger fade animation

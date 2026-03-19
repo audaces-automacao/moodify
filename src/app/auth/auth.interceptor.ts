@@ -12,14 +12,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  let clonedReq = req;
-  if (token) {
-    clonedReq = req.clone({
-      setHeaders: { Authorization: `Bearer ${token}` },
-    });
-  }
+  const authReq = token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
 
-  return next(clonedReq).pipe(
+  return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401 && !req.url.endsWith('/api/auth/verify')) {
         authService.logout();

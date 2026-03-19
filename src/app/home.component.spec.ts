@@ -291,9 +291,9 @@ describe('HomeComponent', () => {
       );
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await expect(
-        (component as any).preloadImage('https://example.com/bad.png')
-      ).rejects.toBeUndefined();
+      await expect((component as any).preloadImage('https://example.com/bad.png')).rejects.toThrow(
+        'Image failed to load'
+      );
     });
   });
 

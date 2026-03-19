@@ -30,15 +30,15 @@ export class ThemeService {
   }
 
   private getInitialTheme(): Theme {
-    // Check localStorage first
-    const stored = localStorage.getItem(THEME_STORAGE_KEY);
+    const win = this.document.defaultView;
+
+    const stored = win?.localStorage.getItem(THEME_STORAGE_KEY);
     if (stored === 'dark' || stored === 'light') {
       return stored;
     }
 
-    // Check system preference
-    if (window.matchMedia) {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (win?.matchMedia) {
+      const prefersDark = win.matchMedia('(prefers-color-scheme: dark)').matches;
       return prefersDark ? 'dark' : 'light';
     }
 
@@ -50,6 +50,6 @@ export class ThemeService {
   }
 
   private persistTheme(theme: Theme): void {
-    localStorage.setItem(THEME_STORAGE_KEY, theme);
+    this.document.defaultView?.localStorage.setItem(THEME_STORAGE_KEY, theme);
   }
 }

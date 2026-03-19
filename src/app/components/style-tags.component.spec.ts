@@ -49,21 +49,29 @@ describe('StyleTagsComponent', () => {
     expect(title.textContent).toContain('Style Keywords');
   });
 
-  describe('getTagStyle', () => {
-    it('should return correct styles for each index', () => {
-      expect(component.getTagStyle(0)).toBe('bg-luxury-champagne text-luxury-void');
-      expect(component.getTagStyle(1)).toBe('border border-luxury-champagne text-luxury-champagne');
-      expect(component.getTagStyle(2)).toBe('bg-luxury-onyx text-luxury-cream');
-      expect(component.getTagStyle(3)).toBe('border border-luxury-graphite text-luxury-cream');
+  describe('styledTags', () => {
+    it('should pair each tag with the correct style', () => {
+      const styled = component.styledTags();
+      expect(styled[0]).toEqual({ tag: 'Elegant', style: 'bg-luxury-champagne text-luxury-void' });
+      expect(styled[1]).toEqual({
+        tag: 'Sophisticated',
+        style: 'border border-luxury-champagne text-luxury-champagne',
+      });
+      expect(styled[2]).toEqual({ tag: 'Modern', style: 'bg-luxury-onyx text-luxury-cream' });
+      expect(styled[3]).toEqual({
+        tag: 'Minimalist',
+        style: 'border border-luxury-graphite text-luxury-cream',
+      });
     });
 
-    it('should cycle through 8 unique styles', () => {
-      const styles = Array.from({ length: 8 }, (_, i) => component.getTagStyle(i));
-      const uniqueStyles = new Set(styles);
+    it('should cycle styles when tags exceed style count', async () => {
+      const manyTags = Array.from({ length: 10 }, (_, i) => `Tag${i}`);
+      fixture.componentRef.setInput('tags', manyTags);
+      fixture.detectChanges();
 
-      expect(uniqueStyles.size).toBe(8);
-      expect(component.getTagStyle(8)).toBe(component.getTagStyle(0));
-      expect(component.getTagStyle(9)).toBe(component.getTagStyle(1));
+      const styled = component.styledTags();
+      expect(styled[8].style).toBe(styled[0].style);
+      expect(styled[9].style).toBe(styled[1].style);
     });
   });
 

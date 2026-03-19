@@ -15,7 +15,10 @@ import { ThemeSwitcherComponent } from './theme-switcher.component';
           <app-theme-switcher />
           <app-language-switcher />
           @if (authService.isAuthenticated()) {
-            <button (click)="logout()" class="glass-btn-secondary px-3 py-1.5 text-xs rounded">
+            <button
+              (click)="authService.logout()"
+              class="glass-btn-secondary px-3 py-1.5 text-xs rounded"
+            >
               {{ 'header.logout' | transloco }}
             </button>
           }
@@ -37,8 +40,4 @@ import { ThemeSwitcherComponent } from './theme-switcher.component';
 })
 export class HeaderComponent {
   protected authService = inject(AuthService);
-
-  logout(): void {
-    this.authService.logout();
-  }
 }

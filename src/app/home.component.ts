@@ -1,16 +1,17 @@
-import { DOCUMENT } from '@angular/common';
 import {
+  afterNextRender,
   Component,
   DestroyRef,
   ElementRef,
   inject,
+  Injector,
   OnInit,
   signal,
   ViewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { finalize } from 'rxjs';
+import { finalize, from, map, switchMap } from 'rxjs';
 import { HeaderComponent } from './components/header.component';
 import { LoadingSkeletonComponent } from './components/loading-skeleton.component';
 import { MoodBoardComponent } from './components/mood-board.component';
@@ -32,8 +33,8 @@ import { OpenAIService } from './services/openai.service';
 export class HomeComponent implements OnInit {
   private openai = inject(OpenAIService);
   private transloco = inject(TranslocoService);
-  private document = inject(DOCUMENT);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
 
   @ViewChild('loadingSection') loadingSection!: ElementRef<HTMLDivElement>;
 
@@ -49,13 +50,10 @@ export class HomeComponent implements OnInit {
   private exampleKeys = ['parisian', 'coastal', '90s', 'darkAcademia', 'disco'] as const;
 
   ngOnInit() {
-    // Subscribe to translation changes - emits when translations are fully loaded
-    // Handles both initial load and language switches
     this.transloco
       .selectTranslation()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.document.documentElement.lang = this.transloco.getActiveLang();
         this.updateExamplePrompts();
       });
   }
@@ -70,19 +68,16 @@ export class HomeComponent implements OnInit {
   }
 
   generateMoodBoard(prompt: string) {
-    this.isLoading.set(true);
-    this.error.set(null);
-    this.moodBoard.set(null);
-    this.outfitImage.set(null);
-    this.isImageLoading.set(false);
-    this.imageError.set(null);
+    this.resetState();
 
-    // Scroll to loading section after DOM updates
-    setTimeout(() => this.scrollToLoading(), 100);
+    afterNextRender(() => this.scrollToLoading(), { injector: this.injector });
 
     this.openai
       .generateMoodBoard(prompt)
-      .pipe(finalize(() => this.isLoading.set(false)))
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
         next: result => {
           this.moodBoard.set(result);
@@ -92,25 +87,30 @@ export class HomeComponent implements OnInit {
       });
   }
 
+  private resetState() {
+    this.isLoading.set(true);
+    this.error.set(null);
+    this.moodBoard.set(null);
+    this.outfitImage.set(null);
+    this.isImageLoading.set(false);
+    this.imageError.set(null);
+  }
+
   private generateOutfitImage(moodBoard: MoodBoardResponse) {
     this.isImageLoading.set(true);
-    this.imageError.set(null);
 
     this.openai
       .generateOutfitImage(moodBoard.outfitSuggestions, moodBoard.styleKeywords)
+      .pipe(
+        switchMap(url => from(this.preloadImage(url)).pipe(map(() => url))),
+        finalize(() => this.isImageLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
-        next: imageUrl => {
-          // Preload the image before displaying to avoid visual gap
-          this.preloadImage(imageUrl)
-            .then(
-              () => this.outfitImage.set(imageUrl),
-              () => this.imageError.set(this.transloco.translate('errors.imageGenericError'))
-            )
-            .finally(() => this.isImageLoading.set(false));
-        },
+        next: url => this.outfitImage.set(url),
         error: err => {
-          this.imageError.set(err.message);
-          this.isImageLoading.set(false);
+          const message = err?.message || this.transloco.translate('errors.imageGenericError');
+          this.imageError.set(message);
         },
       });
   }
@@ -119,7 +119,7 @@ export class HomeComponent implements OnInit {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => resolve();
-      img.onerror = () => reject();
+      img.onerror = () => reject(new Error('Image failed to load'));
       img.src = url;
     });
   }

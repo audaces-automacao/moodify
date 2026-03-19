@@ -1,35 +1,28 @@
+import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, map, Observable, of, tap } from 'rxjs';
+import { LoginResponse, VerifyResponse } from '../models/auth.model';
 
-interface LoginResponse {
-  token: string;
-  email: string;
-}
-
-interface VerifyResponse {
-  valid: boolean;
-  email: string;
-}
+const TOKEN_KEY = 'auth_token';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
-
-  private readonly TOKEN_KEY = 'auth_token';
+  private storage = inject(DOCUMENT).defaultView?.localStorage;
 
   isAuthenticated = signal(false);
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return this.storage?.getItem(TOKEN_KEY) ?? null;
   }
 
   login(email: string, password: string): Observable<boolean> {
     return this.http.post<LoginResponse>('/api/auth/login', { email, password }).pipe(
       tap(response => {
-        localStorage.setItem(this.TOKEN_KEY, response.token);
+        this.storage?.setItem(TOKEN_KEY, response.token);
         this.isAuthenticated.set(true);
       }),
       map(() => true),
@@ -38,7 +31,7 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
+    this.storage?.removeItem(TOKEN_KEY);
     this.isAuthenticated.set(false);
     this.router.navigate(['/login']);
   }

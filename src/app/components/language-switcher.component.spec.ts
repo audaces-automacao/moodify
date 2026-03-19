@@ -42,8 +42,7 @@ describe('LanguageSwitcherComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize currentLang from localStorage', () => {
-    expect(localStorageSpy.getItem).toHaveBeenCalledWith('preferredLanguage');
+  it('should initialize currentLang from transloco active language', () => {
     expect(component.currentLang()).toBe('en');
   });
 
