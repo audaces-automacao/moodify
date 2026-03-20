@@ -45,7 +45,10 @@ const en = {
     shoes: 'Shoes',
     accessories: 'Accessories',
   },
-  errors: { generic: 'An error occurred' },
+  errors: {
+    generic: 'An error occurred',
+    imageGenericError: 'Failed to generate outfit image. Please try again.',
+  },
   outfitImage: {
     title: 'Outfit Visualization',
     altText: 'AI-generated outfit visualization',
@@ -203,7 +206,7 @@ describe('HomeComponent', () => {
       vi.spyOn(component as any, 'preloadImage').mockReturnValue(Promise.resolve());
 
       component.generateMoodBoard('test');
-      // Flush microtask queue: one for .then(), one for .finally()
+      // Flush microtask queue for Promise wrapped in from()
       await Promise.resolve();
       await Promise.resolve();
 
@@ -228,14 +231,16 @@ describe('HomeComponent', () => {
       openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
       openAIServiceMock.generateOutfitImage.mockReturnValue(of('https://example.com/image.png'));
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      vi.spyOn(component as any, 'preloadImage').mockReturnValue(Promise.reject());
+      vi.spyOn(component as any, 'preloadImage').mockReturnValue(
+        Promise.reject(new Error('Failed to generate outfit image. Please try again.'))
+      );
 
       component.generateMoodBoard('test');
-      // Flush microtask queue: one for .then(), one for .finally()
+      // Flush microtask queue for Promise wrapped in from()
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(component.imageError()).toBe('errors.imageGenericError');
+      expect(component.imageError()).toBe('Failed to generate outfit image. Please try again.');
       expect(component.outfitImage()).toBeNull();
       expect(component.isImageLoading()).toBe(false);
     });
@@ -291,9 +296,9 @@ describe('HomeComponent', () => {
       );
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await expect(
-        (component as any).preloadImage('https://example.com/bad.png')
-      ).rejects.toBeUndefined();
+      await expect((component as any).preloadImage('https://example.com/bad.png')).rejects.toThrow(
+        'Failed to generate outfit image. Please try again.'
+      );
     });
   });
 

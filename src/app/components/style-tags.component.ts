@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 const TAG_STYLES = [
@@ -21,13 +21,13 @@ const TAG_STYLES = [
         {{ 'styleTags.title' | transloco }}
       </h3>
       <div class="flex flex-wrap gap-3">
-        @for (tag of tags(); track tag; let i = $index) {
+        @for (item of styledTags(); track item.tag) {
           <span
             class="px-4 py-2 text-sm font-medium rounded-full transition-all duration-300
                    hover:scale-105 cursor-default"
-            [class]="getTagStyle(i)"
+            [class]="item.style"
           >
-            {{ tag }}
+            {{ item.tag }}
           </span>
         }
       </div>
@@ -37,7 +37,7 @@ const TAG_STYLES = [
 export class StyleTagsComponent {
   tags = input.required<string[]>();
 
-  getTagStyle(index: number): string {
-    return TAG_STYLES[index % TAG_STYLES.length];
-  }
+  styledTags = computed(() =>
+    this.tags().map((tag, i) => ({ tag, style: TAG_STYLES[i % TAG_STYLES.length] }))
+  );
 }

@@ -21,7 +21,7 @@ export const appConfig: ApplicationConfig = {
     provideTransloco({
       config: {
         availableLangs: AVAILABLE_LANGUAGES.map(l => l.code),
-        defaultLang: getDefaultLanguage(),
+        defaultLang: getDefaultLanguage(localStorage, navigator.language),
         reRenderOnLangChange: true,
         prodMode: !isDevMode(),
       },
@@ -30,13 +30,13 @@ export const appConfig: ApplicationConfig = {
   ],
 };
 
-function getDefaultLanguage(): string {
-  const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+export function getDefaultLanguage(storage: Storage, navigatorLang: string): string {
+  const stored = storage.getItem(LANGUAGE_STORAGE_KEY);
   if (stored && AVAILABLE_LANGUAGES.some(l => l.code === stored)) {
     return stored;
   }
 
-  if (navigator.language.startsWith('pt')) {
+  if (navigatorLang.startsWith('pt')) {
     return 'pt-BR';
   }
 
