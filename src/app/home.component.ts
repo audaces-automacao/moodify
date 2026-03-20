@@ -119,7 +119,7 @@ export class HomeComponent implements OnInit {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => resolve();
-      img.onerror = () => reject(new Error('Image failed to load'));
+      img.onerror = () => reject(new Error(this.transloco.translate('errors.imageGenericError')));
       img.src = url;
     });
   }

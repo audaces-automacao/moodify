@@ -64,7 +64,7 @@ describe('StyleTagsComponent', () => {
       });
     });
 
-    it('should cycle styles when tags exceed style count', async () => {
+    it('should cycle styles when tags exceed style count', () => {
       const manyTags = Array.from({ length: 10 }, (_, i) => `Tag${i}`);
       fixture.componentRef.setInput('tags', manyTags);
       fixture.detectChanges();

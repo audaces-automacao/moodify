@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, map, Observable, of, tap } from 'rxjs';
-import { LoginResponse, VerifyResponse } from '../models/auth.model';
+import { LoginResponse, VerifyResponse } from './auth.model';
 
 const TOKEN_KEY = 'auth_token';
 

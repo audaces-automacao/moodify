@@ -4,12 +4,7 @@ import { TranslocoService } from '@jsverse/transloco';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { MoodBoardResponse, OutfitSuggestion } from '../models/mood-board.model';
-import {
-  DallERequest,
-  DallEResponse,
-  OpenAIRequest,
-  OpenAIResponse,
-} from '../models/openai-api.model';
+import { DallERequest, DallEResponse, OpenAIRequest, OpenAIResponse } from './openai-api.model';
 
 const HTTP_ERROR_MESSAGES: Record<number, string> = {
   401: 'errors.invalidApiKey',
