@@ -2,25 +2,25 @@
 
 ## Stack
 
-Angular 21 with Tailwind CSS v4, PostCSS, and SCSS for component styles.
+Angular 21 with Tailwind CSS v4 utilities and SCSS for component styles.
 
 ## Conventions
 
-- Utility-first styling with Tailwind CSS classes in templates
-- Bold editorial design aesthetic (Vogue/Harper's Bazaar inspired)
-- Fonts: Playfair Display (serif headings) + Inter (sans-serif body)
-- Dark/light theme toggle via `ThemeService` — uses CSS class strategy on document root
+- Bold editorial design inspired by Vogue/Harper's Bazaar — high contrast, dramatic typography
+- Fonts: Playfair Display (serif, headings/display) + Inter (sans-serif, body/UI)
+- Tailwind CSS v4 for utility classes; SCSS for component-scoped styles (Angular `styleUrl`)
+- Dark/light theme support via `ThemeService` — respect user's theme toggle preference
 
 ## File Organization
 
-- `src/styles.scss` — global styles, Tailwind directives, font imports
-- Component-level SCSS via Angular's `inlineStyleLanguage: "scss"`
-- `.postcssrc.json` — PostCSS config with Tailwind and autoprefixer
-- `.prettierrc` — Prettier configured with Angular HTML parser
+- Component styles co-located as SCSS files (e.g., `login.component.scss`)
+- Global styles in `src/styles.scss`
+- Tailwind configuration via CSS-based `@theme` in `src/styles.scss`
+- Translation files in `public/i18n/` (en.json, pt-BR.json)
 
 ## Adding New Components
 
-- Use Tailwind utility classes for layout and spacing
-- Follow existing component patterns: standalone components with inline templates where appropriate
-- Dark mode: use Tailwind's `dark:` variant for theme-aware styles
-- Keep custom SCSS minimal — prefer Tailwind utilities over custom CSS
+- Use Tailwind utilities for layout and spacing; SCSS for complex component-specific styles
+- Follow the editorial design language: bold typography, generous whitespace, strong visual hierarchy
+- Ensure all user-facing text uses transloco keys for i18n support
+- Support both dark and light themes — test in both modes

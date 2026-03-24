@@ -1,35 +1,33 @@
-<!-- Keep this file, .claude/docs/, and subproject CLAUDE.md files updated when project structure changes -->
+<!-- Keep this file and .claude/docs/ updated when project structure, conventions, or tooling changes -->
 
 # Moodify
 
-AI-powered fashion mood board generator. Monorepo with 2 packages.
-
-## Architecture
-
-| Subproject | Purpose | Stack |
-|---------|---------|-------|
-| `/` (root) | Angular frontend — mood board UI with i18n and theming | TS/Angular 21, Tailwind v4 |
-| `server/` | Express backend — auth, OpenAI proxy, static serving | Node.js/Express |
-
-## Commands
-
-npm run dev              # Start both servers (Angular + Express)
-npm run build            # Build Angular frontend
-npm run lint             # Lint all TypeScript + HTML
-npm run test:ci          # Frontend tests with coverage
-cd server && npm test    # Backend tests (Jest)
+AI-powered fashion mood board generator. Built with Angular 21, Express.js, Tailwind CSS v4, OpenAI GPT-4o.
 
 ## Conventions
 
-- Standalone components with signals (no NgModules)
-- JWT auth with interceptor; proxy config routes /api/* to Express
-- i18n via @jsverse/transloco (en, pt-BR) — translations in src/assets/i18n/
-- Components use `app-` prefix (kebab-case selectors, camelCase directives)
-- Strict TypeScript with strict Angular templates
+- Standalone Angular components (no NgModules), signals-based reactivity
+- Bold editorial design (Vogue/Harper's Bazaar aesthetic): Playfair Display + Inter fonts
+- SCSS for component styles, Tailwind CSS v4 for utility classes
+- i18n via @jsverse/transloco (en, pt-BR) — all user-facing strings must be translatable
+- Express backend in `server/` — JWT auth, OpenAI proxy, rate limiting
 
-## Subproject Docs
+## Commands
 
-- `server/CLAUDE.md` - Express backend API
+```bash
+npm run dev              # Start Angular + Express dev servers
+npm run build            # Build the project
+npm test                 # Run frontend tests (Vitest)
+npm run test:ci          # Frontend tests with coverage
+npm run lint             # Lint source files
+cd server && npm test    # Run backend tests (Jest)
+```
+
+## Project Structure
+
+- `src/app/` — Angular frontend (components, services, auth, models)
+- `server/` — Express.js backend API (has own package.json, CLAUDE.md)
+- `public/` — Static assets (i18n translation files)
 
 ## Before Writing Code
 
@@ -37,9 +35,9 @@ ALWAYS read `.claude/docs/coding-guidelines.md` before planning or implementing 
 
 ## Documentation
 
-- `.claude/docs/testing.md` - Frontend testing with Vitest
-- `.claude/docs/styling.md` - Tailwind CSS v4 and editorial design patterns
-- `.claude/docs/architecture.md` - Architecture map and data flow
+- `.claude/docs/testing.md` — Test framework, conventions, coverage
+- `.claude/docs/styling.md` — UI styling patterns and design tokens
+- `.claude/docs/architecture.md` — System architecture and data flow
 
 ## Agents
 

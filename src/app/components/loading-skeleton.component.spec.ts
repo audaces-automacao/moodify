@@ -201,4 +201,19 @@ describe('LoadingSkeletonComponent (falsy translate)', () => {
     // messages() returns [] via || [] fallback, so currentMessage stays empty
     expect(localComponent.currentMessage()).toBe('');
   });
+
+  it('should skip rotation when messages are empty', () => {
+    vi.useFakeTimers();
+
+    const localFixture = TestBed.createComponent(LoadingSkeletonComponent);
+    const localComponent = localFixture.componentInstance;
+    localFixture.detectChanges();
+
+    // rotateMessage fires but messages is empty — early return branch
+    vi.advanceTimersByTime(3500);
+    expect(localComponent.shouldAnimate()).toBe(false);
+    expect(localComponent.currentMessage()).toBe('');
+
+    vi.useRealTimers();
+  });
 });

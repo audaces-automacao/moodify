@@ -245,6 +245,17 @@ describe('HomeComponent', () => {
       expect(component.isImageLoading()).toBe(false);
     });
 
+    it('should use fallback message when image error has no message', () => {
+      openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
+      openAIServiceMock.generateOutfitImage.mockReturnValue(
+        throwError(() => ({ notAnError: true }))
+      );
+
+      component.generateMoodBoard('test');
+
+      expect(component.imageError()).toBe('Failed to generate outfit image. Please try again.');
+    });
+
     it('should not affect mood board display when image generation fails', () => {
       openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
       openAIServiceMock.generateOutfitImage.mockReturnValue(

@@ -18,7 +18,7 @@ Before analyzing, read `.claude/CLAUDE.md` to understand the project structure. 
 
 4. **Verify Test Commands Work**: Confirm that test commands documented in `testing.md` are actually runnable. Flag broken or outdated test scripts.
 
-5. **Report Coverage Changes**: If a coverage tool is configured (documented in `testing.md`), report whether coverage increased or decreased.
+5. **Report Coverage Changes**: If a coverage tool is configured (documented in `testing.md`), run it and report whether coverage increased or decreased.
 
 6. **Flag Structurally Untestable Code**: Identify code that contains testable logic but cannot be unit-tested without refactoring (hardcoded dependencies, tightly coupled modules, inline DB/HTTP calls without dependency injection, deeply nested side effects, global state mutations). Report these as structural issues, noting which specific barrier prevents testing.
 
