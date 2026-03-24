@@ -5,28 +5,19 @@ import { join } from 'path';
 import { fileURLToPath } from 'url';
 import {
   applyMiddleware,
+  createApiLimiter,
   createAuthLimiter,
   createAuthMiddleware,
   createCorsOptions,
+  createErrorHandler,
   createOpenAIProxy,
   createValidationMiddleware,
   validateChatRequest,
   validateImageRequest,
+  validateLoginRequest,
 } from './middleware.js';
 
-const DEFAULT_USER = {
-  email: 'bob@audaces.com',
-  password: '12345',
-  sub: 'bob',
-};
-
-export function createApp({
-  jwtSecret,
-  openaiApiKey,
-  allowedOrigins,
-  validUser = DEFAULT_USER,
-  staticPath,
-} = {}) {
+export function createApp({ jwtSecret, openaiApiKey, allowedOrigins, validUser, staticPath } = {}) {
   if (!jwtSecret) throw new Error('jwtSecret is required');
   if (!openaiApiKey) throw new Error('openaiApiKey is required');
   if (!validUser?.email || !validUser?.password || !validUser?.sub) {
@@ -38,33 +29,36 @@ export function createApp({
   const corsOptions = createCorsOptions(allowedOrigins);
   const authMiddleware = createAuthMiddleware(jwtSecret);
   const authLimiter = createAuthLimiter();
+  const apiLimiter = createApiLimiter();
 
   applyMiddleware(app, corsOptions);
 
   // Auth endpoints (no auth required)
-  app.post('/api/auth/login', authLimiter, (req, res) => {
-    const { email, password } = req.body || {};
+  app.post(
+    '/api/auth/login',
+    authLimiter,
+    createValidationMiddleware(validateLoginRequest, 'Email and password are required'),
+    (req, res) => {
+      const { email, password } = req.body;
 
-    if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
-      return res.status(400).json({ error: 'Email and password are required' });
+      if (email === validUser.email && password === validUser.password) {
+        const token = jwt.sign({ email, sub: validUser.sub }, jwtSecret, { expiresIn: '1d' });
+        return res.json({ token, email });
+      }
+
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
+  );
 
-    if (email === validUser.email && password === validUser.password) {
-      const token = jwt.sign({ email, sub: validUser.sub }, jwtSecret, { expiresIn: '1d' });
-      return res.json({ token, email });
-    }
-
-    return res.status(401).json({ error: 'Invalid credentials' });
-  });
-
-  app.get('/api/auth/verify', authMiddleware, (req, res) => {
+  app.get('/api/auth/verify', authMiddleware, apiLimiter, (req, res) => {
     res.json({ valid: true, email: req.user.email });
   });
 
-  // Proxy endpoints (protected)
+  // Proxy endpoints (protected, rate-limited)
   app.post(
     '/api/chat/completions',
     authMiddleware,
+    apiLimiter,
     createValidationMiddleware(
       validateChatRequest,
       'Invalid chat request: messages array with role and content required'
@@ -79,6 +73,7 @@ export function createApp({
   app.post(
     '/api/images/generations',
     authMiddleware,
+    apiLimiter,
     createValidationMiddleware(
       validateImageRequest,
       'Invalid image request: prompt string required'
@@ -102,35 +97,50 @@ export function createApp({
     });
   }
 
+  app.use(createErrorHandler());
+
   return app;
 }
 
-// Entry point: load env and start server
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const __dirname = import.meta.dirname;
-  dotenv.config({ path: join(__dirname, '../.env') });
+export function startServer(
+  env = process.env,
+  { exit = process.exit, listen = (app, port, cb) => app.listen(port, cb), staticPath } = {}
+) {
+  const {
+    PORT = 3000,
+    OPENAI_API_KEY,
+    JWT_SECRET,
+    AUTH_EMAIL,
+    AUTH_PASSWORD,
+    AUTH_SUB,
+    ALLOWED_ORIGINS,
+  } = env;
 
-  const PORT = process.env.PORT || 3000;
-  const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-  const JWT_SECRET = process.env.JWT_SECRET;
+  const required = { OPENAI_API_KEY, JWT_SECRET, AUTH_EMAIL, AUTH_PASSWORD };
+  for (const [key, val] of Object.entries(required)) {
+    if (!val) {
+      console.error(`FATAL: ${key} environment variable is required`);
+      exit(1);
+      return;
+    }
+  }
 
-  if (!OPENAI_API_KEY) {
-    console.error('FATAL: OPENAI_API_KEY environment variable is required');
-    process.exit(1);
-  }
-  if (!JWT_SECRET) {
-    console.error('FATAL: JWT_SECRET environment variable is required');
-    process.exit(1);
-  }
+  const allowedOrigins = ALLOWED_ORIGINS?.split(',');
 
   const app = createApp({
     jwtSecret: JWT_SECRET,
     openaiApiKey: OPENAI_API_KEY,
-    allowedOrigins: process.env.ALLOWED_ORIGINS?.split(','),
-    staticPath: join(__dirname, '../dist/moodify/browser'),
+    allowedOrigins,
+    validUser: { email: AUTH_EMAIL, password: AUTH_PASSWORD, sub: AUTH_SUB || 'default' },
+    staticPath: staticPath ?? join(import.meta.dirname, '../dist/moodify/browser'),
   });
 
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  listen(app, PORT, () => {
+    console.log(`Server listening on 0.0.0.0:${PORT}`);
   });
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  dotenv.config({ path: join(import.meta.dirname, '../.env') });
+  startServer();
 }

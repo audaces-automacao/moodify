@@ -20,7 +20,7 @@ test-coverage.cmd        # All tests with coverage reports
 ## Test Structure
 
 - Frontend specs co-located with source: `src/app/**/*.spec.ts`
-- Backend specs co-located with source: `server/**/*.test.js`
+- Backend specs co-located with source: `server/**/*.spec.js`
 - Each component, service, guard, and interceptor has a corresponding spec file
 
 ## Writing Tests

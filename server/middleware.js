@@ -29,6 +29,10 @@ export function createAuthMiddleware(secret) {
 
     const token = authHeader.split(' ')[1];
 
+    if (!token) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
     try {
       const decoded = jwt.verify(token, secret);
       req.user = decoded;
@@ -40,22 +44,37 @@ export function createAuthMiddleware(secret) {
 }
 
 export function validateChatRequest(body) {
-  if (!body || !Array.isArray(body.messages)) return false;
+  if (!body || !Array.isArray(body.messages) || body.messages.length === 0) return false;
   return body.messages.every(m => typeof m.role === 'string' && typeof m.content === 'string');
 }
 
 export function validateImageRequest(body) {
-  if (!body || typeof body.prompt !== 'string') return false;
+  if (!body || typeof body.prompt !== 'string' || body.prompt.trim() === '') return false;
   if (body.n !== undefined && typeof body.n !== 'number') return false;
   if (body.size !== undefined && typeof body.size !== 'string') return false;
   return true;
 }
 
-export function createAuthLimiter() {
+export function validateLoginRequest(body) {
+  if (!body || typeof body.email !== 'string' || typeof body.password !== 'string') return false;
+  return body.email.length > 0 && body.password.length > 0;
+}
+
+export function createAuthLimiter({ windowMs = 15 * 60 * 1000, max = 5 } = {}) {
   return rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 5,
+    windowMs,
+    max,
     message: { error: 'Too many login attempts, please try again later' },
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
+}
+
+export function createApiLimiter({ windowMs = 60 * 1000, max = 20 } = {}) {
+  return rateLimit({
+    windowMs,
+    max,
+    message: { error: 'Too many requests, please try again later' },
     standardHeaders: true,
     legacyHeaders: false,
   });
@@ -84,24 +103,40 @@ export function createValidationMiddleware(validatorFn, errorMessage = 'Invalid 
   };
 }
 
-export function createOpenAIProxy(apiKey, url, label) {
+export function createOpenAIProxy(apiKey, url, label, { fetchFn = fetch, timeoutMs = 30000 } = {}) {
   return async (req, res) => {
     try {
-      const response = await fetch(url, {
+      const response = await fetchFn(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify(req.body),
-        signal: AbortSignal.timeout(30000),
+        signal: AbortSignal.timeout(timeoutMs),
       });
 
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        console.error(`${label} upstream error: non-JSON response (HTTP ${response.status})`);
+        return res.status(502).json({ error: `${label}: upstream returned non-JSON response` });
+      }
       res.status(response.status).json(data);
     } catch (error) {
       console.error(`${label} proxy error:`, error);
+      if (error.name === 'TimeoutError') {
+        return res.status(504).json({ error: `${label} timed out` });
+      }
       res.status(500).json({ error: `${label} failed` });
     }
+  };
+}
+
+export function createErrorHandler() {
+  return (err, _req, res, _next) => {
+    console.error('Unhandled error:', err);
+    res.status(500).json({ error: 'Internal server error' });
   };
 }

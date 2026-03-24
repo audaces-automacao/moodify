@@ -1,12 +1,19 @@
 import { jest } from '@jest/globals';
+import express from 'express';
 import jwt from 'jsonwebtoken';
+import request from 'supertest';
 import {
+  applyMiddleware,
+  createApiLimiter,
+  createAuthLimiter,
   createAuthMiddleware,
   createCorsOptions,
+  createErrorHandler,
   createOpenAIProxy,
   createValidationMiddleware,
   validateChatRequest,
   validateImageRequest,
+  validateLoginRequest,
 } from './middleware.js';
 
 const JWT_SECRET = 'test-secret';
@@ -63,8 +70,8 @@ describe('validateChatRequest', () => {
     expect(validateChatRequest({ messages: [{ role: 'user' }] })).toBe(false);
   });
 
-  it('should accept empty messages array', () => {
-    expect(validateChatRequest({ messages: [] })).toBe(true);
+  it('should reject empty messages array', () => {
+    expect(validateChatRequest({ messages: [] })).toBe(false);
   });
 });
 
@@ -107,6 +114,14 @@ describe('validateImageRequest', () => {
 
   it('should accept prompt with only size', () => {
     expect(validateImageRequest({ prompt: 'Test', size: '512x512' })).toBe(true);
+  });
+
+  it('should reject empty prompt', () => {
+    expect(validateImageRequest({ prompt: '' })).toBe(false);
+  });
+
+  it('should reject whitespace-only prompt', () => {
+    expect(validateImageRequest({ prompt: '   ' })).toBe(false);
   });
 });
 
@@ -163,6 +178,17 @@ describe('createAuthMiddleware', () => {
 
     expect(mockRes.status).toHaveBeenCalledWith(401);
     expect(mockRes.json).toHaveBeenCalledWith({ error: 'Invalid or expired token' });
+  });
+
+  it('should return 401 for Bearer with empty token', () => {
+    const mockReq = { headers: { authorization: 'Bearer ' } };
+    const mockNext = jest.fn();
+
+    authMiddleware(mockReq, mockRes, mockNext);
+
+    expect(mockRes.status).toHaveBeenCalledWith(401);
+    expect(mockRes.json).toHaveBeenCalledWith({ error: 'No token provided' });
+    expect(mockNext).not.toHaveBeenCalled();
   });
 
   it('should return 401 for expired token', () => {
@@ -364,5 +390,194 @@ describe('createValidationMiddleware', () => {
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
     expect(mockNext).not.toHaveBeenCalled();
+  });
+});
+
+describe('validateLoginRequest', () => {
+  it('should accept valid email and password', () => {
+    expect(validateLoginRequest({ email: 'bob@audaces.com', password: '12345' })).toBe(true);
+  });
+
+  it('should reject null body', () => {
+    expect(validateLoginRequest(null)).toBe(false);
+  });
+
+  it('should reject undefined body', () => {
+    expect(validateLoginRequest(undefined)).toBe(false);
+  });
+
+  it('should reject missing email', () => {
+    expect(validateLoginRequest({ password: '12345' })).toBe(false);
+  });
+
+  it('should reject missing password', () => {
+    expect(validateLoginRequest({ email: 'bob@audaces.com' })).toBe(false);
+  });
+
+  it('should reject empty email', () => {
+    expect(validateLoginRequest({ email: '', password: '12345' })).toBe(false);
+  });
+
+  it('should reject empty password', () => {
+    expect(validateLoginRequest({ email: 'bob@audaces.com', password: '' })).toBe(false);
+  });
+
+  it('should reject non-string email', () => {
+    expect(validateLoginRequest({ email: 123, password: '12345' })).toBe(false);
+  });
+
+  it('should reject non-string password', () => {
+    expect(validateLoginRequest({ email: 'bob@audaces.com', password: 123 })).toBe(false);
+  });
+});
+
+describe('createErrorHandler', () => {
+  it('should return 500 with generic error message', () => {
+    const handler = createErrorHandler();
+    const mockRes = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    jest.spyOn(console, 'error').mockImplementation();
+
+    handler(new Error('boom'), {}, mockRes, jest.fn());
+
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.json).toHaveBeenCalledWith({ error: 'Internal server error' });
+    expect(console.error).toHaveBeenCalledWith('Unhandled error:', expect.any(Error));
+    console.error.mockRestore();
+  });
+});
+
+describe('createOpenAIProxy — non-JSON response', () => {
+  let mockRes;
+
+  beforeEach(() => {
+    jest.spyOn(globalThis, 'fetch');
+    jest.spyOn(console, 'error').mockImplementation();
+    mockRes = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should return 502 when upstream returns non-JSON response', async () => {
+    globalThis.fetch.mockResolvedValue({
+      status: 200,
+      json: () => Promise.reject(new Error('Unexpected token')),
+    });
+
+    const proxy = createOpenAIProxy('key', 'https://api.openai.com/v1/chat/completions', 'Chat');
+    await proxy({ body: {} }, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(502);
+    expect(mockRes.json).toHaveBeenCalledWith({
+      error: 'Chat: upstream returned non-JSON response',
+    });
+  });
+
+  it('should return 504 when request times out', async () => {
+    const timeoutError = new Error('The operation was aborted due to timeout');
+    timeoutError.name = 'TimeoutError';
+    globalThis.fetch.mockRejectedValue(timeoutError);
+
+    const proxy = createOpenAIProxy('key', 'https://api.openai.com/v1/chat/completions', 'Chat');
+    await proxy({ body: {} }, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(504);
+    expect(mockRes.json).toHaveBeenCalledWith({ error: 'Chat timed out' });
+  });
+});
+
+describe('createAuthLimiter', () => {
+  it('should return a middleware function with default params', () => {
+    const limiter = createAuthLimiter();
+    expect(typeof limiter).toBe('function');
+  });
+
+  it('should accept custom windowMs and max', () => {
+    const limiter = createAuthLimiter({ windowMs: 60000, max: 10 });
+    expect(typeof limiter).toBe('function');
+  });
+});
+
+describe('createApiLimiter', () => {
+  it('should return a middleware function with default params', () => {
+    const limiter = createApiLimiter();
+    expect(typeof limiter).toBe('function');
+  });
+
+  it('should accept custom windowMs and max', () => {
+    const limiter = createApiLimiter({ windowMs: 30000, max: 50 });
+    expect(typeof limiter).toBe('function');
+  });
+});
+
+describe('applyMiddleware', () => {
+  it('should apply helmet, cors, compression, and JSON parser to the app', async () => {
+    const app = express();
+    const corsOptions = createCorsOptions();
+
+    applyMiddleware(app, corsOptions);
+
+    app.get('/test', (req, res) => res.json({ ok: true }));
+
+    const res = await request(app).get('/test');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ ok: true });
+    expect(res.headers['x-content-type-options']).toBe('nosniff');
+  });
+
+  it('should parse JSON request bodies', async () => {
+    const app = express();
+    applyMiddleware(app, createCorsOptions());
+
+    app.post('/echo', (req, res) => res.json(req.body));
+
+    const res = await request(app).post('/echo').send({ hello: 'world' });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ hello: 'world' });
+  });
+});
+
+describe('createOpenAIProxy — injectable fetchFn and timeoutMs', () => {
+  it('should use injected fetchFn instead of global fetch', async () => {
+    const mockFetch = jest.fn().mockResolvedValue({
+      status: 200,
+      json: () => Promise.resolve({ result: 'ok' }),
+    });
+    const mockRes = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+
+    const proxy = createOpenAIProxy('key', 'https://api.openai.com/v1/test', 'Test', {
+      fetchFn: mockFetch,
+    });
+    await proxy({ body: { prompt: 'hi' } }, mockRes);
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://api.openai.com/v1/test',
+      expect.objectContaining({ method: 'POST' })
+    );
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith({ result: 'ok' });
+  });
+
+  it('should pass custom timeoutMs to AbortSignal.timeout', async () => {
+    const mockFetch = jest.fn().mockResolvedValue({
+      status: 200,
+      json: () => Promise.resolve({}),
+    });
+    const mockRes = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+
+    const proxy = createOpenAIProxy('key', 'https://api.openai.com/v1/test', 'Test', {
+      fetchFn: mockFetch,
+      timeoutMs: 5000,
+    });
+    await proxy({ body: {} }, mockRes);
+
+    const callArgs = mockFetch.mock.calls[0][1];
+    expect(callArgs.signal).toBeInstanceOf(AbortSignal);
   });
 });

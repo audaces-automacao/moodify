@@ -4,9 +4,17 @@ import jwt from 'jsonwebtoken';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import request from 'supertest';
-import { createApp } from './index.js';
+import { createApp, startServer } from './index.js';
 
 const JWT_SECRET = 'test-secret';
+const TEST_USER = { email: 'bob@audaces.com', password: '12345', sub: 'bob' };
+
+const VALID_ENV = {
+  OPENAI_API_KEY: 'test-key',
+  JWT_SECRET: 'test-secret',
+  AUTH_EMAIL: 'bob@audaces.com',
+  AUTH_PASSWORD: '12345',
+};
 
 describe('Server API', () => {
   let app;
@@ -18,7 +26,7 @@ describe('Server API', () => {
       json: () => Promise.resolve({ choices: [{ message: { content: 'Test response' } }] }),
     });
     jest.spyOn(console, 'error').mockImplementation(() => {});
-    app = createApp({ jwtSecret: JWT_SECRET, openaiApiKey: 'test-api-key' });
+    app = createApp({ jwtSecret: JWT_SECRET, openaiApiKey: 'test-api-key', validUser: TEST_USER });
     validToken = jwt.sign({ email: 'bob@audaces.com', sub: 'bob' }, JWT_SECRET);
   });
 
@@ -371,6 +379,7 @@ describe('Server API', () => {
       const staticApp = createApp({
         jwtSecret: JWT_SECRET,
         openaiApiKey: 'test-api-key',
+        validUser: TEST_USER,
         staticPath: staticDir,
       });
 
@@ -384,6 +393,7 @@ describe('Server API', () => {
       const staticApp = createApp({
         jwtSecret: JWT_SECRET,
         openaiApiKey: 'test-api-key',
+        validUser: TEST_USER,
         staticPath: staticDir,
       });
 
@@ -397,6 +407,7 @@ describe('Server API', () => {
       const staticApp = createApp({
         jwtSecret: JWT_SECRET,
         openaiApiKey: 'test-api-key',
+        validUser: TEST_USER,
         staticPath: staticDir,
       });
 
@@ -405,5 +416,118 @@ describe('Server API', () => {
       expect(res.status).toBe(404);
       expect(res.body.error).toBe('Not found');
     });
+  });
+});
+
+describe('startServer', () => {
+  const VALID_ENV = {
+    OPENAI_API_KEY: 'test-key',
+    JWT_SECRET: 'test-secret',
+    AUTH_EMAIL: 'bob@audaces.com',
+    AUTH_PASSWORD: '12345',
+  };
+
+  let exit;
+  let listen;
+  let deps;
+
+  beforeEach(() => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    exit = jest.fn();
+    listen = jest.fn();
+    deps = { exit, listen, staticPath: '/tmp/test' };
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should exit with 1 when OPENAI_API_KEY is missing', () => {
+    startServer({ ...VALID_ENV, OPENAI_API_KEY: '' }, deps);
+
+    expect(exit).toHaveBeenCalledWith(1);
+    expect(console.error).toHaveBeenCalledWith(
+      'FATAL: OPENAI_API_KEY environment variable is required'
+    );
+    expect(listen).not.toHaveBeenCalled();
+  });
+
+  it('should exit with 1 when JWT_SECRET is missing', () => {
+    startServer({ ...VALID_ENV, JWT_SECRET: '' }, deps);
+
+    expect(exit).toHaveBeenCalledWith(1);
+    expect(console.error).toHaveBeenCalledWith(
+      'FATAL: JWT_SECRET environment variable is required'
+    );
+    expect(listen).not.toHaveBeenCalled();
+  });
+
+  it('should exit with 1 when AUTH_EMAIL is missing', () => {
+    startServer({ ...VALID_ENV, AUTH_EMAIL: '' }, deps);
+
+    expect(exit).toHaveBeenCalledWith(1);
+    expect(console.error).toHaveBeenCalledWith(
+      'FATAL: AUTH_EMAIL environment variable is required'
+    );
+    expect(listen).not.toHaveBeenCalled();
+  });
+
+  it('should exit with 1 when AUTH_PASSWORD is missing', () => {
+    startServer({ ...VALID_ENV, AUTH_PASSWORD: '' }, deps);
+
+    expect(exit).toHaveBeenCalledWith(1);
+    expect(console.error).toHaveBeenCalledWith(
+      'FATAL: AUTH_PASSWORD environment variable is required'
+    );
+    expect(listen).not.toHaveBeenCalled();
+  });
+
+  it('should call listen with default port 3000 when PORT is not set', () => {
+    startServer(VALID_ENV, deps);
+
+    expect(exit).not.toHaveBeenCalled();
+    expect(listen).toHaveBeenCalledWith(expect.anything(), 3000, expect.any(Function));
+  });
+
+  it('should call listen with custom PORT from env', () => {
+    startServer({ ...VALID_ENV, PORT: 8080 }, deps);
+
+    expect(exit).not.toHaveBeenCalled();
+    expect(listen).toHaveBeenCalledWith(expect.anything(), 8080, expect.any(Function));
+  });
+
+  it('should parse ALLOWED_ORIGINS as comma-separated list', () => {
+    jest
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue({ status: 200, json: () => Promise.resolve({}) });
+
+    startServer({ ...VALID_ENV, ALLOWED_ORIGINS: 'https://a.com,https://b.com' }, deps);
+
+    expect(exit).not.toHaveBeenCalled();
+    expect(listen).toHaveBeenCalled();
+  });
+
+  it('should use AUTH_SUB fallback when not provided', () => {
+    startServer(VALID_ENV, deps);
+
+    expect(exit).not.toHaveBeenCalled();
+    expect(listen).toHaveBeenCalled();
+  });
+
+  it('should use custom AUTH_SUB from env', () => {
+    startServer({ ...VALID_ENV, AUTH_SUB: 'custom-sub' }, deps);
+
+    expect(exit).not.toHaveBeenCalled();
+    expect(listen).toHaveBeenCalled();
+  });
+
+  it('should log listening message when listen callback fires', () => {
+    startServer(VALID_ENV, deps);
+
+    const callback = listen.mock.calls[0][2];
+    callback();
+
+    expect(console.log).toHaveBeenCalledWith('Server listening on 0.0.0.0:3000');
   });
 });
