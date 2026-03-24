@@ -1,5 +1,8 @@
 import { jest } from '@jest/globals';
+import { mkdtempSync, rmSync, writeFileSync } from 'fs';
 import jwt from 'jsonwebtoken';
+import { tmpdir } from 'os';
+import { join } from 'path';
 import request from 'supertest';
 import { createApp } from './index.js';
 
@@ -318,6 +321,89 @@ describe('Server API', () => {
 
     it('should throw when openaiApiKey is missing', () => {
       expect(() => createApp({ jwtSecret: 'secret' })).toThrow('openaiApiKey is required');
+    });
+
+    it('should throw when validUser is missing email', () => {
+      expect(() =>
+        createApp({
+          jwtSecret: 'secret',
+          openaiApiKey: 'key',
+          validUser: { password: '123', sub: 'test' },
+        })
+      ).toThrow('validUser must include email, password, and sub');
+    });
+
+    it('should throw when validUser is missing password', () => {
+      expect(() =>
+        createApp({
+          jwtSecret: 'secret',
+          openaiApiKey: 'key',
+          validUser: { email: 'a@b.com', sub: 'test' },
+        })
+      ).toThrow('validUser must include email, password, and sub');
+    });
+
+    it('should throw when validUser is missing sub', () => {
+      expect(() =>
+        createApp({
+          jwtSecret: 'secret',
+          openaiApiKey: 'key',
+          validUser: { email: 'a@b.com', password: '123' },
+        })
+      ).toThrow('validUser must include email, password, and sub');
+    });
+  });
+
+  describe('Static file serving', () => {
+    let staticDir;
+
+    beforeEach(() => {
+      staticDir = mkdtempSync(join(tmpdir(), 'moodify-test-'));
+      writeFileSync(join(staticDir, 'index.html'), '<html><body>SPA</body></html>');
+      writeFileSync(join(staticDir, 'style.css'), 'body { color: red; }');
+    });
+
+    afterEach(() => {
+      rmSync(staticDir, { recursive: true, force: true });
+    });
+
+    it('should serve static files when staticPath is provided', async () => {
+      const staticApp = createApp({
+        jwtSecret: JWT_SECRET,
+        openaiApiKey: 'test-api-key',
+        staticPath: staticDir,
+      });
+
+      const res = await request(staticApp).get('/style.css');
+
+      expect(res.status).toBe(200);
+      expect(res.text).toContain('body { color: red; }');
+    });
+
+    it('should serve index.html as SPA fallback for unknown routes', async () => {
+      const staticApp = createApp({
+        jwtSecret: JWT_SECRET,
+        openaiApiKey: 'test-api-key',
+        staticPath: staticDir,
+      });
+
+      const res = await request(staticApp).get('/some/client/route');
+
+      expect(res.status).toBe(200);
+      expect(res.text).toContain('SPA');
+    });
+
+    it('should still return JSON 404 for unknown API routes with static serving', async () => {
+      const staticApp = createApp({
+        jwtSecret: JWT_SECRET,
+        openaiApiKey: 'test-api-key',
+        staticPath: staticDir,
+      });
+
+      const res = await request(staticApp).get('/api/nonexistent');
+
+      expect(res.status).toBe(404);
+      expect(res.body.error).toBe('Not found');
     });
   });
 });
