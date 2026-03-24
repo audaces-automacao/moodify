@@ -1,72 +1,26 @@
-import express from 'express';
+import { jest } from '@jest/globals';
 import jwt from 'jsonwebtoken';
 import request from 'supertest';
-import {
-  applyMiddleware,
-  createAuthLimiter,
-  createAuthMiddleware,
-  createCorsOptions,
-  validateChatRequest,
-  validateImageRequest,
-} from './middleware.js';
+import { createApp } from './index.js';
 
-// Test configuration
 const JWT_SECRET = 'test-secret';
-const VALID_USER = {
-  email: 'bob@audaces.com',
-  password: '12345',
-};
-
-// Create test app (mirrors index.js structure)
-function createTestApp() {
-  const app = express();
-
-  const corsOptions = createCorsOptions();
-  const authMiddleware = createAuthMiddleware(JWT_SECRET);
-  const authLimiter = createAuthLimiter();
-
-  applyMiddleware(app, corsOptions);
-
-  // Auth endpoints
-  app.post('/api/auth/login', authLimiter, (req, res) => {
-    const { email, password } = req.body || {};
-    if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
-      return res.status(400).json({ error: 'Email and password are required' });
-    }
-    if (email === VALID_USER.email && password === VALID_USER.password) {
-      const token = jwt.sign({ email, sub: 'bob' }, JWT_SECRET, { expiresIn: '1d' });
-      return res.json({ token, email });
-    }
-    return res.status(401).json({ error: 'Invalid credentials' });
-  });
-
-  app.get('/api/auth/verify', authMiddleware, (req, res) => {
-    res.json({ valid: true, email: req.user.email });
-  });
-
-  // Mock OpenAI endpoints for testing validation
-  app.post('/api/chat/completions', authMiddleware, (req, res) => {
-    if (!validateChatRequest(req.body)) {
-      return res.status(400).json({ error: 'Invalid request body' });
-    }
-    res.json({ choices: [{ message: { content: 'Test response' } }] });
-  });
-
-  app.post('/api/images/generations', authMiddleware, (req, res) => {
-    if (!validateImageRequest(req.body)) {
-      return res.status(400).json({ error: 'Invalid request body' });
-    }
-    res.json({ data: [{ url: 'https://example.com/image.png' }] });
-  });
-
-  return app;
-}
 
 describe('Server API', () => {
   let app;
+  let validToken;
 
   beforeEach(() => {
-    app = createTestApp();
+    jest.spyOn(globalThis, 'fetch').mockResolvedValue({
+      status: 200,
+      json: () => Promise.resolve({ choices: [{ message: { content: 'Test response' } }] }),
+    });
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    app = createApp({ jwtSecret: JWT_SECRET, openaiApiKey: 'test-api-key' });
+    validToken = jwt.sign({ email: 'bob@audaces.com', sub: 'bob' }, JWT_SECRET);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe('POST /api/auth/login', () => {
@@ -114,11 +68,9 @@ describe('Server API', () => {
 
   describe('GET /api/auth/verify', () => {
     it('should verify valid token', async () => {
-      const token = jwt.sign({ email: 'bob@audaces.com', sub: 'bob' }, JWT_SECRET);
-
       const res = await request(app)
         .get('/api/auth/verify')
-        .set('Authorization', `Bearer ${token}`);
+        .set('Authorization', `Bearer ${validToken}`);
 
       expect(res.status).toBe(200);
       expect(res.body.valid).toBe(true);
@@ -151,24 +103,30 @@ describe('Server API', () => {
   });
 
   describe('POST /api/chat/completions', () => {
-    let validToken;
+    it('should accept valid chat request and forward to OpenAI', async () => {
+      const body = {
+        messages: [
+          { role: 'system', content: 'You are a helpful assistant' },
+          { role: 'user', content: 'Hello' },
+        ],
+      };
 
-    beforeEach(() => {
-      validToken = jwt.sign({ email: 'bob@audaces.com', sub: 'bob' }, JWT_SECRET);
-    });
-
-    it('should accept valid chat request', async () => {
       const res = await request(app)
         .post('/api/chat/completions')
         .set('Authorization', `Bearer ${validToken}`)
-        .send({
-          messages: [
-            { role: 'system', content: 'You are a helpful assistant' },
-            { role: 'user', content: 'Hello' },
-          ],
-        });
+        .send(body);
 
       expect(res.status).toBe(200);
+      expect(globalThis.fetch).toHaveBeenCalledWith(
+        'https://api.openai.com/v1/chat/completions',
+        expect.objectContaining({
+          method: 'POST',
+          headers: expect.objectContaining({
+            Authorization: 'Bearer test-api-key',
+          }),
+          body: JSON.stringify(body),
+        })
+      );
     });
 
     it('should reject request without messages array', async () => {
@@ -178,7 +136,9 @@ describe('Server API', () => {
         .send({ prompt: 'Hello' });
 
       expect(res.status).toBe(400);
-      expect(res.body.error).toBe('Invalid request body');
+      expect(res.body.error).toBe(
+        'Invalid chat request: messages array with role and content required'
+      );
     });
 
     it('should reject request with invalid message format', async () => {
@@ -199,22 +159,55 @@ describe('Server API', () => {
 
       expect(res.status).toBe(401);
     });
+
+    it('should return 500 when OpenAI fetch fails', async () => {
+      globalThis.fetch.mockRejectedValueOnce(new Error('Network error'));
+
+      const res = await request(app)
+        .post('/api/chat/completions')
+        .set('Authorization', `Bearer ${validToken}`)
+        .send({ messages: [{ role: 'user', content: 'Hello' }] });
+
+      expect(res.status).toBe(500);
+      expect(res.body.error).toBe('Chat completions failed');
+    });
+
+    it('should forward non-200 status from OpenAI', async () => {
+      globalThis.fetch.mockResolvedValueOnce({
+        status: 429,
+        json: () => Promise.resolve({ error: { message: 'Rate limit exceeded' } }),
+      });
+
+      const res = await request(app)
+        .post('/api/chat/completions')
+        .set('Authorization', `Bearer ${validToken}`)
+        .send({ messages: [{ role: 'user', content: 'Hello' }] });
+
+      expect(res.status).toBe(429);
+      expect(res.body.error.message).toBe('Rate limit exceeded');
+    });
   });
 
   describe('POST /api/images/generations', () => {
-    let validToken;
+    it('should accept valid image request and forward to OpenAI', async () => {
+      const body = { prompt: 'A beautiful sunset', n: 1, size: '1024x1024' };
 
-    beforeEach(() => {
-      validToken = jwt.sign({ email: 'bob@audaces.com', sub: 'bob' }, JWT_SECRET);
-    });
-
-    it('should accept valid image request', async () => {
       const res = await request(app)
         .post('/api/images/generations')
         .set('Authorization', `Bearer ${validToken}`)
-        .send({ prompt: 'A beautiful sunset', n: 1, size: '1024x1024' });
+        .send(body);
 
       expect(res.status).toBe(200);
+      expect(globalThis.fetch).toHaveBeenCalledWith(
+        'https://api.openai.com/v1/images/generations',
+        expect.objectContaining({
+          method: 'POST',
+          headers: expect.objectContaining({
+            Authorization: 'Bearer test-api-key',
+          }),
+          body: JSON.stringify(body),
+        })
+      );
     });
 
     it('should accept request with only prompt', async () => {
@@ -233,7 +226,7 @@ describe('Server API', () => {
         .send({ n: 1 });
 
       expect(res.status).toBe(400);
-      expect(res.body.error).toBe('Invalid request body');
+      expect(res.body.error).toBe('Invalid image request: prompt string required');
     });
 
     it('should reject request with non-string prompt', async () => {
@@ -261,13 +254,39 @@ describe('Server API', () => {
 
       expect(res.status).toBe(401);
     });
+
+    it('should return 500 when OpenAI fetch fails', async () => {
+      globalThis.fetch.mockRejectedValueOnce(new Error('Network error'));
+
+      const res = await request(app)
+        .post('/api/images/generations')
+        .set('Authorization', `Bearer ${validToken}`)
+        .send({ prompt: 'A beautiful sunset' });
+
+      expect(res.status).toBe(500);
+      expect(res.body.error).toBe('Image generation failed');
+    });
+
+    it('should forward non-200 status from OpenAI', async () => {
+      globalThis.fetch.mockResolvedValueOnce({
+        status: 429,
+        json: () => Promise.resolve({ error: { message: 'Rate limit exceeded' } }),
+      });
+
+      const res = await request(app)
+        .post('/api/images/generations')
+        .set('Authorization', `Bearer ${validToken}`)
+        .send({ prompt: 'A beautiful sunset' });
+
+      expect(res.status).toBe(429);
+      expect(res.body.error.message).toBe('Rate limit exceeded');
+    });
   });
 
   describe('Security Headers', () => {
     it('should include security headers from helmet', async () => {
       const res = await request(app).get('/api/auth/verify');
 
-      // Helmet adds various security headers
       expect(res.headers).toHaveProperty('x-content-type-options');
       expect(res.headers['x-content-type-options']).toBe('nosniff');
     });
@@ -280,6 +299,25 @@ describe('Server API', () => {
         .set('Origin', 'http://localhost:4200');
 
       expect(res.headers['access-control-allow-origin']).toBe('http://localhost:4200');
+    });
+  });
+
+  describe('API 404', () => {
+    it('should return JSON 404 for unknown API routes', async () => {
+      const res = await request(app).get('/api/nonexistent');
+
+      expect(res.status).toBe(404);
+      expect(res.body.error).toBe('Not found');
+    });
+  });
+
+  describe('createApp configuration', () => {
+    it('should throw when jwtSecret is missing', () => {
+      expect(() => createApp({ openaiApiKey: 'key' })).toThrow('jwtSecret is required');
+    });
+
+    it('should throw when openaiApiKey is missing', () => {
+      expect(() => createApp({ jwtSecret: 'secret' })).toThrow('openaiApiKey is required');
     });
   });
 });
