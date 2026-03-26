@@ -2,36 +2,38 @@
 
 ## Overview
 
-Client-server application: Angular 21 SPA frontend with Express.js backend API. In development, Angular proxies `/api/*` to Express. In production (Docker), Express serves both API routes and static Angular build artifacts.
+Two-tier web application: Angular SPA frontend with Express.js backend API. The frontend handles UI rendering, routing, and i18n; the backend handles JWT authentication, OpenAI API proxying, and static file serving in production.
 
 ## Directory Map
 
 | Directory | Purpose |
 |-----------|---------|
-| `src/app/auth/` | Authentication — AuthService, JWT interceptor, route guard, login component |
-| `src/app/components/` | UI components — mood board, color palette, fabrics, outfits, theme/language switchers |
-| `src/app/services/` | Shared services — OpenAI API integration, theme management |
-| `src/app/models/` | TypeScript interfaces for mood board data |
-| `server/` | Express.js backend — API routes, middleware, JWT auth, OpenAI proxy |
-| `public/i18n/` | Translation files (en.json, pt-BR.json) |
+| `src/app/auth/` | Auth service, HTTP interceptor, route guard, login component |
+| `src/app/components/` | Presentational components (mood board, color palette, fabric list, etc.) |
+| `src/app/services/` | Business logic services (OpenAI integration, theme management) |
+| `src/app/models/` | TypeScript interfaces (mood board data model) |
+| `server/` | Express backend (index.js entry, middleware.js for auth/rate-limiting) |
+| `src/assets/i18n/` | Translation files (en.json, pt-BR.json) |
 
 ## Data Flow
 
-- User enters style prompt → `MoodInputComponent` emits to `HomeComponent`
-- `HomeComponent` calls `OpenaiService.generateMoodBoard()` → HTTP POST to `/api/mood-board`
-- Express backend validates JWT, forwards prompt to OpenAI GPT-4o, returns structured mood board
-- `MoodBoardComponent` renders results: color palette, fabrics, style tags, outfit grid
-- Optional: `OutfitImageComponent` requests DALL-E image generation via `/api/outfit-image`
+- User submits style description via `MoodInputComponent`
+- `OpenAIService` sends POST to `/api/chat/completions` with JWT token (injected by `authInterceptor`)
+- Express backend validates JWT, forwards request to OpenAI GPT-4o API
+- Response parsed into `MoodBoard` model, rendered by `MoodBoardComponent` and child components
+- Optional: DALL-E image generation for outfit visualization via `/api/images/generations`
 
 ## Key Patterns
 
-- Standalone Angular components with signals for reactive state
-- JWT authentication: `AuthInterceptor` injects token, `AuthGuard` protects routes
-- Express middleware chain: auth validation → rate limiting → error handling
-- Proxy configuration (`proxy.conf.json`) bridges Angular dev server to Express backend
+- Angular standalone components with signals (no NgModules)
+- Lazy-loaded routes (`app.routes.ts` with `loadComponent`)
+- HTTP interceptor chain: JWT injection + 401 redirect
+- Express middleware chain: Helmet, CORS, compression, JSON parsing (global); JWT validation, rate limiting, request validation (per-route); error handling
+- i18n via Transloco with lazy-loaded translation files
 
 ## Dependencies Between Modules
 
-- `auth/` is self-contained — provides guard, interceptor, and service consumed by `app.config.ts`
-- `components/` depend on `services/` and `models/` but not on each other (flat hierarchy)
-- `server/` is an independent Node.js package with its own dependencies, connected only via HTTP API
+- `auth/` is independent — used by route guards, HTTP interceptor, and `HeaderComponent` (logout)
+- `components/` depend on `services/` and `models/`; parent components compose children (e.g., `MoodBoardComponent` imports `ColorPaletteComponent`, `FabricListComponent`, etc.)
+- `services/openai.service.ts` relies on `authInterceptor` (registered globally) for JWT headers — no direct import of `auth/`
+- `server/` is fully independent — communicates with frontend only via HTTP API

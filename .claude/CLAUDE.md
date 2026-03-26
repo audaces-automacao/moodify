@@ -1,33 +1,39 @@
-<!-- Keep this file and .claude/docs/ updated when project structure, conventions, or tooling changes -->
+<!-- Keep this file, .claude/docs/, and subproject CLAUDE.md files updated when project structure changes -->
 
 # Moodify
 
-AI-powered fashion mood board generator. Built with Angular 21, Express.js, Tailwind CSS v4, OpenAI GPT-4o.
+AI-powered fashion mood board generator. Monorepo with 2 packages.
 
-## Conventions
+## Architecture
 
-- Standalone Angular components (no NgModules), signals-based reactivity
-- Bold editorial design (Vogue/Harper's Bazaar aesthetic): Playfair Display + Inter fonts
-- SCSS for component styles, Tailwind CSS v4 for utility classes
-- i18n via @jsverse/transloco (en, pt-BR) — all user-facing strings must be translatable
-- Express backend in `server/` — JWT auth, OpenAI proxy, rate limiting
+| Subproject | Purpose | Stack |
+|------------|---------|-------|
+| `/` (root) | Frontend — mood board UI, auth, i18n | TS, Angular 21, Tailwind v4, Vitest |
+| `server/` | Backend — JWT auth, OpenAI proxy, static serving | Node.js/Express (ESM), Jest |
 
 ## Commands
 
 ```bash
-npm run dev              # Start Angular + Express dev servers
-npm run build            # Build the project
-npm test                 # Run frontend tests (Vitest)
-npm run test:ci          # Frontend tests with coverage
-npm run lint             # Lint source files
-cd server && npm test    # Run backend tests (Jest)
+npm run dev              # Start both Angular (4200) + Express (3000) via concurrently
+npm run build            # Build Angular frontend
+npm run test:ci          # Frontend tests (Vitest, single run + coverage)
+npm run lint             # ESLint (Angular + Prettier)
+cd server && npm test    # Backend tests (Jest)
 ```
 
-## Project Structure
+## Conventions
 
-- `src/app/` — Angular frontend (components, services, auth, models)
-- `server/` — Express.js backend API (has own package.json, CLAUDE.md)
-- `public/` — Static assets (i18n translation files)
+- Angular standalone components with signals (no NgModules)
+- i18n via @jsverse/transloco (en, pt-BR) — translations in `src/assets/i18n/`
+- Dev proxy: Angular at :4200 proxies `/api/*` to Express at :3000
+- Production: Docker serves built Angular static files via Express
+- Bug fixes require a failing test before the fix
+- 80% minimum coverage (statements, branches, functions, lines)
+
+## Subproject Docs
+
+Each subproject has its own CLAUDE.md with subproject-specific guidance:
+- `server/CLAUDE.md` - Express backend conventions and commands
 
 ## Before Writing Code
 
@@ -35,12 +41,6 @@ ALWAYS read `.claude/docs/coding-guidelines.md` before planning or implementing 
 
 ## Documentation
 
-- `.claude/docs/testing.md` — Test framework, conventions, coverage
-- `.claude/docs/styling.md` — UI styling patterns and design tokens
-- `.claude/docs/architecture.md` — System architecture and data flow
-
-## Agents
-
-After implementing features or fixing bugs:
-- `.claude/agents/code-simplifier.md` — simplifies recently changed code
-- `.claude/agents/test-guardian.md` — flags missing test coverage
+- `.claude/docs/testing.md` - Frontend testing with Vitest
+- `.claude/docs/styling.md` - Tailwind CSS v4 and Angular component styling
+- `.claude/docs/architecture.md` - Project structure and data flow
