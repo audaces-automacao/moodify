@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ThemeService } from '../services/theme.service';
 
@@ -12,16 +12,8 @@ import { ThemeService } from '../services/theme.service';
       class="glass-input w-8 h-8 rounded cursor-pointer
              hover:border-luxury-champagne/50 transition-all
              inline-flex items-center justify-center"
-      [attr.aria-label]="
-        theme() === 'dark'
-          ? ('themeSwitcher.switchToLight' | transloco)
-          : ('themeSwitcher.switchToDark' | transloco)
-      "
-      [attr.title]="
-        theme() === 'dark'
-          ? ('themeSwitcher.switchToLight' | transloco)
-          : ('themeSwitcher.switchToDark' | transloco)
-      "
+      [attr.aria-label]="themeLabelKey() | transloco"
+      [attr.title]="themeLabelKey() | transloco"
     >
       <span class="pointer-events-none text-luxury-champagne">
         @if (theme() === 'dark') {
@@ -64,4 +56,7 @@ import { ThemeService } from '../services/theme.service';
 export class ThemeSwitcherComponent {
   protected themeService = inject(ThemeService);
   protected theme = this.themeService.theme;
+  protected themeLabelKey = computed(() =>
+    this.theme() === 'dark' ? 'themeSwitcher.switchToLight' : 'themeSwitcher.switchToDark'
+  );
 }

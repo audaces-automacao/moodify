@@ -60,23 +60,29 @@ export function validateLoginRequest(body) {
   return body.email.length > 0 && body.password.length > 0;
 }
 
-export function createAuthLimiter({ windowMs = 15 * 60 * 1000, max = 5 } = {}) {
+function createRateLimiter({ windowMs, max, errorMessage }) {
   return rateLimit({
     windowMs,
     max,
-    message: { error: 'Too many login attempts, please try again later' },
+    message: { error: errorMessage },
     standardHeaders: true,
     legacyHeaders: false,
   });
 }
 
-export function createApiLimiter({ windowMs = 60 * 1000, max = 20 } = {}) {
-  return rateLimit({
+export function createAuthLimiter({ windowMs = 15 * 60 * 1000, max = 5 } = {}) {
+  return createRateLimiter({
     windowMs,
     max,
-    message: { error: 'Too many requests, please try again later' },
-    standardHeaders: true,
-    legacyHeaders: false,
+    errorMessage: 'Too many login attempts, please try again later',
+  });
+}
+
+export function createApiLimiter({ windowMs = 60 * 1000, max = 20 } = {}) {
+  return createRateLimiter({
+    windowMs,
+    max,
+    errorMessage: 'Too many requests, please try again later',
   });
 }
 

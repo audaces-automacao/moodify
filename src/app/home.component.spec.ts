@@ -245,17 +245,6 @@ describe('HomeComponent', () => {
       expect(component.isImageLoading()).toBe(false);
     });
 
-    it('should use fallback message when image error has no message', () => {
-      openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
-      openAIServiceMock.generateOutfitImage.mockReturnValue(
-        throwError(() => ({ notAnError: true }))
-      );
-
-      component.generateMoodBoard('test');
-
-      expect(component.imageError()).toBe('Failed to generate outfit image. Please try again.');
-    });
-
     it('should not affect mood board display when image generation fails', () => {
       openAIServiceMock.generateMoodBoard.mockReturnValue(of(mockMoodBoard));
       openAIServiceMock.generateOutfitImage.mockReturnValue(
@@ -310,6 +299,28 @@ describe('HomeComponent', () => {
       await expect((component as any).preloadImage('https://example.com/bad.png')).rejects.toThrow(
         'Failed to generate outfit image. Please try again.'
       );
+    });
+  });
+
+  describe('scrollToLoading', () => {
+    it('should call scrollIntoView on loadingSection when present', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const comp = component as any;
+      // loadingSection is set via @ViewChild after detectChanges
+      comp.scrollToLoading();
+
+      expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
+
+    it('should not throw when loadingSection is undefined', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const comp = component as any;
+      comp.loadingSection = undefined;
+
+      expect(() => comp.scrollToLoading()).not.toThrow();
     });
   });
 

@@ -94,10 +94,7 @@ Requirements:
   }
 
   private stripMarkdownCodeBlocks(content: string): string {
-    return content
-      .replace(/```json\n?/g, '')
-      .replace(/```\n?/g, '')
-      .trim();
+    return content.replace(/```(?:json)?\n?/g, '').trim();
   }
 
   private handleError(

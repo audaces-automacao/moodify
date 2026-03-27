@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import request from 'supertest';
-import { createApp, startServer } from './index.js';
+import { bootstrap, createApp, startServer } from './index.js';
 
 const JWT_SECRET = 'test-secret';
 const TEST_USER = { email: 'bob@audaces.com', password: '12345', sub: 'bob' };
@@ -529,5 +529,40 @@ describe('startServer', () => {
     callback();
 
     expect(console.log).toHaveBeenCalledWith('Server listening on 0.0.0.0:3000');
+  });
+
+  it('should not crash when staticPath is omitted and dirname is provided', () => {
+    const dirnameDeps = { exit, listen, dirname: '/fake/server' };
+    startServer(VALID_ENV, dirnameDeps);
+
+    expect(listen).toHaveBeenCalledWith(expect.any(Function), 3000, expect.any(Function));
+  });
+});
+
+describe('bootstrap', () => {
+  let config;
+  let start;
+
+  beforeEach(() => {
+    config = jest.fn();
+    start = jest.fn();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should call config and start when isMain is true', () => {
+    bootstrap({ isMain: true, dirname: '/fake/dir', config, start });
+
+    expect(config).toHaveBeenCalledWith({ path: join('/fake/dir', '../.env') });
+    expect(start).toHaveBeenCalledWith(undefined, { dirname: '/fake/dir' });
+  });
+
+  it('should do nothing when isMain is false', () => {
+    bootstrap({ isMain: false, dirname: '/fake/dir', config, start });
+
+    expect(config).not.toHaveBeenCalled();
+    expect(start).not.toHaveBeenCalled();
   });
 });

@@ -108,10 +108,7 @@ export class HomeComponent implements OnInit {
       )
       .subscribe({
         next: url => this.outfitImage.set(url),
-        error: err => {
-          const message = err?.message || this.transloco.translate('errors.imageGenericError');
-          this.imageError.set(message);
-        },
+        error: err => this.imageError.set(err.message),
       });
   }
 

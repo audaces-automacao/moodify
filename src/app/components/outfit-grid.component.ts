@@ -55,14 +55,14 @@ export class OutfitGridComponent {
   outfit = input.required<OutfitSuggestion>();
 
   outfitItems = computed<OutfitItem[]>(() => {
-    const o = this.outfit();
+    const outfit = this.outfit();
     const items: OutfitItem[] = [
-      { labelKey: 'outfits.top', value: o.top },
-      { labelKey: 'outfits.bottom', value: o.bottom },
-      { labelKey: 'outfits.shoes', value: o.shoes },
+      { labelKey: 'outfits.top', value: outfit.top },
+      { labelKey: 'outfits.bottom', value: outfit.bottom },
+      { labelKey: 'outfits.shoes', value: outfit.shoes },
     ];
-    if (o.outerwear) {
-      items.push({ labelKey: 'outfits.outerwear', value: o.outerwear });
+    if (outfit.outerwear) {
+      items.push({ labelKey: 'outfits.outerwear', value: outfit.outerwear });
     }
     return items;
   });

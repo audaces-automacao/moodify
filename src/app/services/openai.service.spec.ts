@@ -101,6 +101,22 @@ describe('OpenAIService', () => {
       req.flush(responseWithMarkdown);
     });
 
+    it('should strip plain code blocks without json specifier', () => {
+      const jsonContent = JSON.stringify(validMoodBoardResponse);
+      const responseWithMarkdown = {
+        choices: [{ message: { content: '```\n' + jsonContent + '\n```' } }],
+      };
+
+      service.generateMoodBoard('test').subscribe({
+        next: result => {
+          expect(result.aestheticDescription).toBe('Test aesthetic description');
+        },
+      });
+
+      const req = httpMock.expectOne('/api/chat/completions');
+      req.flush(responseWithMarkdown);
+    });
+
     it('should strip json code blocks without newline', () => {
       const jsonContent = JSON.stringify(validMoodBoardResponse);
       const responseWithMarkdown = {

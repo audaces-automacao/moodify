@@ -104,7 +104,12 @@ export function createApp({ jwtSecret, openaiApiKey, allowedOrigins, validUser, 
 
 export function startServer(
   env = process.env,
-  { exit = process.exit, listen = (app, port, cb) => app.listen(port, cb), staticPath } = {}
+  {
+    exit = process.exit,
+    listen = (app, port, cb) => app.listen(port, cb),
+    staticPath,
+    dirname = import.meta.dirname,
+  } = {}
 ) {
   const {
     PORT = 3000,
@@ -132,7 +137,7 @@ export function startServer(
     openaiApiKey: OPENAI_API_KEY,
     allowedOrigins,
     validUser: { email: AUTH_EMAIL, password: AUTH_PASSWORD, sub: AUTH_SUB || 'default' },
-    staticPath: staticPath ?? join(import.meta.dirname, '../dist/moodify/browser'),
+    staticPath: staticPath ?? join(dirname, '../dist/moodify/browser'),
   });
 
   listen(app, PORT, () => {
@@ -140,7 +145,15 @@ export function startServer(
   });
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  dotenv.config({ path: join(import.meta.dirname, '../.env') });
-  startServer();
+export function bootstrap({
+  isMain = process.argv[1] === fileURLToPath(import.meta.url),
+  dirname = import.meta.dirname,
+  config = dotenv.config,
+  start = startServer,
+} = {}) {
+  if (!isMain) return;
+  config({ path: join(dirname, '../.env') });
+  start(undefined, { dirname });
 }
+
+bootstrap();

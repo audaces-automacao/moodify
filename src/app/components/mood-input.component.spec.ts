@@ -67,6 +67,15 @@ describe('MoodInputComponent', () => {
     expect(component.inputValue()).toBe('New style description');
   });
 
+  it('should ignore input event from non-textarea element', () => {
+    component.inputValue.set('original');
+    const event = new Event('input');
+    Object.defineProperty(event, 'target', { value: document.createElement('div') });
+    component.onInput(event);
+
+    expect(component.inputValue()).toBe('original');
+  });
+
   it('should disable button when input is empty', () => {
     const button = fixture.nativeElement.querySelector('button');
     expect(button.disabled).toBe(true);

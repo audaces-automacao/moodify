@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoService } from '@jsverse/transloco';
-import { interval } from 'rxjs';
+import { interval, timer } from 'rxjs';
 
 @Component({
   selector: 'app-loading-skeleton',
@@ -139,14 +139,18 @@ export class LoadingSkeletonComponent implements OnInit {
     this.shouldAnimate.set(true);
 
     // Change message at the middle of the animation (when opacity is 0)
-    setTimeout(() => {
-      this.currentIndex = (this.currentIndex + 1) % messages.length;
-      this.currentMessage.set(messages[this.currentIndex]);
-    }, LoadingSkeletonComponent.FADE_OUT_DELAY);
+    timer(LoadingSkeletonComponent.FADE_OUT_DELAY)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.currentIndex = (this.currentIndex + 1) % messages.length;
+        this.currentMessage.set(messages[this.currentIndex]);
+      });
 
     // Reset animation flag
-    setTimeout(() => {
-      this.shouldAnimate.set(false);
-    }, LoadingSkeletonComponent.ANIMATION_DURATION);
+    timer(LoadingSkeletonComponent.ANIMATION_DURATION)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.shouldAnimate.set(false);
+      });
   }
 }
